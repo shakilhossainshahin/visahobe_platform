@@ -45,3 +45,12 @@ In accordance with Section 13 of the Final Blueprint and approved adjustments, P
 3. **Continuous Integration:** GitHub Actions CI executes on PostgreSQL 16 service container and passes all status checks on every pull request.
 4. **Reproducible Migrations:** Prisma migrations deploy cleanly to an empty PostgreSQL database from scratch under single migration-owner rules.
 5. **Zero Secret Leakage & PII Redaction:** Git history and code diffs are verified clean of credentials, and logs scrub PII via field denylists and regex fallbacks.
+
+---
+
+## 4. Phase 1 — Design System & Public Website Tickets Index
+
+| Ticket ID                                                             | Title                                              | Priority | Est. Effort | Status          | Core Deliverables                                                                                                                                               |
+| :-------------------------------------------------------------------- | :------------------------------------------------- | :------- | :---------- | :-------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [TICKET-P1-001](./TICKET-P1-001-design-system-and-liquid-glass-ui.md) | Design System & Liquid Glass UI Component Library  | **P0**   | 2 days      | **In Progress** | `@visahobe/design-system` tokens, CSS vars, Tailwind preset, and `@visahobe/ui` accessible components (`Button`, `Card`, `Badge`, `Input`, `NavbarShell`, etc.) |
+| `TICKET-P1-002`                                                       | Next.js Public Website & Interactive Intake Portal | **P0**   | 3 days      | Planned         | Public marketing pages, service catalogue, multi-step eligibility intake flow, lead capture, and CMS foundation                                                 |
