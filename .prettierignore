@@ -1,0 +1,13 @@
+node_modules
+dist
+.next
+out
+coverage
+.turbo
+pnpm-lock.yaml
+*.log
+postgres-data
+.git
+visahobe_blueprint.md
+VisaHobe_Final_Architecture_Blueprint_v2.0.md
+docs/architecture/blueprints/**

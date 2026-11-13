@@ -3,17 +3,18 @@
 **Status:** Accepted  
 **Date:** 13 November 2026  
 **Deciders:** Lead Architect, Automation Systems Lead, Security Lead  
-**Consulted:** Final Architecture Blueprint v2.0 (Sections 1, 5.3, 6, 11), Master System Blueprint v1.0 (Section 9)  
+**Consulted:** Final Architecture Blueprint v2.0 (Sections 1, 5.3, 6, 11), Master System Blueprint v1.0 (Section 9)
 
 ---
 
 ## 1. Context and Problem Statement
 
-Visa, corporate registration, and consular support frequently require interacting with government portals, embassy portals, and partner agency web interfaces. Many of these portals lack public REST APIs or structured webhooks. 
+Visa, corporate registration, and consular support frequently require interacting with government portals, embassy portals, and partner agency web interfaces. Many of these portals lack public REST APIs or structured webhooks.
 
 To automate approved portal tasks (e.g. appointment availability checks, draft form entry, verification proof capture), the platform requires a browser automation core with vision capabilities, live human observation, client-visible read-only streams, screenshot-based client information requests, and real-time human takeover.
 
 However, browser automation introduces extreme risks:
+
 - Vendor lock-in to proprietary hosted browser models.
 - Credential leakage in prompts, DOM logs, or screenshots.
 - Anti-bot / CAPTCHA bypass violations that jeopardize legal compliance and client accounts.
@@ -39,6 +40,7 @@ The architecture must define how the open-source **Browser Use** framework is in
 VisaHobe adopts **Browser Use as an isolated browser execution engine behind an internal `BrowserExecutionAdapter` abstraction**, executed in containerized workers and governed by VisaHobe's Model Gateway:
 
 ### 3.1 Architectural Boundary & Separation of Ownership
+
 ```
 [ VisaHobe Core Orchestrator ]
   ├── Owns: Tenant identity, Case/Task State, Approval Gates, Credential References, Audit Log
@@ -62,7 +64,7 @@ VisaHobe adopts **Browser Use as an isolated browser execution engine behind an 
   - Action permissions (`browser.session.create`, `browser.session.observe`, `browser.session.takeover`).
   - Human approval records for legally binding or financial steps.
   - Encrypted credential references from HashiCorp Vault / KMS.
-  
+
 - **Browser Use Execution Engine Owns:**
   - DOM tree parsing and coordinate generation.
   - Page navigation and vision model interaction.
@@ -70,12 +72,15 @@ VisaHobe adopts **Browser Use as an isolated browser execution engine behind an 
   - Browser-level retry and element recovery logic.
 
 ### 3.2 Integration Strategy (No Direct Code Inlining)
+
 Browser Use will not be pasted directly into the core application codebase. Instead:
+
 1. `packages/browser-automation` defines the abstract TypeScript contract (`BrowserExecutionAdapter`, `BrowserSessionOptions`, `BrowserActionResult`).
 2. An isolated worker service (`workers/browser-session`) runs the Browser Use execution environment inside sandboxed Docker containers.
 3. Portal-specific interaction scripts (e.g. Singapore ACRA, Dubai DED, Serbian APR) reside in VisaHobe's portal adapter registry.
 
 ### 3.3 Security, Privacy, and Human Gates
+
 1. **Domain & Action Allowlists:** Browser sessions are restricted to explicitly configured domain patterns. Arbitrary web browsing is rejected.
 2. **Credential Protection:** Credentials are injected directly into active input fields via isolated vault references; raw passwords and API keys are never exposed in prompt strings, chat logs, or agent traces.
 3. **Automated PII Redaction:** Passports, credit card details, and confidential identity markers are masked on captured screenshots and live streams.
@@ -87,15 +92,18 @@ Browser Use will not be pasted directly into the core application codebase. Inst
 ## 4. Consequences
 
 ### Positive
+
 - **Vendor Independence:** The underlying browser execution engine can be replaced (e.g. with Playwright, Skyvern, or direct partner APIs) without impacting VisaHobe's core domain models.
 - **Multi-Model Support:** The vision model powering browser navigation can be swapped dynamically based on task complexity, speed, and cost.
 - **Robust Compliance:** Eliminates the legal risks of automated bot challenges and unauthorized filings.
 
 ### Negative / Trade-offs
+
 - Running containerized Chromium instances alongside real-time video streaming requires dedicated worker infrastructure and memory resources.
 - Network latency between the core orchestrator and the browser worker must be minimized.
 
 ### Mitigations
+
 - Maintain a warm pool of pre-warmed, isolated browser containers in `workers/browser-session`.
 - Enforce strict session timeouts (e.g. 15-minute maximum session duration with automatic teardown).
 

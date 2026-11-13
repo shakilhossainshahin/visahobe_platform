@@ -3,7 +3,7 @@
 **Status:** Accepted  
 **Date:** 13 November 2026  
 **Deciders:** Security & Compliance Lead, Lead Architect  
-**Consulted:** Final Architecture Blueprint v2.0 (Sections 2.1, 3, 8.2, 9), Master System Blueprint v1.0 (Sections 3, 15)  
+**Consulted:** Final Architecture Blueprint v2.0 (Sections 2.1, 3, 8.2, 9), Master System Blueprint v1.0 (Sections 3, 15)
 
 ---
 
@@ -31,6 +31,7 @@ A comprehensive security architecture is required that enforces strict authentic
 VisaHobe implements a **Three-Tier Permission Architecture with Supabase Auth, Strict RBAC, Encrypted Secret Vaulting, and Mandatory PII Redaction**:
 
 ### 3.1 Three-Tier Permission Enforcement
+
 ```
 [ Tier 1: UI / Client Layer ]
   └── Hides buttons, routes, and menu items based on user role and permissions.
@@ -47,6 +48,7 @@ VisaHobe implements a **Three-Tier Permission Architecture with Supabase Auth, S
 ```
 
 ### 3.2 Role and Permission Hierarchy
+
 1. **Primary Role Definitions:**
    - `owner`: Full platform sovereignty, emergency overrides, billing management (audited).
    - `admin`: Operational administration, system configuration, staff management.
@@ -68,15 +70,18 @@ VisaHobe implements a **Three-Tier Permission Architecture with Supabase Auth, S
    - `github.pr.create`, `deployment.approve`, `migration.propose`
 
 ### 3.3 Authentication and MFA Baseline
+
 - Authentication provided by **Supabase Auth** (or self-hosted equivalent) using JWTs stored in secure, `HttpOnly`, `SameSite=Lax` cookies.
 - **Mandatory MFA (Time-based One-Time Password / WebAuthn)** for all internal staff accounts (`owner`, `admin`, `case_manager`, `verifier`, `finance`, `browser_operator`, `developer_reviewer`).
 - Session timeouts: Maximum 15 minutes of inactivity for privileged internal sessions; 7 days with sliding refresh for client portal sessions.
 
 ### 3.4 Secret Management and Credential Vault
+
 - Application secrets (database credentials, third-party API keys) are injected via environment variables managed through Doppler / Infisical / cloud secret managers.
 - Portal credentials for external partner and government sites are stored in an **Encrypted Credential Vault** (AES-256-GCM / KMS). Agents and browser workers only ever receive short-lived tokenized vault references (`vault_ref_id`), never plaintext passwords.
 
 ### 3.5 Automated PII Redaction Pipeline
+
 - Passports, national ID numbers, tax IDs, credit card numbers, and banking details are processed through a redaction utility before any string is written to application logs, Sentry error traces, or LLM prompt histories.
 
 ---
@@ -84,15 +89,18 @@ VisaHobe implements a **Three-Tier Permission Architecture with Supabase Auth, S
 ## 4. Consequences
 
 ### Positive
+
 - **Immunity to Single-Point Failures:** If a developer misses an authorization check in an API route handler, PostgreSQL RLS prevents data exfiltration at Tier 3.
 - **Audit Compliance:** Granular permission keys make every administrative action accountable to an exact permission check.
 - **Zero Raw Credentials in Code:** Eliminates accidental secret leaks into GitHub or developer workstations.
 
 ### Negative / Trade-offs
+
 - Managing granular permissions across all modules requires comprehensive seeding and testing.
 - Mandatory staff MFA requires an initial onboarding and enrollment workflow.
 
 ### Mitigations
+
 - Reusable auth middleware and decorator helpers in `packages/auth` (`requirePermission('case.update')`).
 - Mock authentication provider for automated integration tests to bypass MFA during CI test runs.
 

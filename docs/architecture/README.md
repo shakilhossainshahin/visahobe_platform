@@ -2,7 +2,7 @@
 
 **Document Root:** `docs/architecture/`  
 **Planning Baseline:** Version 2.0 (13 November 2026)  
-**Status:** Architecture Baseline Established & Ready for Phase 0 Implementation  
+**Status:** Architecture Baseline Established & Ready for Phase 0 Implementation
 
 ---
 
@@ -15,12 +15,15 @@ VisaHobe is a premium, secure, multi-tenant AI operations platform for visa proc
 ## 2. Architecture Documentation Index
 
 ### 2.1 Blueprints & Audits
+
 - **[Repository & Runtime Audit](./repository-audit.md):** Inspection of workspace structure, runtime dependencies, Windows host environment, and baseline alignment.
 - **[Final Architecture Blueprint v2.0](./blueprints/VisaHobe_Final_Architecture_Blueprint_v2.0.md):** Authoritative architecture blueprint and implementation roadmap.
 - **[Master System Blueprint v1.0](./blueprints/visahobe_blueprint.md):** Consolidated master specification covering workflow registries, database schemas, and agency integrations.
 
 ### 2.2 Architecture Decision Records (ADRs)
+
 See the full **[ADR Directory & Index](./decisions/README.md)**:
+
 1. **[ADR-001: Product Surfaces & Workspaces](./decisions/ADR-001-product-surfaces.md)** — Public Website, Client Dashboard, Super Admin Dashboard, and scoped Partner workspace.
 2. **[ADR-002: Multi-Tenant Isolation Model](./decisions/ADR-002-tenant-isolation-model.md)** — PostgreSQL Row-Level Security (RLS), verified session claims, and private object storage.
 3. **[ADR-003: Backend Stack & Architecture Style](./decisions/ADR-003-backend-stack-and-architecture-style.md)** — Modular Monolith, TypeScript API, Next.js, Prisma ORM, and pg-boss workers.
@@ -32,7 +35,9 @@ See the full **[ADR Directory & Index](./decisions/README.md)**:
 9. **[ADR-009: UI Design System & Liquid Glass](./decisions/ADR-009-ui-design-system-and-liquid-glass.md)** — Premium White + Dark-Green (`#0D3B2E`) identity with selective Liquid Glass overlays.
 
 ### 2.3 Implementation Roadmap & Phase 0 Tickets
+
 See the full **[Phase 0 Tickets Directory & Index](./tickets/README.md)**:
+
 - [TICKET-P0-001: Monorepo Workspace Initialization](./tickets/TICKET-P0-001-monorepo-initialization.md)
 - [TICKET-P0-002: TypeScript, ESLint, Prettier, and Vitest Setup](./tickets/TICKET-P0-002-typescript-lint-format-testing.md)
 - [TICKET-P0-003: GitHub Actions CI/CD Pipeline Setup](./tickets/TICKET-P0-003-ci-cd-pipeline-setup.md)
@@ -47,6 +52,7 @@ See the full **[Phase 0 Tickets Directory & Index](./tickets/README.md)**:
 ## 3. Governance and Engineering Rules
 
 In accordance with Section 14 and Section 21 of the system blueprints:
+
 1. **No Premature Code Generation:** Engineering agents must not generate application features until the foundational phase (Phase 0) is verified and signed off.
 2. **Mandatory Reporting Format:** After every engineering task, the agent must report objectives, implementation details, changed files, migrations, events, test executions, and next steps.
 3. **Defense-in-Depth:** Every sensitive action must pass presentation-tier, API-tier, and database RLS-tier validations.

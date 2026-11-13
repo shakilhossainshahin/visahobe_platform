@@ -6,7 +6,7 @@
 **Status:** Ready for Implementation  
 **Estimated Effort:** 1 Engineering Day  
 **Dependencies:** [TICKET-P0-001](./TICKET-P0-001-monorepo-initialization.md)  
-**Related ADRs:** [ADR-003](../decisions/ADR-003-backend-stack-and-architecture-style.md)  
+**Related ADRs:** [ADR-003](../decisions/ADR-003-backend-stack-and-architecture-style.md)
 
 ---
 

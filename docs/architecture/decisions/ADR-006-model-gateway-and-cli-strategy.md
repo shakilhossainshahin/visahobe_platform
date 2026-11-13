@@ -3,13 +3,14 @@
 **Status:** Accepted  
 **Date:** 13 November 2026  
 **Deciders:** Lead Architect, AI Systems Lead, Security Lead  
-**Consulted:** Final Architecture Blueprint v2.0 (Sections 1, 4.2, 5), Master System Blueprint v1.0 (Section 4, 11)  
+**Consulted:** Final Architecture Blueprint v2.0 (Sections 1, 4.2, 5), Master System Blueprint v1.0 (Section 4, 11)
 
 ---
 
 ## 1. Context and Problem Statement
 
 AI operations platforms that hardcode a single LLM provider face severe operational hazards:
+
 - Service outages or rate-limit exhaustion at a single provider immediately paralyze the entire business.
 - Inability to route tasks to cost-effective models for simple tasks versus high-reasoning models for complex tasks leads to runaway operational costs.
 - Technical engineers operating the **Super Main Agent CLI** need the ability to select specific models suited for complex coding, architectural audits, or fast refactoring.
@@ -33,6 +34,7 @@ The platform requires a centralized, provider-agnostic Model Gateway and a struc
 VisaHobe establishes a **Provider-Agnostic Model Gateway and Configurable Model Registry**, integrated into the Super Admin CLI and agent execution pipeline:
 
 ### 3.1 Model Gateway Architecture
+
 ```
 Agent / CLI Execution Request
   ├── Requested Model (e.g. claude-sonnet, gemini-flash, ollama-qwen)
@@ -53,7 +55,9 @@ Agent / CLI Execution Request
 ```
 
 ### 3.2 Model Registry Schema
+
 Every approved model is cataloged in `packages/core/model-registry.json`:
+
 ```json
 {
   "models": [
@@ -92,17 +96,20 @@ Every approved model is cataloged in `packages/core/model-registry.json`:
 ```
 
 ### 3.3 Task Routing Matrix
-| Task Domain | Primary Model Class | Fallback Model Class | Rationale |
-|---|---|---|---|
-| **Architecture & Complex Coding** | High-Reasoning Coding Model (Claude 3.7 Sonnet / Gemini Pro) | OpenAI o3-mini | Precision in complex multi-file changes and deep refactoring. |
-| **Routine Code Edits & Test Writing** | Fast Coding Model (Claude 3.5 Haiku / DeepSeek Coder) | Gemini Flash | High throughput and minimal token cost. |
-| **Policy & Eligibility Analysis** | Grounded High-Fidelity Model with Strict Retrieval | High-Fidelity Alternative | Minimizes hallucination in legal/visa policy evaluation. |
-| **Document Extraction & OCR Verification** | Multimodal Vision + Structured JSON Extraction | Provider-agnostic OCR | Accurate document field extraction and cross-field consistency. |
-| **Browser Automation Agent** | Vision-Capable Fast Agent Model | Multimodal Vision Model | Rapid screen parsing and coordinate extraction. |
-| **Client Intake & Multilingual Chat** | Fast Multilingual Model (Bangla/English/Banglish) | Cost-Efficient Chat Model | Native low-latency conversational response. |
+
+| Task Domain                                | Primary Model Class                                          | Fallback Model Class      | Rationale                                                       |
+| ------------------------------------------ | ------------------------------------------------------------ | ------------------------- | --------------------------------------------------------------- |
+| **Architecture & Complex Coding**          | High-Reasoning Coding Model (Claude 3.7 Sonnet / Gemini Pro) | OpenAI o3-mini            | Precision in complex multi-file changes and deep refactoring.   |
+| **Routine Code Edits & Test Writing**      | Fast Coding Model (Claude 3.5 Haiku / DeepSeek Coder)        | Gemini Flash              | High throughput and minimal token cost.                         |
+| **Policy & Eligibility Analysis**          | Grounded High-Fidelity Model with Strict Retrieval           | High-Fidelity Alternative | Minimizes hallucination in legal/visa policy evaluation.        |
+| **Document Extraction & OCR Verification** | Multimodal Vision + Structured JSON Extraction               | Provider-agnostic OCR     | Accurate document field extraction and cross-field consistency. |
+| **Browser Automation Agent**               | Vision-Capable Fast Agent Model                              | Multimodal Vision Model   | Rapid screen parsing and coordinate extraction.                 |
+| **Client Intake & Multilingual Chat**      | Fast Multilingual Model (Bangla/English/Banglish)            | Cost-Efficient Chat Model | Native low-latency conversational response.                     |
 
 ### 3.4 Super Admin CLI Execution Policy
+
 The Super Admin CLI (`visahobe`) allows authorized engineers to override or select the execution model via CLI flags:
+
 ```bash
 # Example Super Admin CLI usage
 visahobe agent run \
@@ -110,7 +117,9 @@ visahobe agent run \
   --model claude-3-7-sonnet \
   --task "Implement PostgreSQL RLS migration for case_applicants table"
 ```
+
 The CLI runtime validates:
+
 1. Whether the user has `engineering.agent.run` permission.
 2. Whether the requested model is registered and enabled.
 3. Whether the task capabilities match the model's registered capabilities.
@@ -121,15 +130,18 @@ The CLI runtime validates:
 ## 4. Consequences
 
 ### Positive
+
 - **Resilience:** If one provider experiences downtime, the Model Gateway automatically routes traffic to the designated fallback model.
 - **Budget Control:** Non-reasoning tasks default to low-cost models, dramatically cutting monthly LLM operational expenditures.
 - **Developer Freedom with Guardrails:** Engineers can test cutting-edge models via the CLI without modifying production backend code.
 
 ### Negative / Trade-offs
+
 - Different providers have minor differences in tool calling formats and JSON schema adherence.
 - Prompt templates must be tested across multiple model providers to ensure consistent behavior.
 
 ### Mitigations
+
 - Standardize all tool calling and structured output schemas on Zod with runtime validation.
 - Implement automated model evaluation suites (`tests/agent-evals/`) to benchmark provider outputs on identical test prompts.
 

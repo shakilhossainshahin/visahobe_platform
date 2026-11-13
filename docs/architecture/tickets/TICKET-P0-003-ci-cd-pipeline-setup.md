@@ -6,7 +6,7 @@
 **Status:** Ready for Implementation  
 **Estimated Effort:** 1 Engineering Day  
 **Dependencies:** [TICKET-P0-001](./TICKET-P0-001-monorepo-initialization.md), [TICKET-P0-002](./TICKET-P0-002-typescript-lint-format-testing.md)  
-**Related ADRs:** [ADR-007](../decisions/ADR-007-deployment-ci-cd-engineering-workflow.md)  
+**Related ADRs:** [ADR-007](../decisions/ADR-007-deployment-ci-cd-engineering-workflow.md)
 
 ---
 
@@ -37,13 +37,13 @@ Implement an ironclad automated GitHub Actions Continuous Integration (CI) pipel
    - Document mandatory GitHub repository settings for protected branches (`main`, `staging`):
      - **Strict PR Requirement:** Direct pushes to `main` or `staging` are disabled. All changes must arrive via Pull Request.
      - **Required Status Checks:** PR merge is blocked unless the following required status checks pass:
-       * `CI / Lint and Format`
-       * `CI / Typecheck`
-       * `CI / Migration Deploy & Idempotency`
-       * `CI / RLS Policy Isolation Tests`
-       * `CI / Unit and Integration Tests`
-       * `CI / Monorepo Build`
-       * `CI / Secret Scan`
+       - `CI / Lint and Format`
+       - `CI / Typecheck`
+       - `CI / Migration Deploy & Idempotency`
+       - `CI / RLS Policy Isolation Tests`
+       - `CI / Unit and Integration Tests`
+       - `CI / Monorepo Build`
+       - `CI / Secret Scan`
      - **Human Peer Review Gate:** Minimum of 1 authorized human engineering review approval required; self-approvals blocked.
      - **Up-to-Date Branches:** Branch must be up to date with target branch before merging.
      - **Linear History & No Force Pushes:** Force pushes and branch deletions are strictly disabled.

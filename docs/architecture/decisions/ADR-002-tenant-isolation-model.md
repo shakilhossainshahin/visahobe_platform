@@ -3,13 +3,13 @@
 **Status:** Accepted  
 **Date:** 13 November 2026  
 **Deciders:** Core Architecture Team, Security & Compliance Lead  
-**Consulted:** Final Architecture Blueprint v2.0, Master System Blueprint v1.0  
+**Consulted:** Final Architecture Blueprint v2.0, Master System Blueprint v1.0
 
 ---
 
 ## 1. Context and Problem Statement
 
-VisaHobe handles highly sensitive personal, legal, and financial data: biometric passports, bank statements, tax records, company registration filings, and government submission proofs. In a multi-tenant platform, tenant data leakage constitutes a critical compliance, legal, and reputational disaster. 
+VisaHobe handles highly sensitive personal, legal, and financial data: biometric passports, bank statements, tax records, company registration filings, and government submission proofs. In a multi-tenant platform, tenant data leakage constitutes a critical compliance, legal, and reputational disaster.
 
 Earlier SaaS architectures frequently relied on application-level filtering (e.g. `WHERE tenant_id = x` in ORM queries). Application-layer filters are vulnerable to developer oversight, ORM bypasses, raw SQL queries, and agent tool execution vulnerabilities.
 
@@ -31,6 +31,7 @@ A defense-in-depth tenant isolation strategy is required to guarantee zero cross
 VisaHobe adopts a **Shared-Database, Tenant-Scoped Architecture enforced by PostgreSQL Row-Level Security (RLS)** backed by cryptographically verified server-side claims:
 
 ### 3.1 Core Tenancy Rules
+
 1. **Tenant Identification:**
    - Every tenant-owned table contains an immutable `tenant_id UUID NOT NULL` column with a foreign key reference to `tenants(id)`.
    - Primary entities with mandatory `tenant_id`: `cases`, `case_applicants`, `documents`, `tasks`, `agent_runs`, `chat_threads`, `messages`, `invoices`, `payments`, `browser_sessions`, and `client_information_requests`.
@@ -70,15 +71,18 @@ VisaHobe adopts a **Shared-Database, Tenant-Scoped Architecture enforced by Post
 ## 4. Consequences
 
 ### Positive
+
 - **Guaranteed Isolation:** Even if an API endpoint forgets a `WHERE tenant_id = ...` clause, PostgreSQL RLS blocks unauthorized rows from being returned or updated.
 - **Auditability:** Cross-tenant access attempts immediately trigger PostgreSQL permission exceptions and audit alarms.
 - **Simplified Query Logic:** Application code remains clean while database transactions enforce tenancy.
 
 ### Negative / Trade-offs
+
 - Super Admin operations that query across tenants (e.g. cross-tenant case queues) must explicitly switch database role context to an authorized internal role.
 - Background worker jobs (`pg-boss`) must set the database tenant context explicitly before executing task logic for a tenant.
 
 ### Mitigations
+
 - Create an automated Database Context Wrapper in `packages/database` (`withTenantContext(tenantId, callback)`) to guarantee context initialization and cleanup.
 - Dedicated automated security test suite that explicitly attempts cross-tenant reads, writes, document downloads, and agent tool executions.
 

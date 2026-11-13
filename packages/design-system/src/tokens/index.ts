@@ -22,7 +22,7 @@ export const colors = {
     500: '#16654F', // Interactive hover states & primary buttons
     300: '#2A9D7C', // Secondary accents
     100: '#E3EFEA', // Light green tint for badges & highlights
-    50: '#F0F7F4',  // Ultra-subtle green wash
+    50: '#F0F7F4', // Ultra-subtle green wash
   },
 
   // Semantic Feedback Tokens
@@ -31,18 +31,18 @@ export const colors = {
     successLight: '#DCFCE7',
     warning: '#B45309', // Pending actions, expiring documents, missing info
     warningLight: '#FEF3C7',
-    danger: '#B91C1C',  // Rejected documents, blocked tasks, failed payments
+    danger: '#B91C1C', // Rejected documents, blocked tasks, failed payments
     dangerLight: '#FEE2E2',
-    info: '#0369A1',    // Neutral informational alerts & hints
+    info: '#0369A1', // Neutral informational alerts & hints
     infoLight: '#E0F2FE',
   },
 
   // Typography Tokens
   text: {
-    primary: '#111827',   // High-contrast primary body text & headings
+    primary: '#111827', // High-contrast primary body text & headings
     secondary: '#4B5563', // Subtitles, metadata, timestamps
-    muted: '#9CA3AF',     // Placeholder text & disabled labels
-    inverse: '#FFFFFF',   // White text on dark green surfaces
+    muted: '#9CA3AF', // Placeholder text & disabled labels
+    inverse: '#FFFFFF', // White text on dark green surfaces
   },
 } as const;
 

@@ -3,7 +3,7 @@
 **Status:** Accepted  
 **Date:** 13 November 2026  
 **Deciders:** Lead Architect, DevOps & Security Lead  
-**Consulted:** Final Architecture Blueprint v2.0 (Sections 1, 4.2, 5, 11), Master System Blueprint v1.0 (Sections 11, 14.2)  
+**Consulted:** Final Architecture Blueprint v2.0 (Sections 1, 4.2, 5, 11), Master System Blueprint v1.0 (Sections 11, 14.2)
 
 ---
 
@@ -29,6 +29,7 @@ VisaHobe requires an engineering workflow where the **Super Main Agent** can act
 VisaHobe establishes a **GitHub Branch → PR → Automated CI → Human Peer Review → Staging → Production Approval Gate** engineering workflow, orchestrated via the Super Main Agent CLI and GitHub Actions:
 
 ### 3.1 Controlled Engineering Lifecycle
+
 ```
 [ Feature / Bugfix Task ]
          │
@@ -68,16 +69,19 @@ VisaHobe establishes a **GitHub Branch → PR → Automated CI → Human Peer Re
 ```
 
 ### 3.2 Change Categorization and Governance
-| Category | Mechanism | Approval Requirement |
-|---|---|---|
-| **Marketing Content** | CMS Draft / Review / Publish workflow | Content Editor approval; no git commit required. |
-| **UI Configuration** | Schema-validated JSON feature flags & widget settings | Stored in DB with instant toggle & audit log. |
-| **Application Code** | Feature branch → GitHub PR → Staging → Production | Mandatory Human PR review + Owner deployment sign-off. |
-| **Database Schema** | Numbered Prisma migration file (`prisma migrate`) | Schema review + dry-run in staging + Owner sign-off before prod. |
-| **Infrastructure / Secrets** | Infrastructure-as-Code (Terraform / Docker) | Two-person review for sensitive production secrets. |
+
+| Category                     | Mechanism                                             | Approval Requirement                                             |
+| ---------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------- |
+| **Marketing Content**        | CMS Draft / Review / Publish workflow                 | Content Editor approval; no git commit required.                 |
+| **UI Configuration**         | Schema-validated JSON feature flags & widget settings | Stored in DB with instant toggle & audit log.                    |
+| **Application Code**         | Feature branch → GitHub PR → Staging → Production     | Mandatory Human PR review + Owner deployment sign-off.           |
+| **Database Schema**          | Numbered Prisma migration file (`prisma migrate`)     | Schema review + dry-run in staging + Owner sign-off before prod. |
+| **Infrastructure / Secrets** | Infrastructure-as-Code (Terraform / Docker)           | Two-person review for sensitive production secrets.              |
 
 ### 3.3 Super Admin CLI Engineering Commands
+
 The Super Main Agent interacts with engineering workflows through structured CLI commands:
+
 ```bash
 # Branch and PR creation
 visahobe github branch create --name feat/p0-database-baseline
@@ -97,15 +101,18 @@ visahobe rollback --release-id rel_20261113_01
 ## 4. Consequences
 
 ### Positive
+
 - **Guaranteed Safety:** Eliminates rogue code changes or unverified schema alterations in production.
 - **Complete Audit Trail:** Every line of code, migration, and deployment is immutably recorded in Git commit history and GitHub audit logs.
 - **Staging Parity:** Bugs and migration conflicts are caught in the staging environment before touching client data.
 
 ### Negative / Trade-offs
+
 - AI cannot instantly self-heal production code in real-time without waiting for human review.
 - Multi-step approval adds latency between code generation and production release.
 
 ### Mitigations
+
 - Emergency hotfix procedures allow authorized human owners to trigger expedited PR merges with recorded post-incident audits.
 - Automated staging deployment provides immediate live previews for human reviewers.
 

@@ -6,7 +6,7 @@
 **Status:** Ready for Implementation  
 **Estimated Effort:** 1 Engineering Day  
 **Dependencies:** None  
-**Related ADRs:** [ADR-001](../decisions/ADR-001-product-surfaces.md), [ADR-003](../decisions/ADR-003-backend-stack-and-architecture-style.md), [ADR-009](../decisions/ADR-009-ui-design-system-and-liquid-glass.md)  
+**Related ADRs:** [ADR-001](../decisions/ADR-001-product-surfaces.md), [ADR-003](../decisions/ADR-003-backend-stack-and-architecture-style.md), [ADR-009](../decisions/ADR-009-ui-design-system-and-liquid-glass.md)
 
 ---
 
@@ -44,6 +44,7 @@ Initialize the Git repository, scaffold the complete monorepo workspace structur
 
 4. **Directory Skeleton Scaffolding:**
    Create empty package directories with minimal `package.json` and `README.md` manifests:
+
    ```text
    visahobe/
    ├── apps/

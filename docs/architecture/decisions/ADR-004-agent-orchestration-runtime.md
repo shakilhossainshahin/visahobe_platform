@@ -3,7 +3,7 @@
 **Status:** Accepted  
 **Date:** 13 November 2026  
 **Deciders:** Lead Architect, AI Systems Lead  
-**Consulted:** Final Architecture Blueprint v2.0 (Sections 1, 4, 11), Master System Blueprint v1.0 (Sections 4, 15)  
+**Consulted:** Final Architecture Blueprint v2.0 (Sections 1, 4, 11), Master System Blueprint v1.0 (Sections 4, 15)
 
 ---
 
@@ -12,6 +12,7 @@
 VisaHobe incorporates AI agents as core operational collaborators, including the **Client Main Agent** (client orchestrator), the **Super Main Agent** (internal operations and engineering orchestrator), and six specialist backend agents (A1 Intake, A2 Consultant, A3 Policy & Eligibility, A4 Preparation, A5 Verification Assistant, A6 Follow-up).
 
 Traditional LLM agent implementations that rely on stateless loops or conversational memory fail catastrophically in production:
+
 - Workflows lose state when servers restart or network drops occur.
 - Agents hallucinate policy details or make unauthorized commitments (e.g. guaranteeing visa approval or issuing refunds).
 - Lack of explicit human approval gates allows autonomous tools to take irreversible external actions.
@@ -35,6 +36,7 @@ The platform requires a durable, stateful, auditable agent orchestration framewo
 VisaHobe adopts **LangGraph (with durable PostgreSQL checkpointers) as the primary Agent Orchestration Runtime**, governed by strict Tool Permission Contracts and Human Approval Gates:
 
 ### 3.1 Orchestration Architecture
+
 ```
 Client / Admin Request
          │
@@ -59,6 +61,7 @@ Client / Admin Request
 ```
 
 ### 3.2 Main Agents and Separation of Duties
+
 1. **Client Main Agent:**
    - Multilingual interaction in Bangla, English, and Banglish.
    - Interprets client intent, links to case/service, creates durable tasks in `packages/workflows`.
@@ -75,7 +78,9 @@ Client / Admin Request
    - Outputs are strictly treated as **draft recommendations** until verified by business validation or human staff.
 
 ### 3.3 Mandatory Human Approval Gates
+
 Autonomous execution is strictly prohibited, and the graph pauses (`WAITING_FOR_HUMAN`) for:
+
 - Document verification approval (`document.verify`).
 - External visa/consular application submission (`submission.approve`).
 - Partner contract or high-impact service assignment (`partner.assign`).
@@ -84,7 +89,9 @@ Autonomous execution is strictly prohibited, and the graph pauses (`WAITING_FOR_
 - High-risk browser automation actions (payment, contract signing, legal declaration).
 
 ### 3.4 Tool Permission Contract and Audit Schema
+
 Every tool execution requires a formal definition:
+
 ```typescript
 export interface AgentToolDefinition<TInput, TOutput> {
   name: string;
@@ -97,6 +104,7 @@ export interface AgentToolDefinition<TInput, TOutput> {
   execute: (input: TInput, context: AgentExecutionContext) => Promise<TOutput>;
 }
 ```
+
 Every run records an immutable audit entry in `agent_runs` and `tool_calls` tables containing `run_id`, `task_id`, `tenant_id`, prompt version, model ID, token usage, latency, tool arguments, approval status, and execution output.
 
 ---
@@ -104,15 +112,18 @@ Every run records an immutable audit entry in `agent_runs` and `tool_calls` tabl
 ## 4. Consequences
 
 ### Positive
+
 - **Fault-Tolerant Operations:** If an agent step fails or waits on external input, the state is safely persisted in PostgreSQL; workers resume seamlessly from the exact state node.
 - **Zero Hallucinated Actions:** Tools execute only with valid schemas and verified user/agent permissions.
 - **Complete Accountability:** Every single suggestion, draft, and tool execution is permanently tied to an audit record.
 
 ### Negative / Trade-offs
+
 - Graph definition and state serialization in LangGraph require rigorous schema modeling compared to simple ad-hoc LLM scripts.
 - Execution latency includes checkpoint persistence overhead for every state transition.
 
 ### Mitigations
+
 - Use optimized JSONB serialization and lightweight state checkpoints in PostgreSQL.
 - Abstract LangGraph primitives inside `packages/agents` so that business logic remains clean and testable with mock checkpointers.
 

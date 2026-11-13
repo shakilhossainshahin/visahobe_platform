@@ -6,7 +6,7 @@
 **Status:** Ready for Implementation  
 **Estimated Effort:** 2 Engineering Days  
 **Dependencies:** [TICKET-P0-001](./TICKET-P0-001-monorepo-initialization.md), [TICKET-P0-002](./TICKET-P0-002-typescript-lint-format-testing.md)  
-**Related ADRs:** [ADR-002](../decisions/ADR-002-tenant-isolation-model.md), [ADR-003](../decisions/ADR-003-backend-stack-and-architecture-style.md)  
+**Related ADRs:** [ADR-002](../decisions/ADR-002-tenant-isolation-model.md), [ADR-003](../decisions/ADR-003-backend-stack-and-architecture-style.md)
 
 ---
 
@@ -19,11 +19,14 @@ Configure the PostgreSQL 16 database environment, initialize Prisma ORM in `pack
 ## 2. Mandatory Migration Governance Rules
 
 ### 2.1 Single Migration-Owner Rule
+
 > [!IMPORTANT]
 > **Only one migration owner may create or modify `prisma/schema.prisma` or database migration files at a time.** Concurrent agent or human edits to the schema or migration files are strictly prohibited. Any schema change must be coordinated through the designated migration owner agent to prevent migration version drift and conflicting schema states.
 
 ### 2.2 Mandatory Migration Documentation Standard
+
 Every migration generated must include a structured header comment and an entry in `database/migrations/MIGRATION_LOG.md` detailing:
+
 - **Migration ID & Name:** (e.g. `20261113000001_initial_baseline`)
 - **Purpose:** Clear business and domain rationale for the change.
 - **Rollback / Forward-Fix Plan:** Explicit SQL steps or strategy if migration fails or must be reverted.
