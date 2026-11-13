@@ -18,6 +18,9 @@ describe('Tenant Context Helper (withTenantContext)', () => {
         executedRawQueries.push({ strings: strings.join('?'), values });
         return 1;
       }),
+      auditLog: {
+        create: vi.fn(),
+      },
     };
 
     const transactionSpy = vi
@@ -38,18 +41,50 @@ describe('Tenant Context Helper (withTenantContext)', () => {
 
     expect(result).toEqual({ success: true });
     expect(transactionSpy).toHaveBeenCalledTimes(1);
-    expect(mockTx.$executeRaw).toHaveBeenCalledTimes(2);
+    // Sets tenant_id, user_id, user_role, has_scoped_access
+    expect(mockTx.$executeRaw).toHaveBeenCalledTimes(4);
 
     transactionSpy.mockRestore();
   });
 
-  it('should support options object overload with default role', async () => {
-    const executedValues: unknown[] = [];
+  it('should reject cross-tenant scoped access for non-staff roles', async () => {
+    const tenantId = '11111111-1111-1111-1111-111111111111';
+
+    await expect(
+      withTenantContext(
+        {
+          tenantId,
+          role: 'client',
+          hasScopedAccess: true,
+          isMfaVerified: true,
+        },
+        async () => {},
+      ),
+    ).rejects.toThrow("Role 'client' is not a privileged staff role");
+  });
+
+  it('should reject cross-tenant scoped access for staff without verified MFA', async () => {
+    const tenantId = '11111111-1111-1111-1111-111111111111';
+
+    await expect(
+      withTenantContext(
+        {
+          tenantId,
+          role: 'admin',
+          hasScopedAccess: true,
+          isMfaVerified: false,
+        },
+        async () => {},
+      ),
+    ).rejects.toThrow('requires verified Multi-Factor Authentication');
+  });
+
+  it('should allow scoped cross-tenant access for verified staff and create audit log', async () => {
     const mockTx = {
-      $executeRaw: vi.fn(async (_strings: unknown, ...values: unknown[]) => {
-        executedValues.push(...values);
-        return 1;
-      }),
+      $executeRaw: vi.fn(async () => 1),
+      auditLog: {
+        create: vi.fn(async () => ({ id: 'mock-audit-id' })),
+      },
     };
 
     const transactionSpy = vi
@@ -60,14 +95,33 @@ describe('Tenant Context Helper (withTenantContext)', () => {
         },
       );
 
-    const tenantId = '22222222-2222-2222-2222-222222222222';
+    const tenantId = '11111111-1111-1111-1111-111111111111';
+    const userId = 'user-staff-123';
 
-    await withTenantContext({ tenantId }, async () => {
-      return 'ok';
-    });
+    await withTenantContext(
+      {
+        tenantId,
+        userId,
+        role: 'owner',
+        hasScopedAccess: true,
+        isMfaVerified: true,
+        auditAction: 'admin.cross_tenant_audit',
+      },
+      async () => {
+        return 'done';
+      },
+    );
 
-    expect(executedValues).toContain(tenantId);
-    expect(executedValues).toContain('client'); // default role
+    expect(mockTx.auditLog.create).toHaveBeenCalledTimes(1);
+    expect(mockTx.auditLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          tenantId,
+          userId,
+          action: 'admin.cross_tenant_audit',
+        }),
+      }),
+    );
 
     transactionSpy.mockRestore();
   });

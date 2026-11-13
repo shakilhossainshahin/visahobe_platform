@@ -59,3 +59,13 @@ export class CsrfValidationError extends AuthError {
     this.name = 'CsrfValidationError';
   }
 }
+
+export class PermissionDeniedError extends AuthError {
+  readonly requiredPermission: string;
+
+  constructor(permission: string, message = `Permission denied: required '${permission}'`) {
+    super(message, 403, 'PERMISSION_DENIED');
+    this.name = 'PermissionDeniedError';
+    this.requiredPermission = permission;
+  }
+}

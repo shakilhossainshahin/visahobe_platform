@@ -12,9 +12,10 @@ This document records all database migrations applied to the VisaHobe multi-tena
 
 ## Migration Index
 
-| Migration ID     | Name               | Applied Date | RLS Impact                              | Status         |
-| ---------------- | ------------------ | ------------ | --------------------------------------- | -------------- |
-| `20261113000001` | `initial_baseline` | 2026-11-13   | RLS Enabled & Forced on 5 tenant tables | Ready / Active |
+| Migration ID     | Name                        | Applied Date | RLS Impact                                             | Status         |
+| ---------------- | --------------------------- | ------------ | ------------------------------------------------------ | -------------- |
+| `20261113000001` | `initial_baseline`          | 2026-11-13   | RLS Enabled & Forced on 5 tenant tables                | Ready / Active |
+| `20261113000002` | `scoped_staff_rls_policies` | 2026-11-13   | Refined RLS policies requiring `app.has_scoped_access` | Ready / Active |
 
 ---
 
@@ -48,3 +49,23 @@ This document records all database migrations applied to the VisaHobe multi-tena
 - **Test Requirement:**
   - Executed via `pnpm --filter @visahobe/database db:migrate` against PostgreSQL 16 service container.
   - Verification test verifying RLS boundary isolation and idempotent replay.
+
+---
+
+### Migration: `20261113000002_scoped_staff_rls_policies`
+
+- **Migration ID & Name:** `20261113000002_scoped_staff_rls_policies`
+- **Purpose:**
+  Strengthen PostgreSQL Row-Level Security policies to require explicit audit-scoped authorization (`app.has_scoped_access = 'true'`) for staff cross-tenant access. Enforces that staff or Super Admin users without explicit scoped access cannot read or mutate rows across tenant boundaries.
+- **Rollback / Forward-Fix Plan:**
+  - _Rollback SQL:_
+    Re-apply baseline policies from `20261113000001_initial_baseline/migration.sql`.
+  - _Forward-Fix:_
+    Apply subsequent additive migration.
+- **RLS Impact:**
+  - Refined policies on `memberships`, `cases`, `tasks`, `documents`, and `audit_logs`.
+  - Added clause: `AND NULLIF(current_setting('app.has_scoped_access', true), 'false')::boolean = true` to privileged role bypass conditions.
+- **Index Impact:**
+  - Zero index changes. Existing B-Tree indexes on `tenant_id` support policy filtering.
+- **Test Requirement:**
+  - Executed via `tests/security/tenant-isolation.test.ts`.
