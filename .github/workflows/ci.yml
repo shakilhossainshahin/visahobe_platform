@@ -1,0 +1,187 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: read
+  checks: write
+
+jobs:
+  lint-and-format:
+    name: Lint and Format
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9.12.3
+
+      - name: Set up Node.js LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies with frozen lockfile
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Prettier format check
+        run: pnpm format:check
+
+      - name: Run ESLint
+        run: pnpm lint
+
+  typecheck:
+    name: TypeScript Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9.12.3
+
+      - name: Set up Node.js LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies with frozen lockfile
+        run: pnpm install --frozen-lockfile
+
+      - name: Run TypeScript typecheck
+        run: pnpm typecheck
+
+  test-and-build:
+    name: Tests and Monorepo Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9.12.3
+
+      - name: Set up Node.js LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies with frozen lockfile
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Unit Tests
+        run: pnpm test
+
+      - name: Run Monorepo Build
+        run: pnpm build
+
+      - name: Upload Test Coverage Artifacts (if generated)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-artifacts
+          path: |
+            coverage/
+            **/coverage/
+          if-no-files-found: ignore
+
+  database-and-migrations:
+    name: PostgreSQL Migration & RLS Check
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: visahobe_test_user
+          POSTGRES_PASSWORD: visahobe_test_password
+          POSTGRES_DB: visahobe_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://visahobe_test_user:visahobe_test_password@localhost:5432/visahobe_test?schema=public
+      TEST_DATABASE_URL: postgresql://visahobe_test_user:visahobe_test_password@localhost:5432/visahobe_test?schema=public
+      JWT_SECRET: dev_jwt_secret_key_minimum_32_chars_for_ci_pipeline
+      CI: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9.12.3
+
+      - name: Set up Node.js LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies with frozen lockfile
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify PostgreSQL 16 Service Readiness
+        run: |
+          sudo apt-get update && sudo apt-get install -y postgresql-client
+          pg_isready -h localhost -p 5432 -U visahobe_test_user
+
+      - name: Database Migration & Idempotency Check
+        run: |
+          if [ -f "packages/database/prisma/schema.prisma" ]; then
+            echo "Applying Prisma migrations to PostgreSQL 16 service container..."
+            pnpm --filter @visahobe/database db:deploy
+            echo "Verifying migration replay idempotency..."
+            pnpm --filter @visahobe/database db:deploy
+          else
+            echo "Database schema will be introduced in TICKET-P0-004; PostgreSQL 16 service container verified successfully."
+          fi
+
+      - name: Run RLS & Tenant Isolation Tests
+        run: |
+          if [ -d "tests/security" ] && [ "$(ls -A tests/security/*.test.ts 2>/dev/null)" ]; then
+            echo "Executing RLS and Tenant Isolation security test suite..."
+            pnpm exec vitest run tests/security
+          else
+            echo "Security tests directory ready for TICKET-P0-006; baseline check complete."
+          fi
+
+  secret-scan:
+    name: TruffleHog Secret Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository with full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run TruffleHog Secret Scanner
+        uses: trufflesecurity/trufflehog@main
+        with:
+          extra_args: --only-verified
