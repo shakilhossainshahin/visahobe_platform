@@ -149,16 +149,47 @@ jobs:
 
       - name: Verify PostgreSQL 16 Service Readiness
         run: |
-          sudo apt-get update && sudo apt-get install -y postgresql-client
-          pg_isready -h localhost -p 5432 -U visahobe_test_user
+          node -e "
+            const net = require('net');
+            const maxAttempts = 30;
+            let attempts = 0;
+            function probe() {
+              attempts++;
+              const socket = new net.Socket();
+              socket.setTimeout(2000);
+              socket.on('connect', () => {
+                console.log('PostgreSQL 16 is ready and accepting connections on port 5432 (attempt ' + attempts + ').');
+                socket.destroy();
+                process.exit(0);
+              });
+              socket.on('error', (err) => {
+                socket.destroy();
+                if (attempts >= maxAttempts) {
+                  console.error('Failed to connect to PostgreSQL 16 on port 5432 after ' + attempts + ' attempts:', err.message);
+                  process.exit(1);
+                }
+                setTimeout(probe, 1000);
+              });
+              socket.on('timeout', () => {
+                socket.destroy();
+                if (attempts >= maxAttempts) {
+                  console.error('Timeout connecting to PostgreSQL 16 on port 5432 after ' + attempts + ' attempts.');
+                  process.exit(1);
+                }
+                setTimeout(probe, 1000);
+              });
+              socket.connect(5432, '127.0.0.1');
+            }
+            probe();
+          "
 
       - name: Database Migration & Idempotency Check
         run: |
           if [ -f "packages/database/prisma/schema.prisma" ]; then
             echo "Applying Prisma migrations to PostgreSQL 16 service container..."
-            pnpm --filter @visahobe/database db:deploy
+            pnpm --filter @visahobe/database exec prisma migrate deploy
             echo "Verifying migration replay idempotency..."
-            pnpm --filter @visahobe/database db:deploy
+            pnpm --filter @visahobe/database exec prisma migrate deploy
           else
             echo "Database schema will be introduced in TICKET-P0-004; PostgreSQL 16 service container verified successfully."
           fi
