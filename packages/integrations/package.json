@@ -1,0 +1,12 @@
+﻿{
+  "name": "@visahobe/integrations",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Third-Party Adapters (WhatsApp, Telegram, Email, Gateways)",
+  "scripts": {
+    "build": "echo build",
+    "lint": "echo lint",
+    "typecheck": "echo typecheck",
+    "test": "echo test"
+  }
+}

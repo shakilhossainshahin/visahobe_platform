@@ -1,0 +1,12 @@
+﻿{
+  "name": "@visahobe/database",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Prisma Schema, Client, RLS Policies, and Migrations",
+  "scripts": {
+    "build": "echo build",
+    "lint": "echo lint",
+    "typecheck": "echo typecheck",
+    "test": "echo test"
+  }
+}

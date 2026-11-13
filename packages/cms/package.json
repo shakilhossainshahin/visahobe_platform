@@ -1,0 +1,12 @@
+﻿{
+  "name": "@visahobe/cms",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Content Management System and Configurable UI Engine",
+  "scripts": {
+    "build": "echo build",
+    "lint": "echo lint",
+    "typecheck": "echo typecheck",
+    "test": "echo test"
+  }
+}

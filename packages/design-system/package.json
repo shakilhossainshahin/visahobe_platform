@@ -1,0 +1,12 @@
+﻿{
+  "name": "@visahobe/design-system",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Design System Tokens, Liquid Glass Specification, and Themes",
+  "scripts": {
+    "build": "echo build",
+    "lint": "echo lint",
+    "typecheck": "echo typecheck",
+    "test": "echo test"
+  }
+}

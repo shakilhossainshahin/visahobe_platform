@@ -1,0 +1,12 @@
+﻿{
+  "name": "@visahobe/worker-follow-up",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Client Follow-Up and SLA Escalation Worker",
+  "scripts": {
+    "build": "echo build",
+    "lint": "echo lint",
+    "typecheck": "echo typecheck",
+    "test": "echo test"
+  }
+}

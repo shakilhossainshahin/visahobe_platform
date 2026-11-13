@@ -1,0 +1,12 @@
+﻿{
+  "name": "@visahobe/worker-document-processing",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Document Processing, OCR Extraction, and Malware Scan Worker",
+  "scripts": {
+    "build": "echo build",
+    "lint": "echo lint",
+    "typecheck": "echo typecheck",
+    "test": "echo test"
+  }
+}

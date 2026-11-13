@@ -1,0 +1,12 @@
+﻿{
+  "name": "@visahobe/super-agent-tools",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Super Main Agent Bounded Engineering Tools",
+  "scripts": {
+    "build": "echo build",
+    "lint": "echo lint",
+    "typecheck": "echo typecheck",
+    "test": "echo test"
+  }
+}

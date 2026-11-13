@@ -1,0 +1,12 @@
+﻿{
+  "name": "@visahobe/orchestrator",
+  "version": "0.1.0",
+  "private": true,
+  "description": "VisaHobe Durable Workflow State Orchestration Service",
+  "scripts": {
+    "build": "echo build",
+    "lint": "echo lint",
+    "typecheck": "echo typecheck",
+    "test": "echo test"
+  }
+}

@@ -1,0 +1,12 @@
+﻿{
+  "name": "@visahobe/worker-partner-sync",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Partner Status, Rates, and Assignment Sync Worker",
+  "scripts": {
+    "build": "echo build",
+    "lint": "echo lint",
+    "typecheck": "echo typecheck",
+    "test": "echo test"
+  }
+}

@@ -1,0 +1,12 @@
+﻿{
+  "name": "@visahobe/agent-runtime",
+  "version": "0.1.0",
+  "private": true,
+  "description": "VisaHobe AI Agent Execution Runtime Service",
+  "scripts": {
+    "build": "echo build",
+    "lint": "echo lint",
+    "typecheck": "echo typecheck",
+    "test": "echo test"
+  }
+}

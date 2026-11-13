@@ -1,0 +1,12 @@
+﻿{
+  "name": "@visahobe/agents",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Agent Definitions, LangGraph State Graphs, and Tool Contracts",
+  "scripts": {
+    "build": "echo build",
+    "lint": "echo lint",
+    "typecheck": "echo typecheck",
+    "test": "echo test"
+  }
+}
