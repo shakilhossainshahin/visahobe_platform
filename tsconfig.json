@@ -3,7 +3,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@visahobe/design-system": ["packages/design-system/src/tokens"],
+      "@visahobe/design-system": ["packages/design-system/src/index"],
+      "@visahobe/design-system/*": ["packages/design-system/src/*"],
       "@visahobe/*": ["packages/*/src"]
     }
   },
