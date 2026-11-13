@@ -64,6 +64,9 @@ jobs:
       - name: Install dependencies with frozen lockfile
         run: pnpm install --frozen-lockfile
 
+      - name: Generate Prisma Client
+        run: pnpm --filter @visahobe/database db:generate
+
       - name: Run TypeScript typecheck
         run: pnpm typecheck
 
@@ -87,6 +90,9 @@ jobs:
 
       - name: Install dependencies with frozen lockfile
         run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: pnpm --filter @visahobe/database db:generate
 
       - name: Run Unit Tests
         run: pnpm test
@@ -186,10 +192,18 @@ jobs:
       - name: Database Migration & Idempotency Check
         run: |
           if [ -f "packages/database/prisma/schema.prisma" ]; then
+            echo "Generating Prisma Client..."
+            pnpm --filter @visahobe/database db:generate
             echo "Applying Prisma migrations to PostgreSQL 16 service container..."
-            pnpm --filter @visahobe/database exec prisma migrate deploy
+            pnpm --filter @visahobe/database db:migrate
             echo "Verifying migration replay idempotency..."
-            pnpm --filter @visahobe/database exec prisma migrate deploy
+            pnpm --filter @visahobe/database db:migrate
+            echo "Seeding default roles, permissions and dev tenant..."
+            pnpm --filter @visahobe/database db:seed
+            echo "Verifying seeder idempotency..."
+            pnpm --filter @visahobe/database db:seed
+            echo "Running database package test suite..."
+            pnpm exec vitest run packages/database/test
           else
             echo "Database schema will be introduced in TICKET-P0-004; PostgreSQL 16 service container verified successfully."
           fi
