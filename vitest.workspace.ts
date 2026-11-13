@@ -1,11 +1,13 @@
 import path from 'node:path';
 import { defineWorkspace } from 'vitest/config';
 
+const toPosix = (p: string) => p.replace(/\\/g, '/');
+
 export default defineWorkspace([
-  'apps/*',
-  'services/*',
-  'packages/*',
-  'workers/*',
+  toPosix(path.resolve(__dirname, 'apps/*')),
+  toPosix(path.resolve(__dirname, 'services/*')),
+  toPosix(path.resolve(__dirname, 'packages/*')),
+  toPosix(path.resolve(__dirname, 'workers/*')),
   {
     resolve: {
       alias: {
@@ -16,7 +18,7 @@ export default defineWorkspace([
     },
     test: {
       name: 'security',
-      root: './tests/security',
+      root: path.resolve(__dirname, 'tests/security'),
       include: ['**/*.test.ts'],
     },
   },

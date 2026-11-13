@@ -19,4 +19,8 @@ export function getAppMetadata(env = 'development'): AppMetadata {
   };
 }
 
+export * from './secrets/index.js';
+export * from './security/pii/index.js';
+export * from './logger/index.js';
+export * from './monitoring/index.js';
 export * from './storage/signed-urls.js';
