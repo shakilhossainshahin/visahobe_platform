@@ -6,7 +6,7 @@
 **Status:** Ready for Implementation  
 **Estimated Effort:** 2 Engineering Days  
 **Dependencies:** [TICKET-P0-004](./TICKET-P0-004-database-and-migration-pipeline.md)  
-**Related ADRs:** [ADR-008](../decisions/ADR-008-security-auth-and-permission-boundaries.md)  
+**Related ADRs:** [ADR-008](../decisions/ADR-008-security-auth-and-permission-boundaries.md)
 
 ---
 

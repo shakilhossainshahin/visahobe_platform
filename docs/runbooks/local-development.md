@@ -2,7 +2,7 @@
 
 **Document:** Local Engineering Environment Setup & Operational Standards  
 **Target Audience:** Software Engineers, QA Engineers, DevOps  
-**Last Updated:** 13 November 2026  
+**Last Updated:** 13 November 2026
 
 ---
 
@@ -10,18 +10,19 @@
 
 Before running the VisaHobe monorepo locally, ensure your workstation has the following runtimes installed:
 
-| Tool | Recommended Version | Installation Command (Windows) |
-|---|---|---|
-| **Node.js LTS** | v20.x or v22.x | `winget install OpenJS.NodeJS.LTS` |
-| **pnpm** | v9.x | `corepack enable pnpm` or `winget install pnpm` |
-| **Docker Desktop / WSL2** | Latest | `winget install Docker.DockerDesktop` |
-| **Git** | v2.40+ | `winget install Git.Git` |
+| Tool                      | Recommended Version | Installation Command (Windows)                  |
+| ------------------------- | ------------------- | ----------------------------------------------- |
+| **Node.js LTS**           | v20.x or v22.x      | `winget install OpenJS.NodeJS.LTS`              |
+| **pnpm**                  | v9.x                | `corepack enable pnpm` or `winget install pnpm` |
+| **Docker Desktop / WSL2** | Latest              | `winget install Docker.DockerDesktop`           |
+| **Git**                   | v2.40+              | `winget install Git.Git`                        |
 
 ---
 
 ## 2. Quickstart Guide
 
 ### 2.1 Clone and Setup Environment
+
 ```bash
 # 1. Clone repository
 git clone <repository-url>
@@ -51,6 +52,7 @@ pnpm dev
 All HTTP applications and services in VisaHobe must expose two standardized health probe endpoints:
 
 ### 3.1 `/healthz` (Liveness Probe)
+
 - **Purpose:** Verifies that the HTTP server process is running and able to handle incoming event loops.
 - **Contract:**
   - Method: `GET /healthz`
@@ -66,6 +68,7 @@ All HTTP applications and services in VisaHobe must expose two standardized heal
   - Failure Condition: If process is deadlocked or unhandled promise rejection occurs, container orchestrator restarts the pod/container.
 
 ### 3.2 `/readyz` (Readiness Probe)
+
 - **Purpose:** Verifies that all required external dependencies (PostgreSQL database pool, Redis/pg-boss queue, storage connection) are connected, migrations are current, and the service is ready to accept production traffic.
 - **Contract:**
   - Method: `GET /readyz`

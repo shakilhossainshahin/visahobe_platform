@@ -3,7 +3,7 @@
 **Status:** Accepted  
 **Date:** 13 November 2026  
 **Deciders:** Core Architecture Team, Product Engineering  
-**Consulted:** Final Architecture Blueprint v2.0, Master System Blueprint v1.0  
+**Consulted:** Final Architecture Blueprint v2.0, Master System Blueprint v1.0
 
 ---
 
@@ -52,15 +52,18 @@ VisaHobe will be built with **three primary product surfaces**:
 ## 4. Consequences
 
 ### Positive
+
 - **Streamlined Monorepo:** Reduces build targets from five applications down to three core applications sharing packages (`packages/ui`, `packages/core`, `packages/auth`).
 - **Unified Authentication:** Client workspace uses standard end-user authentication; Super Admin enforces staff SSO/MFA and internal RBAC.
 - **Clear Security Boundary:** Public (unauthenticated) vs Client (tenant RLS isolated) vs Internal Ops (RBAC + audit logged).
 
 ### Negative / Trade-offs
+
 - Super Admin must implement robust internal role-based routing and permissions so that `finance` or `verifier` users only see their designated workspaces.
 - Partners will initially access a restricted workspace under strict assignment-level permissions rather than a completely customized branded white-label portal.
 
 ### Mitigations
+
 - Enforce the 3-layer permission model (UI, API middleware, and PostgreSQL Row-Level Security) across all Super Admin endpoints.
 - Abstract partner views within `apps/super-admin` into modular components that can be migrated into a standalone `apps/partner-portal` without rewriting business logic.
 

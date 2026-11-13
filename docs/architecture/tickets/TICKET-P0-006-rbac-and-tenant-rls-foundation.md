@@ -6,7 +6,7 @@
 **Status:** Ready for Implementation  
 **Estimated Effort:** 2 Engineering Days  
 **Dependencies:** [TICKET-P0-004](./TICKET-P0-004-database-and-migration-pipeline.md), [TICKET-P0-005](./TICKET-P0-005-auth-mfa-baseline.md)  
-**Related ADRs:** [ADR-002](../decisions/ADR-002-tenant-isolation-model.md), [ADR-008](../decisions/ADR-008-security-auth-and-permission-boundaries.md)  
+**Related ADRs:** [ADR-002](../decisions/ADR-002-tenant-isolation-model.md), [ADR-008](../decisions/ADR-008-security-auth-and-permission-boundaries.md)
 
 ---
 
@@ -22,7 +22,7 @@ Implement and verify the defense-in-depth tenant isolation model by connecting v
    - Define and deploy comprehensive RLS SQL policies across all tenant-owned entities (`cases`, `tasks`, `documents`, `audit_logs`, `invoices`, `chat_threads`):
      ```sql
      ALTER TABLE cases ENABLE ROW LEVEL SECURITY;
-     
+
      CREATE POLICY cases_tenant_isolation ON cases
        FOR ALL
        USING (

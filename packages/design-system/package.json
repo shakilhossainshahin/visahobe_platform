@@ -1,12 +1,15 @@
-﻿{
+{
   "name": "@visahobe/design-system",
   "version": "0.1.0",
   "private": true,
-  "description": "Design System Tokens, Liquid Glass Specification, and Themes",
+  "type": "module",
+  "main": "./dist/tokens/index.js",
+  "types": "./dist/tokens/index.d.ts",
   "scripts": {
-    "build": "echo build",
-    "lint": "echo lint",
-    "typecheck": "echo typecheck",
-    "test": "echo test"
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
   }
 }

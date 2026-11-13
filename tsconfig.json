@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@visahobe/design-system": ["packages/design-system/src/tokens"],
+      "@visahobe/*": ["packages/*/src"]
+    }
+  },
+  "include": ["vitest.config.ts", "vitest.workspace.ts", "eslint.config.mjs", "scripts/**/*"]
+}

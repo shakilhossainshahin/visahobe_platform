@@ -17,30 +17,39 @@ Thank you for contributing to VisaHobe. This document outlines our branch naming
 
 > [!IMPORTANT]
 > **Only one designated migration owner may create or modify `packages/database/prisma/schema.prisma` or migration SQL files at a time.**
-> 
+>
 > - Concurrent agent or human modifications to schema or migrations will result in immediate rejection of the Pull Request.
 > - Every migration must be documented in `database/migrations/MIGRATION_LOG.md` with:
->   * Migration ID / Name
->   * Business Purpose
->   * Rollback / Forward-Fix Plan
->   * Row-Level Security (RLS) Impact
->   * Index & Query Performance Impact
->   * Verification Test Commands
+>   - Migration ID / Name
+>   - Business Purpose
+>   - Rollback / Forward-Fix Plan
+>   - Row-Level Security (RLS) Impact
+>   - Index & Query Performance Impact
+>   - Verification Test Commands
 
 ---
 
-## 3. Branch Naming Conventions
+## 3. Branch Naming Conventions and Workflow Enforcement
 
 All Git branches must use lowercase alphanumeric characters and hyphens, prefixed by category:
 
-| Prefix | Usage | Example |
-|---|---|---|
-| `feat/` | New platform feature or capability | `feat/p0-database-baseline` |
-| `fix/` | Bug fix or issue resolution | `fix/jwt-claims-validation` |
-| `chore/` | Tooling, dependencies, or configuration | `chore/update-vitest-config` |
-| `docs/` | Architectural or user documentation | `docs/update-adr-005` |
-| `refactor/` | Code refactoring without behavior change | `refactor/logger-middleware` |
-| `test/` | Adding or updating test suites | `test/tenant-isolation-suite` |
+| Prefix               | Usage                                                  | Example                                    |
+| -------------------- | ------------------------------------------------------ | ------------------------------------------ |
+| `feature/ticket-...` | Dedicated implementation branch for an assigned ticket | `feature/ticket-p0-002-typescript-tooling` |
+| `feat/`              | New platform feature or capability                     | `feat/p0-database-baseline`                |
+| `fix/`               | Bug fix or issue resolution                            | `fix/jwt-claims-validation`                |
+| `chore/`             | Tooling, dependencies, or configuration                | `chore/update-vitest-config`               |
+| `docs/`              | Architectural or user documentation                    | `docs/update-adr-005`                      |
+| `refactor/`          | Code refactoring without behavior change               | `refactor/logger-middleware`               |
+| `test/`              | Adding or updating test suites                         | `test/tenant-isolation-suite`              |
+
+### Mandatory Branch & Promotion Rules
+
+1. **Dedicated Ticket Branches:** Every implementation ticket MUST use a dedicated `feature/ticket-...` branch created from the latest `main`.
+2. **Local Verification Gate:** Before any commit or push, the developer/agent must execute and pass the local verification suite: `pnpm install`, `pnpm lint`, `pnpm format:check`, `pnpm typecheck`, `pnpm test`, and `pnpm build`.
+3. **No Direct Pushes to `main`:** Direct pushes to `main` and `staging` are strictly prohibited.
+4. **Conventional Commits:** Every commit must follow Conventional Commits and reference the ticket ID.
+5. **Human Approval Gate:** A Pull Request must be opened for CI validation and human peer review. Merging into `main`, deployment to staging/production, and production database migrations strictly require explicit human approval.
 
 ---
 
@@ -57,6 +66,7 @@ Commits must follow the [Conventional Commits](https://www.conventionalcommits.o
 ```
 
 ### Allowed Types
+
 - `feat`: A new feature
 - `fix`: A bug fix
 - `docs`: Documentation only changes
@@ -67,6 +77,7 @@ Commits must follow the [Conventional Commits](https://www.conventionalcommits.o
 - `chore`: Changes to build process or auxiliary tools
 
 ### Examples
+
 - `feat(auth): enforce mandatory MFA check on staff role endpoints`
 - `fix(database): correct tenant_id foreign key constraint in cases table`
 - `docs(adr): update ADR-004 with human approval gate specifications`
@@ -79,19 +90,23 @@ When submitting a Pull Request, use the standard template below:
 
 ```markdown
 ## Summary of Changes
+
 - Briefly describe the problem and solution.
 
 ## Associated Tickets / ADRs
+
 - Closes TICKET-P0-XXX
 - Ref: ADR-XXX
 
 ## Impact Assessment
+
 - [ ] Database Schema Modified? (If yes, follow Single Migration-Owner Rule)
 - [ ] RLS Policies Affected?
 - [ ] API or Event Contracts Changed?
 - [ ] Security / Permission Implications?
 
 ## Verification & Testing Performed
+
 - [ ] `pnpm format:check` passed
 - [ ] `pnpm lint` passed
 - [ ] `pnpm typecheck` passed
@@ -99,6 +114,7 @@ When submitting a Pull Request, use the standard template below:
 - [ ] Ephemeral PostgreSQL migration verified
 
 ## Zero-Secret Confirmation
+
 - [ ] Verified that no passwords, private keys, API tokens, or unredacted PII are present in this commit.
 ```
 

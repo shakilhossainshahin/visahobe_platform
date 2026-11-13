@@ -6,7 +6,7 @@
 **Status:** Ready for Implementation  
 **Estimated Effort:** 1 Engineering Day  
 **Dependencies:** [TICKET-P0-001](./TICKET-P0-001-monorepo-initialization.md) through [TICKET-P0-007](./TICKET-P0-007-secrets-logging-observability.md)  
-**Related ADRs:** All Phase 0 ADRs (ADR-001 through ADR-009)  
+**Related ADRs:** All Phase 0 ADRs (ADR-001 through ADR-009)
 
 ---
 

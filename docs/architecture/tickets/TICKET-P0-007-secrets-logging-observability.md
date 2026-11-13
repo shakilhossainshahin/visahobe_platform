@@ -6,7 +6,7 @@
 **Status:** Ready for Implementation  
 **Estimated Effort:** 1.5 Engineering Days  
 **Dependencies:** [TICKET-P0-001](./TICKET-P0-001-monorepo-initialization.md), [TICKET-P0-002](./TICKET-P0-002-typescript-lint-format-testing.md)  
-**Related ADRs:** [ADR-008](../decisions/ADR-008-security-auth-and-permission-boundaries.md)  
+**Related ADRs:** [ADR-008](../decisions/ADR-008-security-auth-and-permission-boundaries.md)
 
 ---
 

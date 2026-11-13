@@ -1,12 +1,15 @@
-﻿{
+{
   "name": "@visahobe/worker-notifications",
   "version": "0.1.0",
   "private": true,
-  "description": "Multi-Channel Notification Dispatch Worker",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "echo build",
-    "lint": "echo lint",
-    "typecheck": "echo typecheck",
-    "test": "echo test"
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
   }
 }
