@@ -41,8 +41,8 @@ describe('Tenant Context Helper (withTenantContext)', () => {
 
     expect(result).toEqual({ success: true });
     expect(transactionSpy).toHaveBeenCalledTimes(1);
-    // Sets tenant_id, user_id, user_role, has_scoped_access
-    expect(mockTx.$executeRaw).toHaveBeenCalledTimes(4);
+    // Sets visahobe_app role, tenant_id, user_id, user_role, has_scoped_access
+    expect(mockTx.$executeRaw).toHaveBeenCalledTimes(5);
 
     transactionSpy.mockRestore();
   });

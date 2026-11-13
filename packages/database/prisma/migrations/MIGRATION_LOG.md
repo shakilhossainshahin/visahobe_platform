@@ -56,7 +56,8 @@ This document records all database migrations applied to the VisaHobe multi-tena
 
 - **Migration ID & Name:** `20261113000002_scoped_staff_rls_policies`
 - **Purpose:**
-  Strengthen PostgreSQL Row-Level Security policies to require explicit audit-scoped authorization (`app.has_scoped_access = 'true'`) for staff cross-tenant access. Enforces that staff or Super Admin users without explicit scoped access cannot read or mutate rows across tenant boundaries.
+  1. Strengthen PostgreSQL Row-Level Security policies to require explicit audit-scoped authorization (`app.has_scoped_access = 'true'`) for staff cross-tenant access. Enforces that staff or Super Admin users without explicit scoped access cannot read or mutate rows across tenant boundaries.
+  2. Create non-superuser application role `visahobe_app` (`NOSUPERUSER NOBYPASSRLS`) to guarantee genuine RLS policy enforcement even when connection user is a PostgreSQL superuser (such as CI service containers).
 - **Rollback / Forward-Fix Plan:**
   - _Rollback SQL:_
     Re-apply baseline policies from `20261113000001_initial_baseline/migration.sql`.
@@ -64,7 +65,8 @@ This document records all database migrations applied to the VisaHobe multi-tena
     Apply subsequent additive migration.
 - **RLS Impact:**
   - Refined policies on `memberships`, `cases`, `tasks`, `documents`, and `audit_logs`.
-  - Added clause: `AND NULLIF(current_setting('app.has_scoped_access', true), 'false')::boolean = true` to privileged role bypass conditions.
+  - Added clause: `AND current_setting('app.has_scoped_access', true) = 'true'` to privileged role bypass conditions.
+  - Created application role `visahobe_app` with `NOSUPERUSER NOBYPASSRLS`.
 - **Index Impact:**
   - Zero index changes. Existing B-Tree indexes on `tenant_id` support policy filtering.
 - **Test Requirement:**

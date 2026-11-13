@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import {
   assertPermission,
   authenticateSession,
@@ -9,13 +9,104 @@ import {
   PermissionDeniedError,
 } from '@visahobe/auth';
 import { generateSignedStorageUrl, StorageAccessDeniedError } from '@visahobe/core';
-import { withTenantContext } from '@visahobe/database';
+import { prisma, withTenantContext } from '@visahobe/database';
 
 describe('Tenant Isolation & RLS Security Suite (TICKET-P0-006)', () => {
   const tenantA = '11111111-1111-4111-8111-111111111111';
   const tenantB = '22222222-2222-4222-8222-222222222222';
   const userA = 'aaaa1111-1111-4aaa-8aaa-aaaaaaaaaaaa';
   const userB = 'bbbb2222-2222-4bbb-8bbb-bbbbbbbbbbbb';
+
+  // Seeded test IDs for database RLS integration tests
+  const dbTenantAId = 'a0000000-0000-4000-8000-000000000001';
+  const dbTenantBId = 'b0000000-0000-4000-8000-000000000002';
+  const dbUserAId = 'a1111111-1111-4111-8111-111111111111';
+  const dbUserBId = 'b2222222-2222-4222-8222-222222222222';
+  const dbStaffUserId = 's3333333-3333-4333-8333-333333333333';
+
+  beforeAll(async () => {
+    if (!process.env.DATABASE_URL) return;
+
+    // Seed test tenants (tenants table is not tenant-scoped, no RLS)
+    await prisma.tenant.upsert({
+      where: { id: dbTenantAId },
+      update: {},
+      create: {
+        id: dbTenantAId,
+        name: 'Tenant A Security Test',
+        slug: 'tenant-a-sec-test',
+        status: 'active',
+      },
+    });
+
+    await prisma.tenant.upsert({
+      where: { id: dbTenantBId },
+      update: {},
+      create: {
+        id: dbTenantBId,
+        name: 'Tenant B Security Test',
+        slug: 'tenant-b-sec-test',
+        status: 'active',
+      },
+    });
+
+    // Seed test users (users table is not tenant-scoped, no RLS)
+    await prisma.user.upsert({
+      where: { id: dbUserAId },
+      update: {},
+      create: {
+        id: dbUserAId,
+        email: 'user-a-sec-test@visahobe.com',
+        fullName: 'User A Security Test',
+        status: 'active',
+      },
+    });
+
+    await prisma.user.upsert({
+      where: { id: dbUserBId },
+      update: {},
+      create: {
+        id: dbUserBId,
+        email: 'user-b-sec-test@visahobe.com',
+        fullName: 'User B Security Test',
+        status: 'active',
+      },
+    });
+
+    await prisma.user.upsert({
+      where: { id: dbStaffUserId },
+      update: {},
+      create: {
+        id: dbStaffUserId,
+        email: 'staff-sec-test@visahobe.com',
+        fullName: 'Staff Security Test',
+        status: 'active',
+        mfaEnabled: true,
+      },
+    });
+  });
+
+  afterAll(async () => {
+    if (!process.env.DATABASE_URL) return;
+    try {
+      await prisma.auditLog.deleteMany({
+        where: { tenantId: { in: [dbTenantAId, dbTenantBId] } },
+      });
+      await prisma.case.deleteMany({
+        where: { tenantId: { in: [dbTenantAId, dbTenantBId] } },
+      });
+      await prisma.user.deleteMany({
+        where: { id: { in: [dbUserAId, dbUserBId, dbStaffUserId] } },
+      });
+      await prisma.tenant.deleteMany({
+        where: { id: { in: [dbTenantAId, dbTenantBId] } },
+      });
+    } catch {
+      // Ignored during teardown
+    } finally {
+      await prisma.$disconnect();
+    }
+  });
 
   // ----------------------------------------------------------------------------
   // 1. Storage Signed URL Cross-Tenant Boundary Tests
@@ -169,11 +260,93 @@ describe('Tenant Isolation & RLS Security Suite (TICKET-P0-006)', () => {
       ).rejects.toThrow('requires verified Multi-Factor Authentication');
     });
 
-    it('should execute scoped staff operation and write structured audit log', async () => {
-      const isDbConnected = Boolean(process.env.DATABASE_URL);
+    it('should isolate cases between tenants under RLS enforcement', async () => {
+      if (!process.env.DATABASE_URL) {
+        expect(withTenantContext).toBeDefined();
+        return;
+      }
 
-      if (!isDbConnected) {
-        // Contract validation when running outside database container
+      // Seed Case A in Tenant A context
+      await withTenantContext(
+        { tenantId: dbTenantAId, role: 'client', userId: dbUserAId },
+        async (tx) => {
+          await tx.case.upsert({
+            where: { caseNumber: 'CASE-SEC-RLS-A1' },
+            update: {},
+            create: {
+              tenantId: dbTenantAId,
+              clientId: dbUserAId,
+              caseNumber: 'CASE-SEC-RLS-A1',
+              countryCode: 'BD',
+              serviceType: 'tourist',
+            },
+          });
+        },
+      );
+
+      // Seed Case B in Tenant B context
+      await withTenantContext(
+        { tenantId: dbTenantBId, role: 'client', userId: dbUserBId },
+        async (tx) => {
+          await tx.case.upsert({
+            where: { caseNumber: 'CASE-SEC-RLS-B1' },
+            update: {},
+            create: {
+              tenantId: dbTenantBId,
+              clientId: dbUserBId,
+              caseNumber: 'CASE-SEC-RLS-B1',
+              countryCode: 'BD',
+              serviceType: 'student',
+            },
+          });
+        },
+      );
+
+      // Assert Tenant A cannot read Tenant B's case
+      await withTenantContext(
+        { tenantId: dbTenantAId, role: 'client', userId: dbUserAId },
+        async (tx) => {
+          const cases = await tx.case.findMany({
+            where: { caseNumber: { in: ['CASE-SEC-RLS-A1', 'CASE-SEC-RLS-B1'] } },
+          });
+          expect(cases).toHaveLength(1);
+          expect(cases[0]?.caseNumber).toBe('CASE-SEC-RLS-A1');
+        },
+      );
+
+      // Assert Tenant B cannot read Tenant A's case
+      await withTenantContext(
+        { tenantId: dbTenantBId, role: 'client', userId: dbUserBId },
+        async (tx) => {
+          const cases = await tx.case.findMany({
+            where: { caseNumber: { in: ['CASE-SEC-RLS-A1', 'CASE-SEC-RLS-B1'] } },
+          });
+          expect(cases).toHaveLength(1);
+          expect(cases[0]?.caseNumber).toBe('CASE-SEC-RLS-B1');
+        },
+      );
+
+      // Assert cross-tenant insert is rejected by RLS WITH CHECK
+      await expect(
+        withTenantContext(
+          { tenantId: dbTenantAId, role: 'client', userId: dbUserAId },
+          async (tx) => {
+            await tx.case.create({
+              data: {
+                tenantId: dbTenantBId, // Attempting to insert into Tenant B while in Tenant A context
+                clientId: dbUserBId,
+                caseNumber: 'CASE-SEC-LEAK-ATTEMPT',
+                countryCode: 'BD',
+                serviceType: 'work',
+              },
+            });
+          },
+        ),
+      ).rejects.toThrow();
+    });
+
+    it('should execute scoped staff operation and write structured audit log', async () => {
+      if (!process.env.DATABASE_URL) {
         expect(withTenantContext).toBeDefined();
         return;
       }
@@ -181,19 +354,19 @@ describe('Tenant Isolation & RLS Security Suite (TICKET-P0-006)', () => {
       // When connected to PostgreSQL 16 container (e.g. CI)
       const auditResult = await withTenantContext(
         {
-          tenantId: tenantA,
-          userId: userB,
+          tenantId: dbTenantAId,
+          userId: dbStaffUserId,
           role: 'owner',
           hasScopedAccess: true,
           isMfaVerified: true,
           auditAction: 'security.test.cross_tenant_access',
-          auditEntityType: 'case',
-          auditEntityId: 'case-test-1',
+          auditEntityType: 'tenant',
+          auditEntityId: dbTenantAId,
         },
         async (tx) => {
           return tx.auditLog.findFirst({
             where: {
-              tenantId: tenantA,
+              tenantId: dbTenantAId,
               action: 'security.test.cross_tenant_access',
             },
           });
@@ -201,8 +374,8 @@ describe('Tenant Isolation & RLS Security Suite (TICKET-P0-006)', () => {
       );
 
       expect(auditResult).not.toBeNull();
-      expect(auditResult?.tenantId).toBe(tenantA);
-      expect(auditResult?.userId).toBe(userB);
+      expect(auditResult?.tenantId).toBe(dbTenantAId);
+      expect(auditResult?.userId).toBe(dbStaffUserId);
     });
   });
 });

@@ -118,6 +118,18 @@ export async function withTenantContext<T>(
   }
 
   return prisma.$transaction(async (tx) => {
+    // Switch to non-superuser application role if it exists in pg_roles so RLS
+    // policies are genuinely enforced even when the database connection user is a SUPERUSER.
+    await tx.$executeRaw`
+      DO $$
+      BEGIN
+        IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'visahobe_app') THEN
+          PERFORM set_config('role', 'visahobe_app', true);
+        END IF;
+      END
+      $$;
+    `;
+
     // Set transaction-local session variables for PostgreSQL RLS policies
     await tx.$executeRaw`SELECT set_config('app.current_tenant_id', ${tenantId}, true)`;
     await tx.$executeRaw`SELECT set_config('app.current_user_id', ${userId ?? ''}, true)`;
