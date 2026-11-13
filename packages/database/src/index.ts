@@ -1,2 +1,2 @@
-﻿// Scaffolding placeholder
-export const moduleName = 'packages/database';
+﻿export * from './client.js';
+export * from './tenant-context.js';

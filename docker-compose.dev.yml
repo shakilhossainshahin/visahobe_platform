@@ -1,0 +1,52 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: visahobe-postgres-dev
+    restart: unless-stopped
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-visahobe_dev}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-visahobe_dev_password}
+      POSTGRES_DB: ${POSTGRES_DB:-visahobe_dev}
+    volumes:
+      - visahobe_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U ${POSTGRES_USER:-visahobe_dev} -d ${POSTGRES_DB:-visahobe_dev}',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  postgres_test:
+    image: postgres:16-alpine
+    container_name: visahobe-postgres-test
+    restart: unless-stopped
+    ports:
+      - '5433:5432'
+    environment:
+      POSTGRES_USER: ${POSTGRES_TEST_USER:-visahobe_dev}
+      POSTGRES_PASSWORD: ${POSTGRES_TEST_PASSWORD:-visahobe_dev_password}
+      POSTGRES_DB: ${POSTGRES_TEST_DB:-visahobe_test}
+    volumes:
+      - visahobe_postgres_test_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U ${POSTGRES_TEST_USER:-visahobe_dev} -d ${POSTGRES_TEST_DB:-visahobe_test}',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  visahobe_postgres_data:
+    name: visahobe_postgres_data
+  visahobe_postgres_test_data:
+    name: visahobe_postgres_test_data

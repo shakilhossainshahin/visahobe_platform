@@ -13,10 +13,16 @@
     "test:coverage": "vitest run --coverage",
     "format:check": "prettier --check .",
     "format:write": "prettier --write .",
+    "db:generate": "pnpm --filter @visahobe/database db:generate",
+    "db:migrate": "pnpm --filter @visahobe/database db:migrate",
+    "db:seed": "pnpm --filter @visahobe/database db:seed",
+    "db:studio": "pnpm --filter @visahobe/database db:studio",
+    "db:validate": "pnpm --filter @visahobe/database db:validate",
     "clean": "pnpm -r exec rimraf dist"
   },
   "devDependencies": {
     "@eslint/js": "^9.14.0",
+    "@types/node": "^20.17.6",
     "@vitest/coverage-v8": "^2.1.4",
     "eslint": "^9.14.0",
     "prettier": "^3.3.3",
