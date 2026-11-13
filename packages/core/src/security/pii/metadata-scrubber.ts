@@ -47,8 +47,14 @@ const SENSITIVE_METADATA_KEYS = new Set([
  */
 export function scrubFileMetadata(file: FileMetadataInput): FileMetadataOutput {
   const rawName = file.originalName ?? file.fileName ?? 'upload.bin';
-  // Extract strictly the safe basename, stripping any directory path
-  const baseName = path.basename(rawName).replace(/[^a-zA-Z0-9._-]/g, '_');
+  // Normalize both Windows (\) and POSIX (/) path separators to / and strip drive letters
+  // so basename extraction works uniformly across all client and server operating systems.
+  const normalized = rawName.replace(/\\/g, '/').replace(/^[a-zA-Z]:/, '');
+  // Extract strictly the safe basename, stripping any directory path or traversal segments
+  let baseName = path.posix.basename(normalized).replace(/[^a-zA-Z0-9._-]/g, '_');
+  if (baseName === '.' || baseName === '..' || !baseName) {
+    baseName = 'upload.bin';
+  }
 
   const sanitizedMetadata: Record<string, unknown> = {};
 

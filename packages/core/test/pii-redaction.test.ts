@@ -199,6 +199,23 @@ describe('Defense-in-Depth PII Redaction Pipeline Suite (TICKET-P0-007)', () => 
       expect(result.sanitizedMetadata.model).toBeUndefined();
       expect(result.sanitizedMetadata.colorSpace).toBe('sRGB');
     });
+
+    it('should strip Unix/POSIX paths and prevent path traversal', () => {
+      const posixUpload = {
+        originalName: '/home/applicant/documents/nid_card.jpg',
+        mimeType: 'image/jpeg',
+      };
+      const posixResult = scrubFileMetadata(posixUpload);
+      expect(posixResult.fileName).toBe('nid_card.jpg');
+      expect(posixResult.filePath).toBe('documents/nid_card.jpg');
+
+      const traversalUpload = {
+        originalName: '../../../../etc/passwd',
+      };
+      const traversalResult = scrubFileMetadata(traversalUpload);
+      expect(traversalResult.fileName).toBe('passwd');
+      expect(traversalResult.filePath).toBe('documents/passwd');
+    });
   });
 
   describe('Layer 6: Error Stack Trace Sanitization', () => {
