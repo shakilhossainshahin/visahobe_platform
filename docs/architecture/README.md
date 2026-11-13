@@ -2,13 +2,16 @@
 
 **Document Root:** `docs/architecture/`  
 **Planning Baseline:** Version 2.0 (13 November 2026)  
-**Status:** Architecture Baseline Established & Ready for Phase 0 Implementation
+**Status:** Phase 0 Baseline Complete & Signed Off (8/8 Tickets Completed)
 
 ---
 
 ## 1. Overview
 
 VisaHobe is a premium, secure, multi-tenant AI operations platform for visa processing, travel assistance, and business-migration services. This documentation repository establishes the definitive source of truth for all architectural decisions, security boundaries, browser automation models, agent tool contracts, and implementation phases.
+
+- **[Phase 0 Architecture Baseline](./architecture_and_phase0_baseline.md):** Consolidated Phase 0 baseline documenting all 9 ADRs, 8 completed engineering tickets, and foundational invariants.
+- **[Phase 0 Formal Sign-Off Report](./PHASE_0_SIGNOFF_REPORT.md):** Official completion and acceptance report validating all 5 Phase 0 blueprint criteria (25/25 checks passed).
 
 ---
 

@@ -50,7 +50,11 @@ export function scrubRawString(text: string): string {
   scrubbed = scrubbed.replace(/\b[0-9]{13}\b/g, REDACTED_MASK.NID);
 
   // 5. Bangladesh & International Passports (1-2 letters + 7-9 digits: e.g. A01234567, BP1234567)
-  scrubbed = scrubbed.replace(/\b[A-Za-z]{1,2}[0-9]{7,9}\b/g, REDACTED_MASK.PASSPORT);
+  // Uses negative lookaround to prevent false-positive matches on hyphenated UUID segments (e.g. e3740455-...)
+  scrubbed = scrubbed.replace(
+    /(?<![a-zA-Z0-9-])[A-Za-z]{1,2}[0-9]{7,9}(?![a-zA-Z0-9-])/g,
+    REDACTED_MASK.PASSPORT,
+  );
 
   // 6. Bank Account Numbers (e.g. 102.101.98765 or dot-separated account numbers)
   scrubbed = scrubbed.replace(/\b[0-9]{3}\.[0-9]{3}\.[0-9]{4,}\b/g, REDACTED_MASK.BANK_ACCOUNT);
@@ -89,6 +93,13 @@ export function redactPii<T>(input: T, options: RedactPiiOptions = {}): T {
     }
 
     if (typeof value === 'string') {
+      // Standard UUID v4 strings (correlationId, tenantId, etc.) are opaque operational IDs
+      // and must not be corrupted by unstructured text regex fallbacks
+      if (
+        /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(value)
+      ) {
+        return value;
+      }
       let result = scrubRawString(value);
       if (options.sanitizeStacks !== false) {
         result = sanitizeStackTrace(result);

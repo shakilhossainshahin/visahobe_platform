@@ -217,6 +217,11 @@ jobs:
             echo "Security tests directory ready for TICKET-P0-006; baseline check complete."
           fi
 
+      - name: Run Phase 0 End-to-End Verification Gate
+        run: |
+          echo "Executing Phase 0 End-to-End Verification Suite (TICKET-P0-008)..."
+          pnpm verify:phase-0
+
   secret-scan:
     name: TruffleHog Secret Scan
     runs-on: ubuntu-latest
