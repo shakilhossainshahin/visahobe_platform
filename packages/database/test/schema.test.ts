@@ -76,4 +76,17 @@ describe('Prisma Schema and Migration Baseline Verification', () => {
     expect(sql).toContain('CREATE TRIGGER trg_cases_updated_at');
     expect(sql).toContain('CREATE TRIGGER trg_tasks_updated_at');
   });
+
+  it('should have migration 20261113000002 enforcing app.has_scoped_access and visahobe_app role', () => {
+    const migration2Path = path.resolve(
+      __dirname,
+      '../prisma/migrations/20261113000002_scoped_staff_rls_policies/migration.sql',
+    );
+    expect(fs.existsSync(migration2Path)).toBe(true);
+    const sql = fs.readFileSync(migration2Path, 'utf8');
+    expect(sql).toContain("current_setting('app.has_scoped_access', true) = 'true'");
+    expect(sql).toContain(
+      'CREATE ROLE visahobe_app WITH LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOBYPASSRLS',
+    );
+  });
 });

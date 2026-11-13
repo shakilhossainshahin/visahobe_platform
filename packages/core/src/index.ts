@@ -1,5 +1,5 @@
 /**
- * @visahobe/core — Core domain types and utilities
+ * @visahobe/core — Core domain types, utilities, and storage boundary services
  */
 
 export const CORE_PACKAGE_NAME = '@visahobe/core';
@@ -18,3 +18,5 @@ export function getAppMetadata(env = 'development'): AppMetadata {
     environment: env,
   };
 }
+
+export * from './storage/signed-urls.js';
