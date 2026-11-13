@@ -22,7 +22,7 @@ describe('Tenant Isolation & RLS Security Suite (TICKET-P0-006)', () => {
   const dbTenantBId = 'b0000000-0000-4000-8000-000000000002';
   const dbUserAId = 'a1111111-1111-4111-8111-111111111111';
   const dbUserBId = 'b2222222-2222-4222-8222-222222222222';
-  const dbStaffUserId = 's3333333-3333-4333-8333-333333333333';
+  const dbStaffUserId = 'c3333333-3333-4333-8333-333333333333';
 
   beforeAll(async () => {
     if (!process.env.DATABASE_URL) return;
