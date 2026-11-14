@@ -21,8 +21,9 @@ out/
 !.env.example
 
 # Logs
-logs/
+/logs/
 *.log
+!apps/**/app/logs/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
