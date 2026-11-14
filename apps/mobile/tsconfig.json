@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@visahobe/core": ["../../packages/core/src/index"],
+      "@visahobe/core/*": ["../../packages/core/src/*"],
+      "@visahobe/shared": ["../../packages/shared/src/index"],
+      "@visahobe/shared/*": ["../../packages/shared/src/*"]
+    }
+  },
+  "include": ["src/**/*"]
+}
