@@ -37,10 +37,56 @@ importers:
         version: 2.1.9(@types/node@20.19.43)
 
   apps/client-dashboard:
+    dependencies:
+      '@visahobe/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
+      '@visahobe/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@visahobe/design-system':
+        specifier: workspace:*
+        version: link:../../packages/design-system
+      '@visahobe/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+      '@visahobe/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      next:
+        specifier: ^15.0.3
+        version: 15.5.29(@types/node@20.19.43)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
     devDependencies:
+      '@types/node':
+        specifier: ^20.17.6
+        version: 20.19.43
+      '@types/react':
+        specifier: ^18.3.18
+        version: 18.3.31
+      '@types/react-dom':
+        specifier: ^18.3.5
+        version: 18.3.7(@types/react@18.3.31)
+      autoprefixer:
+        specifier: ^10.4.20
+        version: 10.6.2(postcss@8.5.32)
+      postcss:
+        specifier: ^8.4.49
+        version: 8.5.32
+      tailwindcss:
+        specifier: ^3.4.15
+        version: 3.4.19(tsx@4.23.15)
       typescript:
         specifier: ^5.6.3
         version: 5.9.3
+      vitest:
+        specifier: ^2.1.4
+        version: 2.1.9(@types/node@20.19.43)
 
   apps/super-admin:
     devDependencies:
