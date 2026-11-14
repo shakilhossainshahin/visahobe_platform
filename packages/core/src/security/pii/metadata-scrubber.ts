@@ -41,12 +41,10 @@ const SENSITIVE_METADATA_KEYS = new Set([
 ]);
 
 /**
- * Scrubs file uploads and screenshot metadata before storage:
- * - Strips full client local filesystem paths (e.g. C:\Users\alice\passport.jpg) to safe relative basenames.
- * - Strips sensitive device, location, and camera EXIF metadata.
+ * Sanitizes raw upload filenames by stripping Windows and POSIX path traversal
+ * sequences and special characters, returning a clean relative basename.
  */
-export function scrubFileMetadata(file: FileMetadataInput): FileMetadataOutput {
-  const rawName = file.originalName ?? file.fileName ?? 'upload.bin';
+export function sanitizeUploadFilename(rawName: string): string {
   // Normalize both Windows (\) and POSIX (/) path separators to / and strip drive letters
   // so basename extraction works uniformly across all client and server operating systems.
   const normalized = rawName.replace(/\\/g, '/').replace(/^[a-zA-Z]:/, '');
@@ -55,6 +53,17 @@ export function scrubFileMetadata(file: FileMetadataInput): FileMetadataOutput {
   if (baseName === '.' || baseName === '..' || !baseName) {
     baseName = 'upload.bin';
   }
+  return baseName;
+}
+
+/**
+ * Scrubs file uploads and screenshot metadata before storage:
+ * - Strips full client local filesystem paths (e.g. C:\Users\alice\passport.jpg) to safe relative basenames.
+ * - Strips sensitive device, location, and camera EXIF metadata.
+ */
+export function scrubFileMetadata(file: FileMetadataInput): FileMetadataOutput {
+  const rawName = file.originalName ?? file.fileName ?? 'upload.bin';
+  const baseName = sanitizeUploadFilename(rawName);
 
   const sanitizedMetadata: Record<string, unknown> = {};
 
