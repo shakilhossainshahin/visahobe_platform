@@ -17,6 +17,7 @@ export default function HomePage() {
   const popularDestinations = [
     {
       country: 'Singapore',
+      slug: 'singapore',
       flag: '🇸🇬',
       title: 'Employment Pass (COMPASS)',
       category: 'Skilled Work',
@@ -26,6 +27,7 @@ export default function HomePage() {
     },
     {
       country: 'Germany / Schengen',
+      slug: 'germany',
       flag: '🇩🇪',
       title: 'EU Blue Card & Opportunity Card',
       category: 'Skilled Migration',
@@ -35,6 +37,7 @@ export default function HomePage() {
     },
     {
       country: 'United Kingdom',
+      slug: 'united-kingdom',
       flag: '🇬🇧',
       title: 'Skilled Worker & Student Visa',
       category: 'Work & Study',
@@ -44,6 +47,7 @@ export default function HomePage() {
     },
     {
       country: 'Canada',
+      slug: 'canada',
       flag: '🇨🇦',
       title: 'Express Entry & Provincial Nominee',
       category: 'Permanent Residency',
@@ -53,6 +57,7 @@ export default function HomePage() {
     },
     {
       country: 'Australia',
+      slug: 'australia',
       flag: '🇦🇺',
       title: 'Subclass 189 / 190 / 482',
       category: 'Skilled Migration',
@@ -62,6 +67,7 @@ export default function HomePage() {
     },
     {
       country: 'United Arab Emirates',
+      slug: 'uae',
       flag: '🇦🇪',
       title: 'Golden Visa & Green Visa',
       category: 'Investors & Talent',
@@ -270,9 +276,9 @@ export default function HomePage() {
                 unmatched compliance accuracy.
               </p>
             </div>
-            <a href="/assess">
+            <a href="/countries">
               <Button variant="outline" size="sm">
-                View All 42+ Countries →
+                View All Destinations →
               </Button>
             </a>
           </div>
@@ -299,7 +305,11 @@ export default function HomePage() {
                       </Badge>
                     )}
                   </div>
-                  <CardTitle className="text-lg font-bold text-[#0D3B2E]">{dest.country}</CardTitle>
+                  <a href={`/countries/${dest.slug}`} className="hover:underline">
+                    <CardTitle className="text-lg font-bold text-[#0D3B2E]">
+                      {dest.country}
+                    </CardTitle>
+                  </a>
                   <CardDescription className="text-sm font-medium text-[#0F172A]">
                     {dest.title}
                   </CardDescription>
@@ -314,17 +324,22 @@ export default function HomePage() {
                     <span className="font-semibold text-[#0F172A]">{dest.minRequirements}</span>
                   </div>
                 </CardContent>
-                <CardFooter className="pt-2">
+                <CardFooter className="pt-2 flex items-center gap-2">
+                  <a href={`/countries/${dest.slug}`} className="flex-1">
+                    <Button variant="outline" size="sm" className="w-full text-xs">
+                      View Guide
+                    </Button>
+                  </a>
                   <a
                     href={`/assess?country=${encodeURIComponent(dest.country.toLowerCase())}`}
-                    className="w-full"
+                    className="flex-1"
                   >
                     <Button
                       variant="secondary"
                       size="sm"
-                      className="w-full hover:bg-[#E3EFEA] hover:text-[#0D3B2E]"
+                      className="w-full text-xs hover:bg-[#E3EFEA] hover:text-[#0D3B2E]"
                     >
-                      Check Eligibility
+                      Assess Fit
                     </Button>
                   </a>
                 </CardFooter>

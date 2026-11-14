@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const navLinks = [
     { label: 'Services', href: '/#services' },
-    { label: 'Destinations', href: '/#destinations' },
+    { label: 'Destinations', href: '/countries' },
     { label: 'Eligibility Check', href: '/assess' },
     { label: 'How It Works', href: '/#how-it-works' },
     { label: 'Trust & Security', href: '/#security' },
@@ -46,11 +46,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     {
       title: 'Destinations',
       links: [
-        { label: 'Singapore Employment Pass', href: '/#destinations' },
-        { label: 'Europe / Schengen Area', href: '/#destinations' },
-        { label: 'United Kingdom (Skilled Worker)', href: '/#destinations' },
-        { label: 'Canada (Express Entry & PNP)', href: '/#destinations' },
-        { label: 'Australia & New Zealand', href: '/#destinations' },
+        { label: 'Singapore (Employment Pass)', href: '/countries/singapore' },
+        { label: 'Germany (EU Blue Card)', href: '/countries/germany' },
+        { label: 'United Kingdom (Skilled Worker)', href: '/countries/united-kingdom' },
+        { label: 'Canada (Express Entry & PNP)', href: '/countries/canada' },
+        { label: 'Australia (Skilled Migration)', href: '/countries/australia' },
+        { label: 'UAE (Golden Visa)', href: '/countries/uae' },
       ],
     },
     {

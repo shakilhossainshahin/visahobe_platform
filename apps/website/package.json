@@ -11,6 +11,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@visahobe/cms": "workspace:*",
     "@visahobe/core": "workspace:*",
     "@visahobe/design-system": "workspace:*",
     "@visahobe/ui": "workspace:*",

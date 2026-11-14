@@ -4,6 +4,7 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   resolve: {
     alias: {
+      '@visahobe/cms': path.resolve(__dirname, '../../packages/cms/src/index.ts'),
       '@visahobe/auth': path.resolve(__dirname, '../../packages/auth/src/index.ts'),
       '@visahobe/database': path.resolve(__dirname, '../../packages/database/src/index.ts'),
       '@visahobe/core': path.resolve(__dirname, '../../packages/core/src/index.ts'),
