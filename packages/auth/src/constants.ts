@@ -8,6 +8,7 @@ export const PRIVILEGED_STAFF_ROLES = [
   'finance',
   'browser_operator',
   'developer_reviewer',
+  'cms_editor',
 ] as const;
 
 export type PrivilegedStaffRole = (typeof PRIVILEGED_STAFF_ROLES)[number];

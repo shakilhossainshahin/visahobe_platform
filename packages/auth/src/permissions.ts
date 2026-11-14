@@ -47,6 +47,12 @@ export const ALL_PERMISSIONS = [
   'github.pr.create',
   'deployment.approve',
   'migration.propose',
+
+  // CMS Editorial
+  'cms.read',
+  'cms.create',
+  'cms.update',
+  'cms.publish',
 ] as const;
 
 export type PermissionKey = (typeof ALL_PERMISSIONS)[number];
@@ -77,6 +83,10 @@ export const ROLE_PERMISSIONS: Record<string, readonly PermissionKey[]> = {
     'refund.approve',
     'finance.manage',
     'audit.view',
+    'cms.read',
+    'cms.create',
+    'cms.update',
+    'cms.publish',
     'agent.run',
     'browser.session.create',
     'browser.session.observe',
@@ -108,6 +118,8 @@ export const ROLE_PERMISSIONS: Record<string, readonly PermissionKey[]> = {
     'task.read',
     'task.execute',
   ],
+
+  cms_editor: ['case.read', 'cms.read', 'cms.create', 'cms.update', 'cms.publish'],
 
   finance: [
     'case.read',

@@ -1,4 +1,3 @@
-import { randomBytes } from 'crypto';
 import { DEFAULT_AUTH_CONFIG } from './constants.js';
 import { CsrfValidationError } from './errors.js';
 import type { CookieOptions } from './types.js';
@@ -105,7 +104,9 @@ export function createClearCookie(name: string, path = '/'): string {
 }
 
 export function generateCsrfToken(): string {
-  return randomBytes(32).toString('hex');
+  const bytes = new Uint8Array(32);
+  globalThis.crypto.getRandomValues(bytes);
+  return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
 }
 
 export function validateCsrfProtection(request: {
