@@ -62,7 +62,7 @@ export default function LoginPage() {
               type="email"
               label="Email Address"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
               placeholder="applicant@example.com"
               autoComplete="username"
               required
@@ -74,7 +74,7 @@ export default function LoginPage() {
                 type="password"
                 label="Password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                 placeholder="••••••••••••"
                 autoComplete="current-password"
                 required

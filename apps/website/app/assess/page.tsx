@@ -253,7 +253,7 @@ export default function AssessmentPage() {
                       id="destinationCountry"
                       label="Target Destination Country"
                       value={formData.destinationCountry}
-                      onChange={(e) =>
+                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                         setFormData({ ...formData, destinationCountry: e.target.value })
                       }
                       options={[
@@ -272,7 +272,9 @@ export default function AssessmentPage() {
                       id="visaCategory"
                       label="Intended Visa Category"
                       value={formData.visaCategory}
-                      onChange={(e) => setFormData({ ...formData, visaCategory: e.target.value })}
+                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                        setFormData({ ...formData, visaCategory: e.target.value })
+                      }
                       options={[
                         { value: 'Skilled Work', label: 'Skilled Work & Employment Permit' },
                         { value: 'Student Visa', label: 'Higher Education & Student Visa' },
@@ -286,7 +288,9 @@ export default function AssessmentPage() {
                       id="nationality"
                       label="Citizenship / Passport Country"
                       value={formData.nationality}
-                      onChange={(e) => setFormData({ ...formData, nationality: e.target.value })}
+                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                        setFormData({ ...formData, nationality: e.target.value })
+                      }
                       options={[
                         { value: 'Bangladesh', label: 'Bangladesh' },
                         { value: 'India', label: 'India' },
@@ -308,7 +312,9 @@ export default function AssessmentPage() {
                       id="educationLevel"
                       label="Highest Completed Education Level"
                       value={formData.educationLevel}
-                      onChange={(e) => setFormData({ ...formData, educationLevel: e.target.value })}
+                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                        setFormData({ ...formData, educationLevel: e.target.value })
+                      }
                       options={[
                         { value: 'Doctorate / PhD', label: 'Doctorate / PhD' },
                         { value: 'Master Degree', label: 'Master’s Degree (Postgraduate)' },
@@ -329,7 +335,7 @@ export default function AssessmentPage() {
                       max={40}
                       label="Years of Relevant Professional Experience"
                       value={formData.yearsOfExperience}
-                      onChange={(e) =>
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                         setFormData({
                           ...formData,
                           yearsOfExperience: parseInt(e.target.value, 10) || 0,
@@ -343,7 +349,7 @@ export default function AssessmentPage() {
                       id="englishProficiency"
                       label="Official English Proficiency Level"
                       value={formData.englishProficiency}
-                      onChange={(e) =>
+                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                         setFormData({ ...formData, englishProficiency: e.target.value })
                       }
                       options={[
@@ -367,7 +373,7 @@ export default function AssessmentPage() {
                         <input
                           type="checkbox"
                           checked={formData.hasValidPassport}
-                          onChange={(e) =>
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                             setFormData({ ...formData, hasValidPassport: e.target.checked })
                           }
                           className="h-4 w-4 rounded text-[#0D3B2E] focus:ring-[#0D3B2E]"
@@ -386,7 +392,7 @@ export default function AssessmentPage() {
                         <input
                           type="checkbox"
                           checked={formData.hasProofOfFunds}
-                          onChange={(e) =>
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                             setFormData({ ...formData, hasProofOfFunds: e.target.checked })
                           }
                           className="h-4 w-4 rounded text-[#0D3B2E] focus:ring-[#0D3B2E]"
@@ -405,7 +411,7 @@ export default function AssessmentPage() {
                         <input
                           type="checkbox"
                           checked={formData.hasJobOffer}
-                          onChange={(e) =>
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                             setFormData({ ...formData, hasJobOffer: e.target.checked })
                           }
                           className="h-4 w-4 rounded text-[#0D3B2E] focus:ring-[#0D3B2E]"
@@ -436,7 +442,9 @@ export default function AssessmentPage() {
                       id="fullName"
                       label="Full Legal Name (as shown on passport)"
                       value={formData.fullName}
-                      onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setFormData({ ...formData, fullName: e.target.value })
+                      }
                       placeholder="e.g. Shakil Hossain"
                       autoComplete="name"
                       required
@@ -447,7 +455,9 @@ export default function AssessmentPage() {
                       type="email"
                       label="Official Email Address"
                       value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setFormData({ ...formData, email: e.target.value })
+                      }
                       placeholder="name@example.com"
                       autoComplete="email"
                       required
@@ -458,7 +468,9 @@ export default function AssessmentPage() {
                       type="tel"
                       label="Mobile Phone / WhatsApp Number"
                       value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setFormData({ ...formData, phone: e.target.value })
+                      }
                       placeholder="+880 1700 000000"
                       autoComplete="tel"
                       helperText="Include country calling code for instant eligibility SMS / WhatsApp alerts."
