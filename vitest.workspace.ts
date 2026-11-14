@@ -10,6 +10,7 @@ const sharedAliases = {
   '@visahobe/core': path.resolve(__dirname, 'packages/core/src/index.ts'),
   '@visahobe/design-system': path.resolve(__dirname, 'packages/design-system/src/index.ts'),
   '@visahobe/ui': path.resolve(__dirname, 'packages/ui/src/index.ts'),
+  '@visahobe/mobile': path.resolve(__dirname, 'apps/mobile/src/index.ts'),
   '@visahobe/shared': path.resolve(__dirname, 'packages/shared/src/index.ts'),
 };
 
