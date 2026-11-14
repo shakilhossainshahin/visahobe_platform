@@ -275,3 +275,74 @@ The database is PostgreSQL 16 managed via Prisma ORM (`@prisma/client@^5.22.0`).
      ```
    - **NEVER push directly to `main`.**
    - **NEVER merge Pull Requests yourself.** The agent must provide the one-click comparison URL and leave code review and PR merge authorization to the human repository owner.
+
+---
+
+## Section 6: Zero-Defect Pro-Coder Engineering Protocol
+
+To guarantee continuous zero-defect execution, 100% first-pass CI green rates, and eliminate discrepancy between Windows local workspaces and Linux CI runners, every agent must strictly obey these five invariant rules:
+
+### 6.1 Read-Before-Import Invariant
+
+- **Strict Prohibition on Guessing:** Never assume or guess component prop names, hook signatures, method signatures, or package exports.
+- **Mandatory Inspection:** Always read the target module or component definition file (e.g. `packages/ui/src/components/...`, `packages/core/src/...`, `packages/auth/src/...`) BEFORE writing consumer code or tests.
+- **API Parity:** Ensure exported interfaces and imported props match the underlying source definitions exactly (e.g., `navLinks` vs `links`, `name` vs `streamName`, specific `Badge` variants).
+
+### 6.2 Zero Type-Safety Shortcuts
+
+- **Strict Invariant:** The codebase prohibits type-safety compromises.
+- **Forbidden Constructs:** Never introduce `any`, `unknown as any`, `@ts-ignore`, `@ts-expect-error`, or `eslint-disable` comments.
+- **Test Invariant:** Never skip tests with `it.skip` or `describe.skip`.
+- **Root-Cause Resolution:** Always resolve type mismatches, missing declarations, or runtime schema issues by updating types and logic cleanly at the source.
+
+### 6.3 Linux CI Parity on Windows
+
+- **Case-Sensitive Paths:** Ubuntu Linux CI runners enforce case sensitivity. All file imports, dynamic paths, and route directories must match the exact case on disk.
+- **POSIX Forward Slashes:** Always use POSIX forward slashes (`/`) in import specifiers, glob patterns, and configuration paths.
+- **Clean-Cache Invariant:** Verify that `next typegen` and `tsc --noEmit` succeed without relying on stale local `.next` or `dist` caches.
+- **`.gitignore` Collision Guard:** Ensure global `.gitignore` rules (such as logs, temporary folders, or build outputs) do not inadvertently ignore valid application routes or files (e.g., anchor folder ignores with leading slashes `/logs/` or add explicit exemptions like `!apps/**/app/logs/`). Always verify with `git check-ignore` or `git status` that newly created files are tracked.
+
+### 6.4 Atomic & Complete Implementation
+
+- **Zero Half-Finished Scaffolding:** Every newly created page, route, component, and utility must be completely implemented, exported, and tested.
+- **Self-Contained Commits:** Ensure all companion files, PWA manifests, stylesheets, and test files are staged and committed together.
+- **Configuration Alignment:** Verify that new packages and applications are properly registered in `tsconfig.json`, `pnpm-workspace.yaml`, and `vitest.workspace.ts`.
+
+### 6.5 Sequential PR Gate Discipline
+
+- **Strict Milestone Sequencing:** Never branch for `TICKET-P(N+1)` until `TICKET-P(N)` has passed all 5 GitHub Actions checks (`success`) and has been reviewed and merged into `main`.
+- **Clean Working Tree:** Discard any experimental or premature branch work immediately if preceding dependencies or milestones require fixes.
+- **Continuous Gate Validation:** Always execute the full 7-step pre-push gate locally before submitting or updating any Pull Request.
+
+---
+
+## Section 6: Zero-Defect Pro-Coder Engineering Protocol
+
+To guarantee continuous zero-defect execution, 100% first-pass CI green rates, and eliminate discrepancy between Windows local workspaces and Linux CI runners, every agent must strictly obey these five invariant rules:
+
+### 6.1 Read-Before-Import Invariant
+- **Strict Prohibition on Guessing:** Never assume or guess component prop names, hook signatures, method signatures, or package exports.
+- **Mandatory Inspection:** Always read the target module or component definition file (e.g. `packages/ui/src/components/...`, `packages/core/src/...`, `packages/auth/src/...`) BEFORE writing consumer code or tests.
+- **API Parity:** Ensure exported interfaces and imported props match the underlying source definitions exactly (e.g., `navLinks` vs `links`, `name` vs `streamName`, specific `Badge` variants).
+
+### 6.2 Zero Type-Safety Shortcuts
+- **Strict Invariant:** The codebase prohibits type-safety compromises.
+- **Forbidden Constructs:** Never introduce `any`, `unknown as any`, `@ts-ignore`, `@ts-expect-error`, or `eslint-disable` comments.
+- **Test Invariant:** Never skip tests with `it.skip` or `describe.skip`.
+- **Root-Cause Resolution:** Always resolve type mismatches, missing declarations, or runtime schema issues by updating types and logic cleanly at the source.
+
+### 6.3 Linux CI Parity on Windows
+- **Case-Sensitive Paths:** Ubuntu Linux CI runners enforce case sensitivity. All file imports, dynamic paths, and route directories must match the exact case on disk.
+- **POSIX Forward Slashes:** Always use POSIX forward slashes (`/`) in import specifiers, glob patterns, and configuration paths.
+- **Clean-Cache Invariant:** Verify that `next typegen` and `tsc --noEmit` succeed without relying on stale local `.next` or `dist` caches.
+- **`.gitignore` Collision Guard:** Ensure global `.gitignore` rules (such as logs, temporary folders, or build outputs) do not inadvertently ignore valid application routes or files (e.g., anchor folder ignores with leading slashes `/logs/` or add explicit exemptions like `!apps/**/app/logs/`). Always verify with `git check-ignore` or `git status` that newly created files are tracked.
+
+### 6.4 Atomic & Complete Implementation
+- **Zero Half-Finished Scaffolding:** Every newly created page, route, component, and utility must be completely implemented, exported, and tested.
+- **Self-Contained Commits:** Ensure all companion files, PWA manifests, stylesheets, and test files are staged and committed together.
+- **Configuration Alignment:** Verify that new packages and applications are properly registered in `tsconfig.json`, `pnpm-workspace.yaml`, and `vitest.workspace.ts`.
+
+### 6.5 Sequential PR Gate Discipline
+- **Strict Milestone Sequencing:** Never branch for `TICKET-P(N+1)` until `TICKET-P(N)` has passed all 5 GitHub Actions checks (`success`) and has been reviewed and merged into `main`.
+- **Clean Working Tree:** Discard any experimental or premature branch work immediately if preceding dependencies or milestones require fixes.
+- **Continuous Gate Validation:** Always execute the full 7-step pre-push gate locally before submitting or updating any Pull Request.
