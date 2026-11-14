@@ -31,7 +31,13 @@ The platform will have:
 | Decision | Final direction |
 |---|---|
 | Product surfaces | Public Website, Client Dashboard, Super Admin Dashboard |
-| Partner Portal | Role-based workspace inside Super Admin for MVP; separate app later if needed |
+| Multi-Tenant Architecture | 3-Tier Hierarchical B2B2C: Tier 1 Platform Owner, Tier 2 B2B Partner Agencies, Tier 3 End Applicants (ADR-010) |
+| Partner Agency Model | White-label domain/subdomain branding, dedicated agency staff/seats, wholesale rates, prepaid wallet (ADR-010) |
+| Agency Wallet & Billing | Prepaid wallet balance (Pay Station / Stripe), atomic auto-deduction upon case submission, zero overdraft, immutable ledger (ADR-010) |
+| Fulfillment Engine | Hybrid Fulfillment: Direct Autonomous AI processing vs Pluggable Partner Connector Registry (ADR-011) |
+| Agent Autonomy & Safety | 3-Level Confidence Autonomy Matrix; mandatory Human-in-the-Loop review gates (`in_review`) for consular filings and payments (ADR-011) |
+| Executive Observability | Scheduled daily Executive Digest dispatched to Super Admin Command Center (ADR-011) |
+| Model Context Protocol | Scoped MCP Servers: Admin MCP Server (AAL2 MFA required) and Partner MCP Server (scoped by `tenant_id` + Kernel RLS); B2C AI Concierge separation (ADR-012) |
 | Architecture style | Modular monolith + independent workers + agent orchestration runtime |
 | Database | PostgreSQL with Row-Level Security, migrations and auditability |
 | Frontend | Next.js, React, TypeScript, Tailwind CSS and a shared design system |
@@ -79,6 +85,26 @@ The system will contain the following first-class modules:
 - CMS and configurable UI.
 - Audit, security, retention and compliance.
 - GitHub engineering control plane.
+
+### 2.3 3-Tier Multi-Tenant B2B2C Model & Agency White-Labeling (ADR-010)
+
+To support global distribution through travel agencies, tour operators, and corporate desks, the platform operates as a 3-tier hierarchical multi-tenant system:
+
+```text
+Tier 1: Platform Owner (Super Admin)
+  └── Tier 2: B2B Partner Travel Agencies (White-Label Domains & Prepaid Wallets)
+        └── Tier 3: Agency-Sponsored End Applicants (Client Dashboard & Mobile)
+  └── Tier 2: Direct Retail Desk (VisaHobe Public Portal)
+        └── Tier 3: Direct Retail Applicants (Client Dashboard & Mobile)
+```
+
+1. **Tier 1 (Platform Owner / Root Super Admin):** Operates on `admin.visahobe.com` (Port 3002). Manages global provider routing, platform fee structures, cross-tenant compliance audits, super agent supervision, and system health.
+2. **Tier 2 (B2B Partner Travel Agencies):** Dedicated agency accounts provisioned with:
+   - White-label custom domains (e.g. `visa.bengaltravel.com`) or branded platform paths (`visahobe.com/p/bengal-travel`).
+   - Dynamic branding tokens (agency logo, emerald dark-green accents, company contacts) resolved via Next.js middleware.
+   - Granular agency staff seats (`agency_owner`, `agency_manager`, `agency_agent`, `agency_accountant`) bounded strictly to the agency's `tenant_id` via PostgreSQL 16 Kernel RLS.
+   - Prepaid agency wallet with wholesale per-case pricing and automated balance deductions.
+3. **Tier 3 (End Applicants):** Direct retail or agency-sponsored applicants who complete document uploads, track 5-stage case timelines, and message case specialists through `app.visahobe.com` or white-label partner domains.
 
 ---
 
@@ -214,6 +240,40 @@ Every agent run must record:
 
 Agent output is untrusted until schema validation, business-rule validation, source validation and task-specific acceptance checks pass.
 
+### 4.5 Super AI Agent Autonomy Matrix & Confidence Scoring (ADR-011)
+
+To transition from pure human assistance to scalable high-throughput execution without legal liability, agent autonomy is governed by a 3-tier confidence matrix:
+
+| Level | Designation | Scope | Criteria | Verification Gate |
+|---|---|---|---|---|
+| **Level 1** | **Assisted Draft** | Complex legal filings, business migration, appeals, discrepancy flags | All complex categories; extraction confidence < 0.85 | Mandatory human staff review before saving form state |
+| **Level 2** | **Semi-Autonomous** | Standard tourist/business visas, applicant package preparation | Document checklist verified; confidence 0.85 - 0.94 | **Verifier Gate (`in_review`):** Human verifier must explicitly approve before submission |
+| **Level 3** | **Autonomous Submission** | Standardized electronic visas (Singapore SGAC, UAE e-Visa, Turkey e-Visa) | Approved low-risk visa classes; confidence >= 0.95 | **Fully Autonomous:** Dispatched directly or via Browser Use; full audit log snapshot recorded |
+
+### 4.6 Mandatory Consular Safety Gates (ADR-011)
+
+Regardless of autonomy level or model confidence, the AI agent runtime is strictly prohibited from autonomously executing:
+1. **Live Consular Fee Payments:** Entering credit card details or debiting corporate accounts on government portals.
+2. **Biometrics & Interview Booking:** Finalizing irreversible consular appointment slots.
+3. **Legal Attestations:** Signing statutory declarations under penalty of perjury.
+
+Any workflow step containing these triggers automatically halts execution, transitions case status to `in_review`, and awaits human operator sign-off.
+
+### 4.7 Daily Executive Digest Dispatcher (ADR-011)
+
+A scheduled background worker (`workers/sla-monitor` + `@visahobe/orchestrator`) compiles a daily operational digest dispatched to the Super Admin Command Center:
+- **Volume Metrics:** Active cases, new submissions, completed decisions, country breakdown.
+- **Agent Autonomy Ratios:** Proportion of cases executed under Level 1, Level 2, and Level 3 autonomy.
+- **SLA Breach Warnings:** Applications approaching or exceeding government benchmark processing times.
+- **Agency Financials:** Partner agency wallet balances, low-balance warnings (< $500), and top-up volume.
+- **Model Observability:** Error rates, latency percentiles, and Browser Use execution retries.
+
+### 4.8 Hybrid Fulfillment & Dynamic Partner Connector Registry (ADR-011)
+
+When processing visa applications, the orchestrator evaluates the fulfillment path:
+- **Direct Autonomous AI Fulfillment (`@visahobe/agents` + `@visahobe/browser-automation`):** Handled directly by internal AI workers when no specialized regional partner is required (e.g. direct e-visa portals).
+- **Dynamic Partner Connector Registry (`@visahobe/integrations` + `workers/partner-sync`):** Used when the visa jurisdiction requires licensed local legal counsel, physical passport delivery, or VFS consular desk presence. Connectors implement the `IPartnerConnector` interface (`dispatchCase`, `fetchCaseStatus`, `syncDocuments`, `handleWebhook`) for seamless bidirectional delegation.
+
 ---
 
 ## 5. Super Admin CLI and Model Strategy
@@ -327,6 +387,28 @@ The Browser Agent Runtime will receive:
 - Human-takeover rules.
 
 Browser Use gives an agent a real browser and supports running with local or hosted LLMs. [web:9][web:10]
+
+### 5.4 Scoped Model Context Protocol (MCP) Architecture (ADR-012)
+
+To enable standardized tool integration for AI models, developer CLIs, and agency assistants without compromising multi-tenant security, VisaHobe implements a tiered Model Context Protocol (MCP) architecture:
+
+```text
+[ Super Admin Operators / CLI ] ──► [ Admin MCP Server ]  ──► All-Tenants Tools + MFA AAL2 + Audit Log
+[ B2B Partner Agency Agents ]   ──► [ Partner MCP Server ] ──► Tenant-Scoped Tools + Kernel RLS
+[ B2C Retail Applicants ]       ──► [ AI Concierge UI ]   ──► Guided Chat Stream (No Raw MCP)
+```
+
+1. **Admin MCP Server (`@visahobe/admin-mcp-server` / `apps/super-admin/mcp`):**
+   - **Authentication:** Enforces staff JWT claim with Authenticator Assurance Level 2 (AAL2 MFA required).
+   - **Tool Registry:** Global operational tooling (`listAllTenants`, `inspectCaseAuditTrail`, `reassignCaseSpecialist`, `triggerBrowserUseReplay`, `adjustAgencyWalletBalance`, `dispatchDailyExecutiveDigest`).
+   - **Audit Trail:** Every tool execution records calling operator, parameters (scrubbed of PII), and execution status to `audit_logs`.
+2. **Partner MCP Server (`@visahobe/partner-mcp-server`):**
+   - **Tenant Scoping:** The `tenant_id` is extracted strictly from cryptographically verified JWT claims. Spoofed headers are ignored.
+   - **Kernel RLS Isolation:** Database queries execute under `visahobe_app` with transaction variables `SET LOCAL app.current_tenant_id = '<agency-uuid>'` and `SET LOCAL app.current_user_role = 'partner'`. Cross-tenant data access is physically rejected by PostgreSQL 16 Kernel RLS.
+   - **Tool Registry:** Bounded agency tools (`listAgencyCases`, `getCaseDocumentChecklist`, `checkWalletBalance`, `submitVisaCase`).
+3. **B2C End Applicant Boundary:**
+   - Retail applicants interact exclusively with the built-in AI Concierge in `@visahobe/client-dashboard` and `@visahobe/mobile`.
+   - Raw MCP endpoints and tool execution registries are strictly inaccessible to public clients.
 
 ---
 
@@ -540,6 +622,8 @@ The initial workflow registry will include:
 - `payments`
 - `refunds`
 - `ledger_entries`
+- `agency_wallets`
+- `wallet_transactions`
 - `chat_threads`
 - `messages`
 - `channel_connections`
@@ -567,6 +651,21 @@ The initial workflow registry will include:
 - Use migrations as the only schema-change mechanism.
 - Avoid storing PII in logs, prompts, analytics or agent traces.
 - Define retention and deletion rules per data class.
+
+### 8.3 Prepaid Agency Wallet Engine & Double-Entry Financial Ledger (ADR-010)
+
+To support B2B Partner Agencies without exposing the platform to credit or cross-border payment default risk, financial transactions follow a prepaid wallet and immutable ledger model:
+
+1. **Pre-Funded Balance Guarantee:**
+   - Partner agencies maintain a dedicated record in `agency_wallets` (`tenant_id`, `balance`, `locked_balance`, `currency`).
+   - Overdraft is prohibited via database check constraint `CHECK (balance >= 0)`.
+2. **Atomic Fee Deduction Protocol:**
+   - When an agency agent or autonomous pipeline submits a visa case, the wallet row is locked using `SELECT ... FOR UPDATE` within a database transaction.
+   - If `balance < required_fee`, the transaction aborts with an `InsufficientFundsError`.
+   - If balance is sufficient, the fee is deducted and an immutable double-entry record is inserted into `wallet_transactions` (`CREDIT`, `DEBIT`, `HOLD`, `RELEASE`, `REFUND`).
+3. **Gateway Ingestion & Reconciliation:**
+   - Agency wallets are funded through Pay Station (bKash, Nagad, cards) and Stripe with cryptographic signature validation.
+   - All balance changes are fully auditable and reconcile against payment gateway settlement reports.
 
 ---
 
@@ -1091,14 +1190,18 @@ Its first task is:
 3. Create `docs/architecture/`.
 4. Store this blueprint in the repository.
 5. Create ADRs for:
-   - Product surfaces.
-   - Tenant model.
-   - Backend stack.
-   - Agent orchestration.
-   - Browser Use integration.
-   - Model gateway.
-   - Deployment model.
-   - Security model.
+   - Product surfaces (ADR-001).
+   - Tenant model (ADR-002).
+   - Backend stack (ADR-003).
+   - Agent orchestration (ADR-004).
+   - Browser Use integration (ADR-005).
+   - Model gateway (ADR-006).
+   - Deployment model (ADR-007).
+   - Security model (ADR-008).
+   - UI design system (ADR-009).
+   - B2B2C partner agency and prepaid wallet (ADR-010).
+   - Super AI agent autonomy and partner connectors (ADR-011).
+   - Scoped MCP servers and tenant boundaries (ADR-012).
 6. Propose Phase 0 implementation tickets.
 7. Wait for human approval before major code generation or destructive changes.
 
