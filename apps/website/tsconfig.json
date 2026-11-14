@@ -22,6 +22,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
+      "@visahobe/cms": ["../../packages/cms/src/index"],
+      "@visahobe/cms/*": ["../../packages/cms/src/*"],
       "@visahobe/ui": ["../../packages/ui/src/index"],
       "@visahobe/ui/*": ["../../packages/ui/src/*"],
       "@visahobe/design-system": ["../../packages/design-system/src/index"],

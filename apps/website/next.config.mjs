@@ -2,6 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   transpilePackages: [
+    '@visahobe/cms',
     '@visahobe/ui',
     '@visahobe/design-system',
     '@visahobe/core',
