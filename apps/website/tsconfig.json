@@ -1,8 +1,37 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "./dist",
-    "rootDir": "./src"
+    "target": "ES2022",
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "@visahobe/ui": ["../../packages/ui/src/index"],
+      "@visahobe/ui/*": ["../../packages/ui/src/*"],
+      "@visahobe/design-system": ["../../packages/design-system/src/index"],
+      "@visahobe/design-system/*": ["../../packages/design-system/src/*"],
+      "@visahobe/core": ["../../packages/core/src/index"],
+      "@visahobe/core/*": ["../../packages/core/src/*"],
+      "@visahobe/shared": ["../../packages/shared/src/index"],
+      "@visahobe/shared/*": ["../../packages/shared/src/*"]
+    }
   },
-  "include": ["src/**/*"]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }

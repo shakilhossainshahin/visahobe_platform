@@ -67,6 +67,9 @@ jobs:
       - name: Generate Prisma Client
         run: pnpm --filter @visahobe/database db:generate
 
+      - name: Build internal packages
+        run: pnpm --filter "./packages/**" build
+
       - name: Run TypeScript typecheck
         run: pnpm typecheck
 
@@ -93,6 +96,9 @@ jobs:
 
       - name: Generate Prisma Client
         run: pnpm --filter @visahobe/database db:generate
+
+      - name: Build internal packages
+        run: pnpm --filter "./packages/**" build
 
       - name: Run Unit Tests
         run: pnpm test
