@@ -189,6 +189,22 @@ The database is PostgreSQL 16 managed via Prisma ORM (`@prisma/client@^5.22.0`).
 - Downloads and uploads use short-lived presigned URLs (TTL <= 15 minutes) generated via `@visahobe/core` storage boundary service.
 - All file uploads MUST pass through `sanitizeUploadFilename()` from `@visahobe/core` to strip POSIX and Windows directory traversal attacks (`../`, `..\`) and drive letters.
 
+### 3.5 B2B2C 3-Tier Multi-Tenancy & Prepaid Agency Wallet Ledger (`ADR-010`)
+
+1. **3-Tier Hierarchy:**
+   - **Tier 1 (Platform Owner):** Root super admin command center (`admin.visahobe.com`, port 3002).
+   - **Tier 2 (B2B Partner Agencies):** Custom white-label domain routing (e.g. `visa.bengaltravel.com`), dynamic branding tokens, dedicated agency staff RBAC (`agency_owner`, `agency_manager`, `agency_agent`, `agency_accountant`).
+   - **Tier 3 (End Applicants):** Direct retail or agency-sponsored applicants tracking cases and uploading documents in client dashboard / mobile app.
+2. **Zero Overdraft Prepaid Wallet:**
+   - Partner agencies maintain pre-funded balances in `agency_wallets` with database constraint `CHECK (balance >= 0)`.
+   - Gateways: Pay Station (bKash/Nagad/cards) and Stripe with cryptographic signature validation.
+3. **Atomic Case Fee Deduction Protocol:**
+   - Case submission executes within a database transaction using pessimistic locking:
+     `SELECT id, balance FROM agency_wallets WHERE tenant_id = $1 FOR UPDATE`
+   - Fee is deducted and an immutable double-entry record is inserted into `wallet_transactions` (`CREDIT`, `DEBIT`, `HOLD`, `RELEASE`, `REFUND`).
+4. **Immutable Financial Ledger:**
+   - Direct balance tampering is forbidden. All monetary changes require balancing ledger entries in `wallet_transactions`.
+
 ---
 
 ## Section 4: UI Design (`ADR-009`), Security & PII Guardrails
@@ -232,6 +248,22 @@ The database is PostgreSQL 16 managed via Prisma ORM (`@prisma/client@^5.22.0`).
    - **Layer 3 (Regex Fallback):** Scans and redacts unformatted passport numbers, email addresses, and phone numbers in unstructured text and stack traces.
 3. **Deep Links & Mobile URL Safety:** Never append raw applicant PII (emails, names, passport numbers) to deep-link query parameters. Deep links must route through `resolveAppDeepLink()` from `@visahobe/mobile` which automatically scrubs sensitive query keys.
 
+### 4.4 Super AI Agent Autonomy & Consular Review Gates (`ADR-011`)
+
+1. **3-Level Autonomy Matrix:**
+   - **Level 1 (Assisted Draft):** Complex filings, business migration, appeals. AI drafts forms; human staff inspects and approves before save.
+   - **Level 2 (Semi-Autonomous):** Standard applications. AI validates checklists and prepares payloads; halts at `in_review` for human verifier sign-off.
+   - **Level 3 (Autonomous Submission):** Standard electronic visas (Singapore SGAC, UAE e-Visa, Turkey e-Visa) with OCR/extraction confidence >= 0.95. Fully autonomous dispatch with audit log snapshot.
+2. **Mandatory Consular Review Gates:** Under no circumstances may AI autonomously execute live government portal payments, book consular interview slots, or sign statutory affidavits. These actions strictly require human authorization.
+3. **Dynamic Partner Connector Registry:** Standardized `IPartnerConnector` interface (`@visahobe/integrations` + `workers/partner-sync`) for delegating cases to verified overseas law firms and regional visa desks.
+4. **Daily Executive Digest:** Scheduled daily worker compiling case volume, autonomy ratios, low agency balances (< $500), and SLA alerts for the Super Admin Command Center.
+
+### 4.5 Scoped Model Context Protocol (MCP) Boundaries (`ADR-012`)
+
+1. **Admin MCP Server (`@visahobe/admin-mcp-server` / `apps/super-admin/mcp`):** Full operational control, strictly requires staff session + Authenticator Assurance Level 2 (AAL2 MFA) and mandatory audit logging of every tool invocation.
+2. **Partner MCP Server (`@visahobe/partner-mcp-server`):** Scoped strictly to calling partner agency's `tenant_id` via JWT claim + PostgreSQL 16 Kernel RLS (`SET LOCAL app.current_tenant_id = X`). Tools only access the agency's own cases, documents, wallet balance, and tasks.
+3. **B2C Applicant Shielding:** Retail applicants interact exclusively via the built-in AI concierge streaming chat; raw MCP endpoints are never exposed to public or client users.
+
 ---
 
 ## Section 5: Current Roadmap Progress & Strict Git/PR Workflow
@@ -247,7 +279,13 @@ The database is PostgreSQL 16 managed via Prisma ORM (`@prisma/client@^5.22.0`).
   - `TICKET-P1-004`: Client Dashboard Workspace & Document Vault (`apps/client-dashboard`) — **MERGED**
   - `TICKET-P1-005`: Android Mobile App Capacitor Packaging & Native Bridge (`apps/mobile`) — **MERGED**
 - **Phase 2 — Internal Operations & Case Management Command Center:**
-  - **NEXT ACTIVE MILESTONE:** Starting with `TICKET-P2-001` (Super Admin PWA & Core Operations Workspace in `apps/super-admin`).
+  - `TICKET-P2-001`: Super Admin PWA & Core Operations Workspace (`apps/super-admin`) — **MERGED**
+  - `TICKET-P2-002`: Staff MFA, Granular RBAC & Core Case Operations API (`services/api`, `apps/super-admin`) — **MERGED**
+  - `TICKET-P2-003`: Enterprise Architecture Blueprint Upgrade (3-Tier B2B2C, Prepaid Wallet, Dynamic Connectors, Scoped MCP) — **COMPLETED & VERIFIED (ACTIVE PR)**
+  - `TICKET-P2-004`: B2B Partner Agency Management, White-Label Domain Routing & Prepaid Wallet Engine — **NEXT ACTIVE MILESTONE**
+- **Phase 3 — Super AI Agent & Scoped MCP Server Infrastructure:**
+  - `TICKET-P3-001`: Super AI Agent Engine, Hybrid Autonomous Processor & Executive Digest Dispatcher — **PLANNED**
+  - `TICKET-P3-002`: Scoped Admin & Partner MCP Servers with Kernel RLS Enforcement — **PLANNED**
 
 ### 5.2 Strict Git & Pull Request Rules (Zero Self-Merge)
 
