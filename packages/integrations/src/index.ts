@@ -1,2 +1,4 @@
-﻿// Scaffolding placeholder
-export const moduleName = 'packages/integrations';
+﻿export * from './connectors/types.js';
+export * from './connectors/direct-ai-connector.js';
+export * from './connectors/external-partner-connector.js';
+export * from './registry/connector-registry.js';

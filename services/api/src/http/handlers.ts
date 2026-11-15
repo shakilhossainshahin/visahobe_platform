@@ -10,6 +10,24 @@ import { StorageAccessDeniedError } from '@visahobe/core';
 import { CaseNotFoundError, CaseService } from '../cases/case-service.js';
 import { DocumentNotFoundError, DocumentService } from '../documents/document-service.js';
 import { AuditService } from '../audit/audit-service.js';
+import {
+  WalletService,
+  InsufficientFundsError,
+  WalletNotFoundError,
+  InvalidSignatureError,
+  type TopUpWebhookPayload,
+} from '../wallet/wallet-service.js';
+import {
+  AgencyService,
+  AgencyNotFoundError,
+  AgencyConflictError,
+  type CreateAgencyInput,
+} from '../agencies/agency-service.js';
+import {
+  PartnerConnectorRegistry,
+  type IPartnerConnector,
+  type PartnerCaseSubmissionPayload,
+} from '@visahobe/integrations';
 import type { ApiResponse, AuthenticatedRequest, CaseStatus } from '../types.js';
 
 export interface HttpResponse {
@@ -210,6 +228,129 @@ export class OperationsApiHandler {
         };
       }
 
+      // Route: GET /api/v1/partners
+      if (method === 'GET' && pathname === '/api/v1/partners') {
+        const agencies = await AgencyService.listAgencies(session);
+        return {
+          status: 200,
+          body: { success: true, data: agencies },
+        };
+      }
+
+      // Route: POST /api/v1/partners
+      if (method === 'POST' && pathname === '/api/v1/partners') {
+        const result = await AgencyService.onboardAgency(session, req.body as CreateAgencyInput);
+        return {
+          status: 201,
+          body: { success: true, data: result },
+        };
+      }
+
+      // Route: GET /api/v1/partners/resolve-domain
+      if (method === 'GET' && pathname === '/api/v1/partners/resolve-domain') {
+        const host =
+          typeof req.query?.['host'] === 'string'
+            ? req.query['host']
+            : typeof req.headers['host'] === 'string'
+              ? req.headers['host']
+              : undefined;
+        const resolution = AgencyService.resolveTenantByHost(host);
+        return {
+          status: 200,
+          body: { success: true, data: resolution },
+        };
+      }
+
+      // Route: GET /api/v1/partners/:id
+      const partnerMatch = pathname.match(/^\/api\/v1\/partners\/([^/]+)$/);
+      if (method === 'GET' && partnerMatch && partnerMatch[1]) {
+        const agency = await AgencyService.getAgency(session, partnerMatch[1]);
+        return {
+          status: 200,
+          body: { success: true, data: agency },
+        };
+      }
+
+      // Route: GET /api/v1/wallet
+      if (method === 'GET' && pathname === '/api/v1/wallet') {
+        const tenantId =
+          typeof req.query?.['tenantId'] === 'string' ? req.query['tenantId'] : undefined;
+        const wallet = await WalletService.getWallet(session, tenantId);
+        return {
+          status: 200,
+          body: { success: true, data: wallet },
+        };
+      }
+
+      // Route: POST /api/v1/wallet/topup (Pay Station / Stripe Webhook)
+      if (method === 'POST' && pathname === '/api/v1/wallet/topup') {
+        const topUpResult = await WalletService.topUp(req.body as TopUpWebhookPayload);
+        return {
+          status: 200,
+          body: { success: true, data: topUpResult },
+        };
+      }
+
+      // Route: POST /api/v1/wallet/deduct
+      if (method === 'POST' && pathname === '/api/v1/wallet/deduct') {
+        const body = (req.body as Record<string, unknown>) || {};
+        const caseId = String(body['caseId'] || '');
+        const amount = Number(body['amount'] || 0);
+        const description =
+          typeof body['description'] === 'string' ? body['description'] : undefined;
+        const tenantId = typeof body['tenantId'] === 'string' ? body['tenantId'] : undefined;
+
+        const debitResult = await WalletService.deductCaseFee(
+          session,
+          caseId,
+          amount,
+          description,
+          tenantId,
+        );
+        return {
+          status: 200,
+          body: { success: true, data: debitResult },
+        };
+      }
+
+      // Route: GET /api/v1/wallet/transactions
+      if (method === 'GET' && pathname === '/api/v1/wallet/transactions') {
+        const tenantId =
+          typeof req.query?.['tenantId'] === 'string' ? req.query['tenantId'] : undefined;
+        const txs = await WalletService.listTransactions(session, tenantId);
+        return {
+          status: 200,
+          body: { success: true, data: txs },
+        };
+      }
+
+      // Route: GET /api/v1/connectors
+      if (method === 'GET' && pathname === '/api/v1/connectors') {
+        const registry = PartnerConnectorRegistry.getInstance();
+        const connectors = registry
+          .listConnectors()
+          .map((c: IPartnerConnector) => c.getMaskedConfig());
+        return {
+          status: 200,
+          body: { success: true, data: connectors },
+        };
+      }
+
+      // Route: POST /api/v1/fulfillment/dispatch
+      if (method === 'POST' && pathname === '/api/v1/fulfillment/dispatch') {
+        const body = (req.body as PartnerCaseSubmissionPayload) || {};
+        const registry = PartnerConnectorRegistry.getInstance();
+        const connector = registry.resolveConnectorForCase(body.countryCode, body.serviceType);
+        const dispatchResult = await connector.dispatchCase(body);
+        return {
+          status: 200,
+          body: {
+            success: true,
+            data: { connector: connector.getMaskedConfig(), result: dispatchResult },
+          },
+        };
+      }
+
       return {
         status: 404,
         body: {
@@ -258,9 +399,44 @@ export class OperationsApiHandler {
         };
       }
 
-      if (err instanceof CaseNotFoundError || err instanceof DocumentNotFoundError) {
+      if (
+        err instanceof CaseNotFoundError ||
+        err instanceof DocumentNotFoundError ||
+        err instanceof WalletNotFoundError ||
+        err instanceof AgencyNotFoundError
+      ) {
         return {
           status: 404,
+          body: {
+            success: false,
+            error: { code: err.code, message: err.message },
+          },
+        };
+      }
+
+      if (err instanceof InsufficientFundsError) {
+        return {
+          status: 402,
+          body: {
+            success: false,
+            error: { code: err.code, message: err.message },
+          },
+        };
+      }
+
+      if (err instanceof AgencyConflictError) {
+        return {
+          status: 409,
+          body: {
+            success: false,
+            error: { code: err.code, message: err.message },
+          },
+        };
+      }
+
+      if (err instanceof InvalidSignatureError) {
+        return {
+          status: 400,
           body: {
             success: false,
             error: { code: err.code, message: err.message },

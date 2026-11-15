@@ -13,6 +13,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const navLinks = [
     { label: 'Case Queue', href: '/' },
+    { label: 'Partner Agencies', href: '/partners' },
     { label: 'Document Audit', href: '/audit' },
     { label: 'CMS Editorial', href: '/cms' },
     { label: 'Audit Logs', href: '/logs' },
@@ -66,6 +67,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       title: 'Operations Surfaces',
       links: [
         { label: 'Operational Case Queue', href: '/' },
+        { label: 'Partner Agency Network', href: '/partners' },
         { label: 'Document Verification', href: '/audit' },
         { label: 'CMS Policy Review', href: '/cms' },
         { label: 'Immutable Audit Trail', href: '/logs' },

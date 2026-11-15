@@ -281,10 +281,10 @@ The database is PostgreSQL 16 managed via Prisma ORM (`@prisma/client@^5.22.0`).
 - **Phase 2 — Internal Operations & Case Management Command Center:**
   - `TICKET-P2-001`: Super Admin PWA & Core Operations Workspace (`apps/super-admin`) — **MERGED**
   - `TICKET-P2-002`: Staff MFA, Granular RBAC & Core Case Operations API (`services/api`, `apps/super-admin`) — **MERGED**
-  - `TICKET-P2-003`: Enterprise Architecture Blueprint Upgrade (3-Tier B2B2C, Prepaid Wallet, Dynamic Connectors, Scoped MCP) — **COMPLETED & VERIFIED (ACTIVE PR)**
-  - `TICKET-P2-004`: B2B Partner Agency Management, White-Label Domain Routing & Prepaid Wallet Engine — **NEXT ACTIVE MILESTONE**
+  - `TICKET-P2-003`: Enterprise Architecture Blueprint Upgrade (3-Tier B2B2C, Prepaid Wallet, Dynamic Connectors, Scoped MCP) — **MERGED**
+  - `TICKET-P2-004`: B2B Partner Agency Onboarding, White-Label Domain Routing, Prepaid Wallet Ledger & Connector Registry — **COMPLETED & VERIFIED (ACTIVE PR)**
 - **Phase 3 — Super AI Agent & Scoped MCP Server Infrastructure:**
-  - `TICKET-P3-001`: Super AI Agent Engine, Hybrid Autonomous Processor & Executive Digest Dispatcher — **PLANNED**
+  - `TICKET-P3-001`: Super AI Agent Engine, Hybrid Autonomous Processor & Executive Digest Dispatcher — **NEXT ACTIVE MILESTONE**
   - `TICKET-P3-002`: Scoped Admin & Partner MCP Servers with Kernel RLS Enforcement — **PLANNED**
 
 ### 5.2 Strict Git & Pull Request Rules (Zero Self-Merge)
