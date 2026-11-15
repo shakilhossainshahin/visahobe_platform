@@ -1,7 +1,8 @@
 import React, { forwardRef } from 'react';
 import { cn } from '../../utils/cn.js';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'glass' | 'outline' | 'ghost' | 'danger';
+export type ButtonVariant =
+  'primary' | 'secondary' | 'glass' | 'outline' | 'ghost' | 'danger' | 'luxury' | 'gold';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -26,6 +27,9 @@ const variantStyles: Record<ButtonVariant, string> = {
     'bg-transparent text-[#0D3B2E] hover:bg-[#F0F7F4] active:bg-[#E3EFEA] focus-visible:ring-[#0D3B2E]',
   danger:
     'bg-[#B91C1C] text-white hover:bg-[#991B1B] active:bg-[#7F1D1D] shadow-sm border border-[#B91C1C] focus-visible:ring-[#B91C1C]',
+  luxury:
+    'bg-[#0D3B2E] text-white border border-[#C8A951]/70 shadow-md hover:bg-[#092A21] hover:border-[#C8A951] active:bg-[#07211A] focus-visible:ring-[#C8A951]',
+  gold: 'bg-[#C8A951] text-[#111827] border border-[#B8963E] shadow-sm hover:bg-[#B8963E] active:bg-[#A38331] focus-visible:ring-[#0D3B2E] font-semibold',
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -103,3 +107,28 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 );
 
 Button.displayName = 'Button';
+
+export interface LuxuryButtonProps extends ButtonProps {
+  goldTrim?: boolean | undefined;
+}
+
+export const LuxuryButton = forwardRef<HTMLButtonElement, LuxuryButtonProps>(
+  ({ variant = 'luxury', goldTrim = true, className, children, ...rest }, ref) => {
+    return (
+      <Button
+        ref={ref}
+        variant={variant}
+        className={cn(
+          'tracking-tight transition-all duration-200 hover:-translate-y-[1px]',
+          goldTrim && 'ring-1 ring-[#C8A951]/40',
+          className,
+        )}
+        {...rest}
+      >
+        {children}
+      </Button>
+    );
+  },
+);
+
+LuxuryButton.displayName = 'LuxuryButton';

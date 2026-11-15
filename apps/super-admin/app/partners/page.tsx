@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Card, Button, Badge } from '@visahobe/ui';
+import React, { useState, useMemo } from 'react';
+import { Card, Button, LuxuryButton, Badge, EmeraldBadge, StatKpiCard } from '@visahobe/ui';
 
 interface PartnerAgencyView {
   id: string;
@@ -84,7 +84,7 @@ const INITIAL_AGENCIES: PartnerAgencyView[] = [
     primaryColor: '#092A21',
     balance: 350.0,
     currency: 'USD',
-    isLowBalance: true, // Low balance alert!
+    isLowBalance: true,
     supportedCountries: ['AE', 'SA', 'QA', 'OM'],
     contactEmail: 'support@gulfexpress.ae',
     totalCases: 215,
@@ -173,13 +173,31 @@ export default function PartnersManagementPage() {
   const [agencies, setAgencies] = useState<PartnerAgencyView[]>(INITIAL_AGENCIES);
   const [connectors] = useState<ConnectorView[]>(INITIAL_CONNECTORS);
   const [transactions, setTransactions] = useState<WalletTxView[]>(INITIAL_TRANSACTIONS);
+  const [agencySearch, setAgencySearch] = useState<string>('');
+  const [balanceFilter, setBalanceFilter] = useState<'all' | 'healthy' | 'low'>('all');
   const [selectedAgencyForTopUp, setSelectedAgencyForTopUp] = useState<PartnerAgencyView | null>(
     null,
   );
   const [topUpAmount, setTopUpAmount] = useState<number>(1000);
   const [feedback, setFeedback] = useState<string | null>(null);
 
-  // Quick Top-Up Action Simulation (ADR-010)
+  const filteredAgencies = useMemo(() => {
+    return agencies.filter((agency) => {
+      if (balanceFilter === 'low' && !agency.isLowBalance) return false;
+      if (balanceFilter === 'healthy' && agency.isLowBalance) return false;
+      if (agencySearch.trim()) {
+        const q = agencySearch.toLowerCase();
+        return (
+          agency.name.toLowerCase().includes(q) ||
+          agency.customDomain.toLowerCase().includes(q) ||
+          agency.subdomainSlug.toLowerCase().includes(q) ||
+          agency.supportedCountries.some((c) => c.toLowerCase().includes(q))
+        );
+      }
+      return true;
+    });
+  }, [agencies, agencySearch, balanceFilter]);
+
   const handleExecuteTopUp = () => {
     if (!selectedAgencyForTopUp) return;
 
@@ -221,14 +239,14 @@ export default function PartnersManagementPage() {
   const lowBalanceCount = agencies.filter((a) => a.isLowBalance).length;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-[#111827]">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-[#E2E8F0]">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-[#145342] uppercase tracking-wider">
+            <EmeraldBadge variant="brand" size="sm">
               B2B2C Multi-Tenant SaaS
-            </span>
+            </EmeraldBadge>
             <span className="text-xs text-[#94A3B8]">•</span>
             <span className="text-xs font-mono text-[#64748B]">ADR-010 &amp; ADR-011</span>
           </div>
@@ -242,7 +260,7 @@ export default function PartnersManagementPage() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Badge variant="brand" size="md">
+          <Badge variant="gold" size="md">
             <span>Tier 2 SaaS Desk Active</span>
           </Badge>
         </div>
@@ -263,46 +281,38 @@ export default function PartnersManagementPage() {
 
       {/* KPI Cards — Permitted Liquid Glass per ADR-009 */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-4 rounded-xl bg-white/70 backdrop-blur-md border border-[#E2E8F0] shadow-xs">
-          <span className="text-xs font-semibold text-[#64748B]">Total Partner Agencies</span>
-          <div className="text-2xl font-display font-bold text-[#0D3B2E] mt-1">
-            {agencies.length}
-          </div>
-          <span className="text-[11px] text-[#15803D] font-medium">100% Active Onboarded</span>
-        </div>
-
-        <div className="p-4 rounded-xl bg-white/70 backdrop-blur-md border border-[#E2E8F0] shadow-xs">
-          <span className="text-xs font-semibold text-[#64748B]">Pre-Funded Wallet Total</span>
-          <div className="text-2xl font-display font-bold text-[#0D3B2E] mt-1">
-            ${totalPreFundedBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-          </div>
-          <span className="text-[11px] text-[#64748B]">Settled &amp; Secured Balance</span>
-        </div>
-
-        <div className="p-4 rounded-xl bg-white/70 backdrop-blur-md border border-[#E2E8F0] shadow-xs">
-          <span className="text-xs font-semibold text-[#64748B]">Low Balance Warnings</span>
-          <div
-            className={`text-2xl font-display font-bold mt-1 ${
-              lowBalanceCount > 0 ? 'text-[#B45309]' : 'text-[#15803D]'
-            }`}
-          >
-            {lowBalanceCount} {lowBalanceCount > 0 ? 'Agency Alert' : 'None'}
-          </div>
-          <span className="text-[11px] text-[#64748B]">Threshold &lt; $500.00</span>
-        </div>
-
-        <div className="p-4 rounded-xl bg-white/70 backdrop-blur-md border border-[#E2E8F0] shadow-xs">
-          <span className="text-xs font-semibold text-[#64748B]">Fulfillment Connectors</span>
-          <div className="text-2xl font-display font-bold text-[#0D3B2E] mt-1">
-            {connectors.length} Active
-          </div>
-          <span className="text-[11px] text-[#145342]">1 Direct AI • 3 Partner Law Desks</span>
-        </div>
+        <StatKpiCard
+          label="Total Partner Agencies"
+          value={agencies.length}
+          subvalue="100% Active Onboarded"
+          trend={{ label: 'White-Label TLS', direction: 'up' }}
+        />
+        <StatKpiCard
+          label="Pre-Funded Wallet Total"
+          value={`$${totalPreFundedBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
+          subvalue="Settled & Secured Balance"
+          trend={{ label: 'Zero Overdraft', direction: 'up' }}
+        />
+        <StatKpiCard
+          label="Low Balance Warnings"
+          value={`${lowBalanceCount} ${lowBalanceCount > 0 ? 'Agency Alert' : 'None'}`}
+          subvalue="Threshold < $500.00"
+          trend={{
+            label: lowBalanceCount > 0 ? 'Action Required' : 'Healthy',
+            direction: lowBalanceCount > 0 ? 'down' : 'up',
+          }}
+        />
+        <StatKpiCard
+          label="Fulfillment Connectors"
+          value={`${connectors.length} Active`}
+          subvalue="1 Direct AI • 3 Partner Law Desks"
+          trend={{ label: '100% Operational', direction: 'up' }}
+        />
       </div>
 
       {/* Top-Up Simulation Modal */}
       {selectedAgencyForTopUp && (
-        <Card className="p-5 border border-[#86EFAC] bg-[#F0FDF4] space-y-4">
+        <Card className="p-5 border border-[#C8A951] bg-[#F0FDF4] space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="font-semibold text-sm text-[#0D3B2E]">
               Quick Wallet Top-Up: {selectedAgencyForTopUp.name}
@@ -333,23 +343,56 @@ export default function PartnersManagementPage() {
               />
             </div>
             <div className="pt-5">
-              <Button onClick={handleExecuteTopUp} variant="primary" size="sm">
+              <LuxuryButton onClick={handleExecuteTopUp} size="sm">
                 Confirm Credit Top-Up
-              </Button>
+              </LuxuryButton>
             </div>
           </div>
         </Card>
       )}
 
-      {/* Table 1: Partner Travel Agencies — SOLID WHITE PER ADR-009 */}
+      {/* Table 1: Partner Travel Agencies — SOLID WHITE PER ADR-009 + Interactive Search & Filter */}
       <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-base font-semibold text-[#0D3B2E]">
-            B2B Partner Travel Agencies Directory
-          </h2>
-          <span className="text-xs text-[#64748B]">
-            Showing {agencies.length} registered agencies
-          </span>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div>
+            <h2 className="text-base font-semibold text-[#0D3B2E]">
+              B2B Partner Travel Agencies Directory
+            </h2>
+            <span className="text-xs text-[#64748B]">
+              Showing {filteredAgencies.length} of {agencies.length} registered agencies
+            </span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            {(
+              [
+                { id: 'all', label: 'All Agencies' },
+                { id: 'healthy', label: 'Healthy Balance' },
+                { id: 'low', label: 'Low Balance Alert (< $500)' },
+              ] as const
+            ).map((f) => (
+              <button
+                key={f.id}
+                type="button"
+                onClick={() => setBalanceFilter(f.id)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  balanceFilter === f.id
+                    ? 'bg-[#0D3B2E] text-white border border-[#C8A951]/60'
+                    : 'bg-white border border-[#E2E8F0] text-[#64748B] hover:text-[#0D3B2E]'
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
+
+            <input
+              type="text"
+              placeholder="Search agency, custom domain, or country..."
+              value={agencySearch}
+              onChange={(e) => setAgencySearch(e.target.value)}
+              className="px-3 py-1.5 rounded-lg text-xs border border-[#E2E8F0] bg-white text-[#111827] placeholder-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#0D3B2E] w-full sm:w-64"
+            />
+          </div>
         </div>
 
         <div className="bg-white rounded-xl border border-[#E2E8F0] shadow-xs overflow-hidden">
@@ -367,9 +410,9 @@ export default function PartnersManagementPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#E2E8F0]">
-                {agencies.map((agency) => (
+                {filteredAgencies.map((agency) => (
                   <tr key={agency.id} className="hover:bg-[#F8FAFC] transition-colors">
-                    <td className="py-3.5 px-4 font-semibold text-[#0F172A]">
+                    <td className="py-3.5 px-4 font-semibold text-[#111827]">
                       <div className="flex items-center gap-2">
                         <span
                           className="w-2.5 h-2.5 rounded-full"
@@ -469,7 +512,7 @@ export default function PartnersManagementPage() {
                     <td className="py-3.5 px-4 font-mono font-bold text-[#0D3B2E]">
                       {c.partnerId}
                     </td>
-                    <td className="py-3.5 px-4 font-medium text-[#0F172A]">{c.partnerName}</td>
+                    <td className="py-3.5 px-4 font-medium text-[#111827]">{c.partnerName}</td>
                     <td className="py-3.5 px-4">
                       <span
                         className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
@@ -543,7 +586,7 @@ export default function PartnersManagementPage() {
                 {transactions.map((tx) => (
                   <tr key={tx.id} className="hover:bg-[#F8FAFC] transition-colors">
                     <td className="py-3 px-4 font-mono text-[#0D3B2E] font-semibold">{tx.id}</td>
-                    <td className="py-3 px-4 font-medium text-[#0F172A]">{tx.agencyName}</td>
+                    <td className="py-3 px-4 font-medium text-[#111827]">{tx.agencyName}</td>
                     <td className="py-3 px-4">
                       <span
                         className={`px-2 py-0.5 rounded text-[10px] font-bold ${

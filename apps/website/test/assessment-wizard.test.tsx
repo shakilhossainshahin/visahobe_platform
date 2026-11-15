@@ -21,6 +21,15 @@ describe('Assessment Wizard & Login Preview Components', () => {
       const html = renderToStaticMarkup(<AssessmentPage />);
       expect(html).toContain('AI Assessment Engine v2.0');
     });
+
+    it('should render real-time eligibility score estimator, transparent fee breakdown, and dynamic document checklist preview', () => {
+      const html = renderToStaticMarkup(<AssessmentPage />);
+      expect(html).toContain('Real-Time Eligibility &amp; Fee Estimator');
+      expect(html).toContain('Live Consular Score');
+      expect(html).toContain('Transparent Fee Breakdown');
+      expect(html).toContain('Dynamic Document Checklist Preview');
+      expect(html).toContain('Open Client Dashboard Document Vault →');
+    });
   });
 
   describe('LoginPage', () => {

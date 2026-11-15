@@ -2,7 +2,7 @@ import React, { forwardRef } from 'react';
 import { cn } from '../../utils/cn.js';
 
 export type BadgeVariant =
-  'brand' | 'success' | 'warning' | 'danger' | 'info' | 'neutral' | 'glass';
+  'brand' | 'success' | 'warning' | 'danger' | 'info' | 'neutral' | 'glass' | 'luxury' | 'gold';
 export type BadgeSize = 'sm' | 'md';
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
@@ -40,6 +40,14 @@ const badgeVariantStyles: Record<BadgeVariant, { base: string; dot: string }> = 
   glass: {
     base: 'backdrop-blur-md bg-white/80 text-[#0D3B2E] border border-white/60 shadow-sm',
     dot: 'bg-[#0D3B2E]',
+  },
+  luxury: {
+    base: 'bg-[#0D3B2E] text-white border border-[#C8A951]/60 shadow-xs',
+    dot: 'bg-[#C8A951]',
+  },
+  gold: {
+    base: 'bg-[#FDF8EB] text-[#785C12] border border-[#C8A951]/50',
+    dot: 'bg-[#C8A951]',
   },
 };
 
@@ -86,3 +94,25 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
 );
 
 Badge.displayName = 'Badge';
+
+export interface EmeraldBadgeProps extends BadgeProps {
+  goldAccent?: boolean | undefined;
+}
+
+export const EmeraldBadge = forwardRef<HTMLSpanElement, EmeraldBadgeProps>(
+  ({ variant = 'brand', goldAccent = true, dot = true, className, children, ...rest }, ref) => {
+    return (
+      <Badge
+        ref={ref}
+        variant={variant}
+        dot={dot}
+        className={cn(goldAccent && 'border-[#C8A951]/45', className)}
+        {...rest}
+      >
+        {children}
+      </Badge>
+    );
+  },
+);
+
+EmeraldBadge.displayName = 'EmeraldBadge';

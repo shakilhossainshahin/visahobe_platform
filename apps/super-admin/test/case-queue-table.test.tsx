@@ -61,4 +61,12 @@ describe('Case Operations Command Center & ADR-009 Queue (TICKET-P2-001)', () =>
     expect(html).toContain('Michael Chen');
     expect(html).toContain('Review File');
   });
+
+  it('renders interactive SLA priority filter and crisp #0D3B2E table header', () => {
+    const html = renderToStaticMarkup(<SuperAdminDashboardPage />);
+
+    expect(html).toContain('All SLA Priorities');
+    expect(html).toContain('Urgent SLA Only');
+    expect(html).toContain('bg-[#0D3B2E] text-white');
+  });
 });

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Card, Button, Badge } from '@visahobe/ui';
+import { Card, Button, Badge, EmeraldBadge, StatKpiCard } from '@visahobe/ui';
 
 interface DocumentAuditTarget {
   documentId: string;
@@ -89,9 +89,9 @@ export default function DocumentAuditPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-[#111827]">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-[#E2E8F0]">
         <div>
           <div className="flex items-center gap-2">
             <a href="/" className="text-xs font-semibold text-[#0D3B2E] hover:underline">
@@ -110,6 +110,9 @@ export default function DocumentAuditPage() {
         </div>
 
         <div className="flex items-center gap-2">
+          <EmeraldBadge variant="gold" size="sm" dot={false}>
+            ICAO 9303 MRZ Verified
+          </EmeraldBadge>
           <Badge
             variant={
               docState.status === 'verified'
@@ -127,6 +130,27 @@ export default function DocumentAuditPage() {
                 : 'Status: Pending Audit'}
           </Badge>
         </div>
+      </div>
+
+      {/* Liquid Glass KPI Summary Strip */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <StatKpiCard
+          label="OCR Confidence Score"
+          value="98.2%"
+          subvalue="5 of 5 statutory fields matched"
+          trend={{ label: 'High Assurance', direction: 'up' }}
+        />
+        <StatKpiCard
+          label="EXIF & Metadata Scrubbing"
+          value="100% Sanitized"
+          subvalue="Zero local path or GPS leakage"
+          trend={{ label: '@visahobe/core', direction: 'neutral' }}
+        />
+        <StatKpiCard
+          label="Consular Gate Status"
+          value={docState.status === 'verified' ? 'Signed Off' : 'Awaiting Seal'}
+          subvalue="Requires Human Counsel Approval"
+        />
       </div>
 
       {feedbackMessage && (
@@ -148,13 +172,17 @@ export default function DocumentAuditPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column: Document File Preview Container (Solid White per ADR-009) */}
         <div className="lg:col-span-6 space-y-4">
-          <Card className="p-6 bg-white border border-[#E2E8F0] shadow-xs">
+          <Card
+            variant="luxury"
+            goldDivider
+            className="p-6 bg-white border border-[#E2E8F0] shadow-xs"
+          >
             <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-3">
               <div>
                 <span className="text-xs font-semibold text-[#64748B] uppercase tracking-wider block">
                   Original Client Document
                 </span>
-                <span className="text-sm font-bold text-[#0F172A]">{docState.fileName}</span>
+                <span className="text-sm font-bold text-[#111827]">{docState.fileName}</span>
               </div>
               <Badge variant="neutral" size="sm">
                 PDF Document
@@ -163,10 +191,10 @@ export default function DocumentAuditPage() {
 
             {/* Document Render Canvas */}
             <div className="mt-4 p-8 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl flex flex-col items-center justify-center min-h-[360px] text-center">
-              <div className="w-16 h-16 rounded-2xl bg-[#0D3B2E]/10 flex items-center justify-center text-[#0D3B2E] text-2xl font-bold mb-4">
-                📄
+              <div className="w-16 h-16 rounded-2xl bg-[#0D3B2E] border border-[#C8A951]/60 flex items-center justify-center text-[#C8A951] text-lg font-bold mb-4">
+                PDF
               </div>
-              <h3 className="font-bold text-sm text-[#0F172A]">
+              <h3 className="font-bold text-sm text-[#111827]">
                 Biometric Passport Scan Certified
               </h3>
               <p className="text-xs text-[#64748B] max-w-sm mt-1">
@@ -185,9 +213,9 @@ export default function DocumentAuditPage() {
 
         {/* Right Column: Extracted OCR Diff & Verifier Action Controls */}
         <div className="lg:col-span-6 space-y-6">
-          {/* Extracted Metadata Comparison Table */}
+          {/* Extracted Metadata Comparison Table (Crisp #0D3B2E Header per ADR-009) */}
           <div className="bg-white border border-[#E2E8F0] rounded-xl shadow-xs overflow-hidden">
-            <div className="p-4 border-b border-[#E2E8F0] bg-[#F8FAFC]">
+            <div className="p-4 border-b border-[#E2E8F0] bg-white">
               <h2 className="text-sm font-bold text-[#0D3B2E]">
                 Extracted OCR Fields &amp; Verification Checks
               </h2>
@@ -198,16 +226,16 @@ export default function DocumentAuditPage() {
 
             <table className="w-full text-left text-xs" data-testid="ocr-diff-table">
               <thead>
-                <tr className="border-b border-[#E2E8F0] bg-[#F8FAFC] text-[11px] font-bold text-[#475569]">
-                  <th className="py-2.5 px-4">Field</th>
-                  <th className="py-2.5 px-4">Extracted Value</th>
-                  <th className="py-2.5 px-4">Match</th>
+                <tr className="bg-[#0D3B2E] text-white text-[11px] font-bold uppercase tracking-wider">
+                  <th className="py-3 px-4">Field</th>
+                  <th className="py-3 px-4">Extracted Value</th>
+                  <th className="py-3 px-4">Match</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E2E8F0]">
+              <tbody className="divide-y divide-[#E2E8F0] bg-white">
                 {docState.ocrData.map((row) => (
                   <tr key={row.field} className="hover:bg-[#F8FAFC]">
-                    <td className="py-3 px-4 font-semibold text-[#1E293B]">{row.field}</td>
+                    <td className="py-3 px-4 font-semibold text-[#111827]">{row.field}</td>
                     <td className="py-3 px-4 font-mono text-[#0D3B2E]">{row.extractedValue}</td>
                     <td className="py-3 px-4">
                       {row.match ? (
@@ -227,7 +255,11 @@ export default function DocumentAuditPage() {
           </div>
 
           {/* Verifier Sign-off & Decision Actions */}
-          <Card className="p-6 bg-white border border-[#E2E8F0] shadow-xs space-y-4">
+          <Card
+            variant="luxury"
+            goldDivider
+            className="p-6 bg-white border border-[#E2E8F0] shadow-xs space-y-4"
+          >
             <h3 className="text-sm font-bold text-[#0D3B2E]">Verifier Decision &amp; Audit Seal</h3>
             <p className="text-xs text-[#64748B]">
               Approving seals this document with the verifier&apos;s cryptographic signature and
@@ -254,7 +286,7 @@ export default function DocumentAuditPage() {
                 <select
                   value={selectedReason}
                   onChange={(e) => setSelectedReason(e.target.value)}
-                  className="flex-1 px-3 py-1.5 rounded-lg text-xs border border-[#E2E8F0] bg-white text-[#0F172A]"
+                  className="flex-1 px-3 py-1.5 rounded-lg text-xs border border-[#E2E8F0] bg-white text-[#111827]"
                 >
                   <option value="poor_resolution">Unreadable scan / poor resolution</option>
                   <option value="corners_truncated">Document corners or borders cropped</option>

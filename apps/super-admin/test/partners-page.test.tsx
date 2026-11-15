@@ -63,4 +63,13 @@ describe('Super Admin Partner & Wallet Management UI (ADR-009, ADR-010, ADR-011)
     expect(html).toContain('bg-white rounded-xl border border-[#E2E8F0]');
     expect(html).toContain('bg-[#0D3B2E] text-white font-semibold');
   });
+
+  it('renders interactive balance status filter controls and live search input', () => {
+    const html = renderToStaticMarkup(<PartnersManagementPage />);
+
+    expect(html).toContain('All Agencies');
+    expect(html).toContain('Healthy Balance');
+    expect(html).toContain('Low Balance Alert (&lt; $500)');
+    expect(html).toContain('Search agency, custom domain, or country...');
+  });
 });

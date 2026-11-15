@@ -11,7 +11,10 @@ import {
   CardContent,
   GlassCard,
   Badge,
+  EmeraldBadge,
   Button,
+  LuxuryButton,
+  DataTableShell,
 } from '@visahobe/ui';
 import {
   getCountryGuideBySlug,
@@ -69,7 +72,7 @@ export default async function CountryGuideDetailPage({ params }: PageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div className="min-h-screen bg-[#F8FAFC] text-[#111827]">
       {/* Breadcrumb Header */}
       <div className="bg-white border-b border-[#E2E8F0] py-3 text-xs text-[#64748B]">
         <Container size="2xl">
@@ -96,10 +99,10 @@ export default async function CountryGuideDetailPage({ params }: PageProps) {
                 <span className="text-4xl" role="img" aria-label={guide.countryName}>
                   {guide.flagEmoji}
                 </span>
-                <Badge variant="brand" size="md">
+                <EmeraldBadge variant="brand" size="md">
                   {guide.region}
-                </Badge>
-                <Badge variant="neutral" size="sm">
+                </EmeraldBadge>
+                <Badge variant="gold" size="sm">
                   Verified Policy: {guide.lastVerifiedAt}
                 </Badge>
               </div>
@@ -129,7 +132,8 @@ export default async function CountryGuideDetailPage({ params }: PageProps) {
 
             {/* Quick Action Card */}
             <GlassCard
-              intensity="elevated"
+              intensity="luxury"
+              goldAccent
               className="w-full lg:w-80 shrink-0 p-6 flex flex-col gap-4 bg-white/90"
             >
               <div className="flex flex-col gap-1">
@@ -159,9 +163,9 @@ export default async function CountryGuideDetailPage({ params }: PageProps) {
                 href={`/assess?country=${encodeURIComponent(guide.countryName)}`}
                 className="w-full block"
               >
-                <Button variant="primary" size="md" className="w-full">
+                <LuxuryButton size="md" className="w-full">
                   Assess My Eligibility
-                </Button>
+                </LuxuryButton>
               </a>
             </GlassCard>
           </div>
@@ -172,21 +176,21 @@ export default async function CountryGuideDetailPage({ params }: PageProps) {
       <Section variant="default" padding="sm" className="border-b border-[#E2E8F0] bg-white">
         <Container size="2xl">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-4">
-            <div className="flex flex-col gap-1 p-3 rounded-xl bg-[#F8FAFC]">
+            <div className="flex flex-col gap-1 p-3.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]">
               <span className="text-xs text-[#64748B] font-medium">Processing Benchmark</span>
               <span className="text-sm font-bold text-[#0D3B2E]">{guide.processingTimeRange}</span>
             </div>
-            <div className="flex flex-col gap-1 p-3 rounded-xl bg-[#F8FAFC]">
+            <div className="flex flex-col gap-1 p-3.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]">
               <span className="text-xs text-[#64748B] font-medium">Capital & Currency</span>
               <span className="text-sm font-bold text-[#0D3B2E]">
                 {guide.capital} ({guide.currency})
               </span>
             </div>
-            <div className="flex flex-col gap-1 p-3 rounded-xl bg-[#F8FAFC]">
+            <div className="flex flex-col gap-1 p-3.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]">
               <span className="text-xs text-[#64748B] font-medium">Official Languages</span>
               <span className="text-sm font-bold text-[#0D3B2E]">{guide.officialLanguage}</span>
             </div>
-            <div className="flex flex-col gap-1 p-3 rounded-xl bg-[#F8FAFC]">
+            <div className="flex flex-col gap-1 p-3.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]">
               <span className="text-xs text-[#64748B] font-medium">Policy Verification</span>
               <span className="text-sm font-bold text-[#0D3B2E]">Active (Nov 2026)</span>
             </div>
@@ -199,9 +203,9 @@ export default async function CountryGuideDetailPage({ params }: PageProps) {
         {/* Visa Streams */}
         <section id="visa-streams" className="flex flex-col gap-6">
           <div className="flex flex-col gap-1">
-            <Badge variant="brand" size="sm" className="w-fit">
+            <EmeraldBadge variant="brand" size="sm" className="w-fit">
               Available Pathways
-            </Badge>
+            </EmeraldBadge>
             <h2 className="text-2xl sm:text-3xl font-display font-bold text-[#0D3B2E]">
               Key Visa Streams & Qualification Criteria
             </h2>
@@ -213,16 +217,21 @@ export default async function CountryGuideDetailPage({ params }: PageProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {guide.visaStreams.map((stream) => (
-              <Card key={stream.id} className="flex flex-col justify-between bg-white shadow-xs">
+              <Card
+                key={stream.id}
+                variant="luxury"
+                goldDivider
+                className="flex flex-col justify-between bg-white shadow-xs"
+              >
                 <CardHeader>
                   <div className="flex items-center justify-between mb-2">
                     <Badge variant="neutral" size="sm">
                       {stream.category}
                     </Badge>
                     {stream.highlightTag && (
-                      <Badge variant="brand" size="sm">
+                      <EmeraldBadge variant="brand" size="sm" dot={false}>
                         {stream.highlightTag}
-                      </Badge>
+                      </EmeraldBadge>
                     )}
                   </div>
                   <CardTitle className="text-lg font-bold text-[#0D3B2E]">{stream.name}</CardTitle>
@@ -235,13 +244,13 @@ export default async function CountryGuideDetailPage({ params }: PageProps) {
                   <div className="grid grid-cols-2 gap-3 p-3 rounded-lg bg-[#F8FAFC]">
                     <div>
                       <span className="text-[#64748B] block text-[11px]">Processing Time</span>
-                      <span className="font-semibold text-[#0F172A]">{stream.processingTime}</span>
+                      <span className="font-semibold text-[#111827]">{stream.processingTime}</span>
                     </div>
                     <div>
                       <span className="text-[#64748B] block text-[11px]">
                         Minimum Funds / Salary
                       </span>
-                      <span className="font-semibold text-[#0F172A]">{stream.minimumFunds}</span>
+                      <span className="font-semibold text-[#111827]">{stream.minimumFunds}</span>
                     </div>
                   </div>
 
@@ -294,9 +303,9 @@ export default async function CountryGuideDetailPage({ params }: PageProps) {
         {/* Document Checklist */}
         <section id="documents" className="flex flex-col gap-6">
           <div className="flex flex-col gap-1">
-            <Badge variant="brand" size="sm" className="w-fit">
+            <EmeraldBadge variant="brand" size="sm" className="w-fit">
               Dossier Readiness
-            </Badge>
+            </EmeraldBadge>
             <h2 className="text-2xl sm:text-3xl font-display font-bold text-[#0D3B2E]">
               Required Document Checklist
             </h2>
@@ -333,7 +342,7 @@ export default async function CountryGuideDetailPage({ params }: PageProps) {
 
                 {doc.tips && (
                   <div className="pt-2 border-t border-[#F1F5F9] text-[11px] text-[#0D3B2E] font-medium bg-[#E3EFEA]/40 p-2 rounded-lg">
-                    💡 Tip: {doc.tips}
+                    Tip: {doc.tips}
                   </div>
                 )}
               </div>
@@ -341,12 +350,12 @@ export default async function CountryGuideDetailPage({ params }: PageProps) {
           </div>
         </section>
 
-        {/* Official Fee Summary */}
+        {/* Official Fee Summary (Crisp Solid Table with #0D3B2E Header per ADR-009) */}
         <section id="fees" className="flex flex-col gap-6">
           <div className="flex flex-col gap-1">
-            <Badge variant="brand" size="sm" className="w-fit">
+            <EmeraldBadge variant="brand" size="sm" className="w-fit">
               Financial Transparency
-            </Badge>
+            </EmeraldBadge>
             <h2 className="text-2xl sm:text-3xl font-display font-bold text-[#0D3B2E]">
               Official Government Fee Summary
             </h2>
@@ -355,25 +364,25 @@ export default async function CountryGuideDetailPage({ params }: PageProps) {
             </p>
           </div>
 
-          <div className="overflow-x-auto rounded-2xl border border-[#E2E8F0] bg-white shadow-xs">
+          <DataTableShell goldAccentBar>
             <table className="w-full text-left text-xs">
-              <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0] text-[#64748B] uppercase font-bold tracking-wider">
+              <thead className="bg-[#0D3B2E] text-white uppercase font-bold tracking-wider">
                 <tr>
-                  <th className="py-3 px-4">Visa Program</th>
-                  <th className="py-3 px-4">Government Lodging Fee</th>
-                  <th className="py-3 px-4">Healthcare / Surcharge</th>
-                  <th className="py-3 px-4">Official Notes</th>
+                  <th className="py-3.5 px-4">Visa Program</th>
+                  <th className="py-3.5 px-4">Government Lodging Fee</th>
+                  <th className="py-3.5 px-4">Healthcare / Surcharge</th>
+                  <th className="py-3.5 px-4">Official Notes</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#F1F5F9] text-[#334155]">
+              <tbody className="divide-y divide-[#F1F5F9] text-[#111827] bg-white">
                 {guide.officialFeeSummary.map((fee, idx) => (
-                  <tr key={idx} className="hover:bg-[#F8FAFC]/50">
+                  <tr key={idx} className="hover:bg-[#F8FAFC]">
                     <td className="py-3.5 px-4 font-semibold text-[#0D3B2E]">{fee.streamName}</td>
-                    <td className="py-3.5 px-4 font-medium">{fee.governmentFee}</td>
-                    <td className="py-3.5 px-4 text-[#64748B]">
+                    <td className="py-3.5 px-4 font-mono font-semibold">{fee.governmentFee}</td>
+                    <td className="py-3.5 px-4 text-[#475569]">
                       {fee.healthcareSurcharge || 'None / Not Applicable'}
                     </td>
-                    <td className="py-3.5 px-4 text-[#64748B] max-w-xs">
+                    <td className="py-3.5 px-4 text-[#475569] max-w-xs">
                       {fee.notes ||
                         'Payable directly to official consular authority upon lodgement.'}
                     </td>
@@ -381,11 +390,11 @@ export default async function CountryGuideDetailPage({ params }: PageProps) {
                 ))}
               </tbody>
             </table>
-          </div>
+          </DataTableShell>
         </section>
 
         {/* Official Disclaimer */}
-        <div className="p-6 rounded-2xl bg-[#F1F5F9] border border-[#CBD5E1] text-xs text-[#475569] leading-relaxed flex flex-col gap-2">
+        <div className="p-6 rounded-2xl bg-white border border-[#CBD5E1] text-xs text-[#475569] leading-relaxed flex flex-col gap-2">
           <span className="font-bold text-[#0D3B2E] uppercase tracking-wider text-[11px]">
             Official Consular & Legal Disclaimer
           </span>
@@ -401,7 +410,8 @@ export default async function CountryGuideDetailPage({ params }: PageProps) {
 
         {/* Bottom CTA Banner */}
         <GlassCard
-          intensity="elevated"
+          intensity="luxury"
+          goldAccent
           className="p-8 sm:p-12 text-center flex flex-col items-center gap-6 bg-white/95"
         >
           <div className="max-w-xl flex flex-col gap-2">
@@ -416,9 +426,7 @@ export default async function CountryGuideDetailPage({ params }: PageProps) {
 
           <div className="flex flex-col sm:flex-row items-center gap-4">
             <a href={`/assess?country=${encodeURIComponent(guide.countryName)}`}>
-              <Button variant="primary" size="md">
-                Start Free Assessment for {guide.countryName}
-              </Button>
+              <LuxuryButton size="md">Start Free Assessment for {guide.countryName}</LuxuryButton>
             </a>
             <a href="/countries">
               <Button variant="outline" size="md">
