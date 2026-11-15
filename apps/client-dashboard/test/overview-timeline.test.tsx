@@ -40,4 +40,12 @@ describe('Client Dashboard Overview & Milestone Tracker', () => {
     expect(html).toContain('Automated OCR Check Passed');
     expect(html).toContain('COMPASS Benchmark Calculation');
   });
+
+  it('renders interactive Role/Mode switcher (B2C Applicant Mode vs B2B Partner Agency Workspace) and Built-in AI Concierge drawer', () => {
+    const html = renderToStaticMarkup(<ClientDashboardOverviewPage />);
+    expect(html).toContain('B2C Applicant Mode');
+    expect(html).toContain('B2B Partner Agency Workspace');
+    expect(html).toContain('Built-in AI Visa Concierge Drawer');
+    expect(html).toContain('Scoped Case Context • ADR-012 Shielded');
+  });
 });

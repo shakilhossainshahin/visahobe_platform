@@ -51,4 +51,13 @@ describe('Website Landing Page (HomePage)', () => {
     expect(html).toContain('Defense-in-Depth PII Redaction');
     expect(html).toContain('Strict PostgreSQL Row-Level Security on all database tables');
   });
+
+  it('should render flagship luxury KPI trust metrics and transparent tariff schedule', () => {
+    const html = renderToStaticMarkup(<HomePage />);
+    expect(html).toContain('Consular Approval Rate');
+    expect(html).toContain('99.2%');
+    expect(html).toContain('Instant Consular Pathway &amp; Tariff Preview');
+    expect(html).toContain('99.4% Approved');
+    expect(html).toContain('$290 Service + S$360 MOM Fee');
+  });
 });

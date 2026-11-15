@@ -220,6 +220,19 @@ The database is PostgreSQL 16 managed via Prisma ORM (`@prisma/client@^5.22.0`).
 | **Surface Muted** | `#F8FAFC`       | Soft Off-White          | Page canvas background, secondary sidebars, zebra striping                                    |
 | **Border Subtle** | `#E2E8F0`       | Hairline Slate          | 1px borders on solid data tables, cards, inputs                                               |
 | **Status Tokens** | Green/Amber/Red | Semantic Feedback       | `#15803D` (Verified/Success), `#B45309` (Pending/Warning), `#B91C1C` (Action Required/Danger) |
+| **Luxury Accent** | `#C8A951`       | Champagne Gold          | Executive dividers, flagship status badges, premium step indicators, and subtle border glints |
+| **Charcoal Ink**  | `#111827`       | Deep Charcoal Primary   | High-contrast editorial typography, legal copy, and primary data table text                   |
+
+### 4.1.1 Flagship Luxury & Liquid Glass UI/UX Design Standard (`TICKET-P2-006`)
+
+1. **Signature Luxury Palette:**
+   - Crisp pure white canvas (`#FFFFFF`) paired with **Deep Emerald (`#0D3B2E`)**, **Champagne Gold (`#C8A951`)**, and **Charcoal Ink (`#111827`)**.
+2. **Strict `ADR-009` Contrast & Surface Partitioning:**
+   - **Liquid Glass Surfaces (`backdrop-blur-md`):** Translucent white surfaces (`bg-white/80` to `bg-white/90`) with subtle emerald/gold borders (`border-[#C8A951]/30` or `border-[#0D3B2E]/15`) and soft ambient elevation are strictly reserved for hero overlays, KPI summary cards (`StatKpiCard`), top navigation bars (`NavbarShell`), and floating modals/drawers.
+   - **Crisp Solid Operational Surfaces (`#FFFFFF`):** Dense operational data tables (`DataTableShell`), multi-step intake forms, OCR diff tables, and legal document checklists must remain crisp solid `#FFFFFF` with `#0D3B2E` table headers and `#111827` ink for 100% WCAG AAA readability and zero text distortion.
+3. **Editorial Typography & Interactive Excellence:**
+   - Editorial typography hierarchy (`Plus Jakarta Sans` display headings, `Inter` UI body, `JetBrains Mono` reference IDs and financial figures), generous breathing room, and mobile-first responsive layouts.
+   - Rich client-side interactivity across all customer and admin surfaces: live search and status filter controls, real-time eligibility and fee calculators, interactive B2C/B2B mode switchers, interactive drawers/modals, and zero dead/static buttons.
 
 ### 4.2 The ADR-009 High-Contrast Solid Table Rule (CRITICAL)
 
@@ -283,7 +296,8 @@ The database is PostgreSQL 16 managed via Prisma ORM (`@prisma/client@^5.22.0`).
   - `TICKET-P2-002`: Staff MFA, Granular RBAC & Core Case Operations API (`services/api`, `apps/super-admin`) — **MERGED**
   - `TICKET-P2-003`: Enterprise Architecture Blueprint Upgrade (3-Tier B2B2C, Prepaid Wallet, Dynamic Connectors, Scoped MCP) — **MERGED**
   - `TICKET-P2-004`: B2B Partner Agency Onboarding, White-Label Domain Routing, Prepaid Wallet Ledger & Connector Registry — **MERGED**
-  - `TICKET-P2-005`: Vercel Monorepo Deployment Config for 3 Next.js Apps (`apps/website`, `apps/client-dashboard`, `apps/super-admin`) — **COMPLETED & VERIFIED (ACTIVE PR)**
+  - `TICKET-P2-005`: Vercel Monorepo Deployment Config for 3 Next.js Apps (`apps/website`, `apps/client-dashboard`, `apps/super-admin`) — **MERGED**
+  - `TICKET-P2-006`: Flagship Luxury & Liquid Glass UI/UX Overhaul + Interactive Frontend Experience (`@visahobe/ui`, `apps/website`, `apps/client-dashboard`, `apps/super-admin`) — **COMPLETED & VERIFIED (ACTIVE PR)**
 - **Phase 3 — Super AI Agent & Scoped MCP Server Infrastructure:**
   - `TICKET-P3-001`: Super AI Agent Engine, Hybrid Autonomous Processor & Executive Digest Dispatcher — **NEXT ACTIVE MILESTONE**
   - `TICKET-P3-002`: Scoped Admin & Partner MCP Servers with Kernel RLS Enforcement — **PLANNED**

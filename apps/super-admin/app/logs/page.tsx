@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Card, Badge } from '@visahobe/ui';
+import { Badge, EmeraldBadge, StatKpiCard } from '@visahobe/ui';
 
 interface AuditLogEntry {
   id: string;
@@ -81,16 +81,26 @@ const MOCK_AUDIT_LOGS: AuditLogEntry[] = [
 
 export default function AuditLogsPage() {
   const [filterAction, setFilterAction] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   const filteredLogs = MOCK_AUDIT_LOGS.filter((log) => {
-    if (filterAction === 'all') return true;
-    return log.action.startsWith(filterAction);
+    if (filterAction !== 'all' && !log.action.startsWith(filterAction)) return false;
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      return (
+        log.action.toLowerCase().includes(q) ||
+        log.actorId.toLowerCase().includes(q) ||
+        log.entityId.toLowerCase().includes(q) ||
+        log.details.toLowerCase().includes(q)
+      );
+    }
+    return true;
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-[#111827]">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-[#E2E8F0]">
         <div>
           <h1 className="text-2xl font-display font-bold text-[#0D3B2E]">
             Immutable System Audit Trail
@@ -101,55 +111,68 @@ export default function AuditLogsPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Badge variant="brand" size="sm">
+          <EmeraldBadge variant="brand" size="sm">
             ISO 27001 / SOC 2 Type II
-          </Badge>
+          </EmeraldBadge>
         </div>
       </div>
 
-      {/* Audit Stats Banner */}
+      {/* Liquid Glass KPI Audit Stats Banner */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card className="p-4 bg-white border border-[#E2E8F0] shadow-xs">
-          <span className="text-xs font-semibold text-[#64748B] block">Total Logged Events</span>
-          <span className="text-2xl font-bold text-[#0D3B2E] mt-1 block">1,842</span>
-          <span className="text-[11px] text-[#94A3B8]">Cryptographically signed</span>
-        </Card>
-        <Card className="p-4 bg-white border border-[#E2E8F0] shadow-xs">
-          <span className="text-xs font-semibold text-[#64748B] block">MFA Verified Sessions</span>
-          <span className="text-2xl font-bold text-[#15803D] mt-1 block">100%</span>
-          <span className="text-[11px] text-[#94A3B8]">Staff AAL2 policy enforced</span>
-        </Card>
-        <Card className="p-4 bg-white border border-[#E2E8F0] shadow-xs">
-          <span className="text-xs font-semibold text-[#64748B] block">Raw PII Leakage Scan</span>
-          <span className="text-2xl font-bold text-[#0D3B2E] mt-1 block">0 Detected</span>
-          <span className="text-[11px] text-[#94A3B8]">Scrubbed via @visahobe/core</span>
-        </Card>
+        <StatKpiCard
+          label="Total Logged Events"
+          value="1,842"
+          subvalue="Cryptographically signed"
+        />
+        <StatKpiCard
+          label="MFA Verified Sessions"
+          value="100%"
+          subvalue="Staff AAL2 policy enforced"
+          trend={{ label: 'Verified', direction: 'up' }}
+        />
+        <StatKpiCard
+          label="Raw PII Leakage Scan"
+          value="0 Detected"
+          subvalue="Scrubbed via @visahobe/core"
+          trend={{ label: 'Zero Leaks', direction: 'up' }}
+        />
       </div>
 
-      {/* Action Filters */}
-      <div className="flex items-center gap-2">
-        {[
-          { id: 'all', label: 'All Actions' },
-          { id: 'document', label: 'Document Events' },
-          { id: 'case', label: 'Case Transitions' },
-          { id: 'cms', label: 'CMS Edits' },
-          { id: 'sla', label: 'SLA Alerts' },
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setFilterAction(tab.id)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-              filterAction === tab.id
-                ? 'bg-[#0D3B2E] text-white shadow-xs'
-                : 'bg-white border border-[#E2E8F0] text-[#64748B] hover:text-[#0D3B2E] hover:bg-[#F8FAFC]'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
+      {/* Action Filters & Live Search */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-2">
+          {[
+            { id: 'all', label: 'All Actions' },
+            { id: 'document', label: 'Document Events' },
+            { id: 'case', label: 'Case Transitions' },
+            { id: 'cms', label: 'CMS Edits' },
+            { id: 'sla', label: 'SLA Alerts' },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setFilterAction(tab.id)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+                filterAction === tab.id
+                  ? 'bg-[#0D3B2E] text-white border border-[#C8A951]/60 shadow-xs'
+                  : 'bg-white border border-[#E2E8F0] text-[#64748B] hover:text-[#0D3B2E] hover:bg-[#F8FAFC]'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <input
+          type="text"
+          placeholder="Filter audit events by actor, entity, or action..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="px-3 py-1.5 rounded-lg text-xs border border-[#E2E8F0] bg-white text-[#111827] placeholder-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#0D3B2E] w-full sm:w-64"
+        />
       </div>
 
-      {/* Strict ADR-009 Compliant Solid White Table (Zero Blur on Data Tables) */}
+      {/* Strict ADR-009 Compliant Solid White Table (Zero Blur on Data Tables, Crisp #0D3B2E Header) */}
       <div className="bg-white border border-[#E2E8F0] rounded-xl shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table
@@ -157,16 +180,16 @@ export default function AuditLogsPage() {
             data-testid="audit-logs-table"
           >
             <thead>
-              <tr className="border-b border-[#E2E8F0] bg-[#F8FAFC] text-[11px] font-bold text-[#475569] uppercase tracking-wider">
-                <th className="py-3 px-4">Timestamp (UTC)</th>
-                <th className="py-3 px-4">Actor &amp; Role</th>
-                <th className="py-3 px-4">Action</th>
-                <th className="py-3 px-4">Entity</th>
-                <th className="py-3 px-4">Details &amp; Masked Diffs</th>
-                <th className="py-3 px-4 text-right">IP Origin</th>
+              <tr className="bg-[#0D3B2E] text-white text-[11px] font-bold uppercase tracking-wider">
+                <th className="py-3.5 px-4">Timestamp (UTC)</th>
+                <th className="py-3.5 px-4">Actor &amp; Role</th>
+                <th className="py-3.5 px-4">Action</th>
+                <th className="py-3.5 px-4">Entity</th>
+                <th className="py-3.5 px-4">Details &amp; Masked Diffs</th>
+                <th className="py-3.5 px-4 text-right">IP Origin</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#E2E8F0]">
+            <tbody className="divide-y divide-[#E2E8F0] bg-white">
               {filteredLogs.map((log) => (
                 <tr
                   key={log.id}
@@ -177,7 +200,7 @@ export default function AuditLogsPage() {
                     {log.timestamp}
                   </td>
                   <td className="py-3 px-4">
-                    <div className="font-semibold text-[#0F172A]">{log.actorId}</div>
+                    <div className="font-semibold text-[#111827]">{log.actorId}</div>
                     <Badge variant="brand" size="sm" className="text-[10px]">
                       {log.actorRole}
                     </Badge>

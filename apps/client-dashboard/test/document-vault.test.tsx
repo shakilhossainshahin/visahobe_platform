@@ -38,4 +38,11 @@ describe('Client Dashboard Document Vault (ADR-009 Solid High-Contrast Table)', 
     expect(html).toContain('Verified Clear');
     expect(html).toContain('Pending Audit');
   });
+
+  it('renders interactive Document & OCR Inspector and crisp #0D3B2E table headers', () => {
+    const html = renderToStaticMarkup(<DocumentVaultPage />);
+    expect(html).toContain('Interactive Document &amp; OCR Inspector');
+    expect(html).toContain('99.8% MRZ Match');
+    expect(html).toContain('bg-[#0D3B2E]');
+  });
 });

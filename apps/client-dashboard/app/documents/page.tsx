@@ -1,7 +1,16 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Container, GlassCard, Badge, Button } from '@visahobe/ui';
+import React, { useState, useMemo } from 'react';
+import {
+  Container,
+  GlassCard,
+  Badge,
+  EmeraldBadge,
+  Button,
+  LuxuryButton,
+  StatKpiCard,
+  DataTableShell,
+} from '@visahobe/ui';
 
 interface VaultDocument {
   id: string;
@@ -13,6 +22,8 @@ interface VaultDocument {
   uploadedAt: string | null;
   status: 'verified' | 'pending_review' | 'action_required';
   notes: string;
+  ocrConfidence?: string;
+  sha256Digest?: string;
 }
 
 const INITIAL_DOCUMENTS: VaultDocument[] = [
@@ -26,6 +37,8 @@ const INITIAL_DOCUMENTS: VaultDocument[] = [
     uploadedAt: 'Nov 02, 2026',
     status: 'verified',
     notes: 'Validity exceeds 6 months. Bio-data verified via OCR.',
+    ocrConfidence: '99.8% MRZ Match',
+    sha256Digest: 'sha256:9f84c2a1...e41b',
   },
   {
     id: 'doc-degree',
@@ -37,6 +50,8 @@ const INITIAL_DOCUMENTS: VaultDocument[] = [
     uploadedAt: 'Nov 03, 2026',
     status: 'verified',
     notes: 'DataFlow credential verification completed. 20/20 COMPASS points.',
+    ocrConfidence: '99.5% Seal Verified',
+    sha256Digest: 'sha256:3c71b0d9...82a0',
   },
   {
     id: 'doc-transcripts',
@@ -48,6 +63,8 @@ const INITIAL_DOCUMENTS: VaultDocument[] = [
     uploadedAt: 'Nov 03, 2026',
     status: 'verified',
     notes: 'Grade conversion verified against international standards.',
+    ocrConfidence: '99.2% Tabular OCR',
+    sha256Digest: 'sha256:7a12f5e8...c19d',
   },
   {
     id: 'doc-contract',
@@ -59,6 +76,8 @@ const INITIAL_DOCUMENTS: VaultDocument[] = [
     uploadedAt: 'Nov 04, 2026',
     status: 'verified',
     notes: 'Fixed salary meets statutory threshold (SGD $6,200/mo).',
+    ocrConfidence: '99.7% Clause Match',
+    sha256Digest: 'sha256:5e90a4c2...11f3',
   },
   {
     id: 'doc-cv',
@@ -70,6 +89,8 @@ const INITIAL_DOCUMENTS: VaultDocument[] = [
     uploadedAt: 'Nov 12, 2026',
     status: 'pending_review',
     notes: 'Queued for final MOM employment alignment review by Sarah J.',
+    ocrConfidence: '98.9% Parsed',
+    sha256Digest: 'sha256:2b44d1e7...90a8',
   },
   {
     id: 'doc-bank',
@@ -86,6 +107,8 @@ const INITIAL_DOCUMENTS: VaultDocument[] = [
 
 export default function DocumentVaultPage() {
   const [documents, setDocuments] = useState<VaultDocument[]>(INITIAL_DOCUMENTS);
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [previewDocId, setPreviewDocId] = useState<string>('doc-passport');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('financial');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -98,6 +121,13 @@ export default function DocumentVaultPage() {
   const verifiedCount = documents.filter((d) => d.status === 'verified').length;
   const pendingCount = documents.filter((d) => d.status === 'pending_review').length;
   const actionRequiredCount = documents.filter((d) => d.status === 'action_required').length;
+
+  const filteredDocuments = useMemo(() => {
+    if (statusFilter === 'all') return documents;
+    return documents.filter((d) => d.status === statusFilter);
+  }, [documents, statusFilter]);
+
+  const activePreviewDoc = documents.find((d) => d.id === previewDocId) ?? documents[0]!;
 
   const handleUploadSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -125,7 +155,6 @@ export default function DocumentVaultPage() {
         throw new Error(data.error || 'Upload failed');
       }
 
-      // Update local state for matching category
       setDocuments((prev) =>
         prev.map((doc) => {
           if (doc.category === selectedCategory || doc.status === 'action_required') {
@@ -136,6 +165,8 @@ export default function DocumentVaultPage() {
               uploadedAt: 'Just now',
               status: 'pending_review',
               notes: 'Uploaded and queued for automated OCR & specialist audit.',
+              ocrConfidence: '99.1% Queued Scan',
+              sha256Digest: 'sha256:verified-upload',
             };
           }
           return doc;
@@ -162,14 +193,17 @@ export default function DocumentVaultPage() {
   };
 
   return (
-    <div className="py-8 md:py-12 flex flex-col gap-8 bg-[#F8FAFC] min-h-screen">
+    <div className="py-8 md:py-12 flex flex-col gap-8 bg-[#F8FAFC] min-h-screen text-[#111827]">
       {/* Header & Status Summary */}
       <Container size="2xl">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div className="flex flex-col gap-1.5">
             <div className="flex items-center gap-2">
-              <Badge variant="brand" size="sm">
+              <EmeraldBadge variant="brand" size="sm">
                 Encrypted Vault
+              </EmeraldBadge>
+              <Badge variant="gold" size="sm">
+                Zero-Trust EXIF Scrubbing
               </Badge>
               <span className="text-xs text-[#64748B] font-medium">
                 • Defense-in-Depth PII Protection
@@ -185,42 +219,103 @@ export default function DocumentVaultPage() {
             </p>
           </div>
 
-          <Button variant="primary" size="md" onClick={() => setIsModalOpen(true)}>
+          <LuxuryButton size="md" onClick={() => setIsModalOpen(true)}>
             + Upload New Document
-          </Button>
+          </LuxuryButton>
         </div>
 
-        {/* Metric Badges Bar */}
+        {/* Liquid Glass KPI Metric Badges Bar */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-          <div className="p-4 rounded-xl bg-white border border-[#E2E8F0] shadow-xs flex flex-col gap-1">
-            <span className="text-xs text-[#64748B]">Total Checklist Items</span>
-            <span className="text-xl font-bold text-[#0D3B2E]">{documents.length}</span>
-            <span className="text-[11px] text-[#64748B]">MOM Statutory Requirements</span>
-          </div>
+          <StatKpiCard
+            label="Total Checklist Items"
+            value={documents.length}
+            subvalue="MOM Statutory Requirements"
+          />
+          <StatKpiCard
+            label="Verified Clear"
+            value={verifiedCount}
+            subvalue="Passed all checks"
+            trend={{ label: 'OCR + Lawyer', direction: 'up' }}
+          />
+          <StatKpiCard
+            label="Pending Audit"
+            value={pendingCount}
+            subvalue="Specialist review queued"
+          />
+          <StatKpiCard
+            label="Action Required"
+            value={actionRequiredCount}
+            subvalue="Upload immediately"
+            trend={{ label: 'Due Nov 22', direction: 'down' }}
+          />
+        </div>
 
-          <div className="p-4 rounded-xl bg-white border border-[#E2E8F0] shadow-xs flex flex-col gap-1">
-            <span className="text-xs text-[#64748B]">Verified Clear</span>
-            <span className="text-xl font-bold text-[#15803D]">{verifiedCount}</span>
-            <span className="text-[11px] text-[#15803D]">Passed all checks</span>
+        {/* Interactive Document Preview & OCR Verification Inspector */}
+        <div className="mb-6 rounded-2xl bg-white border border-[#C8A951]/45 p-5 shadow-xs flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+          <div className="flex flex-col gap-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#0D3B2E]">
+                Interactive Document & OCR Inspector
+              </span>
+              <Badge variant="brand" size="sm">
+                {activePreviewDoc.ocrConfidence ?? 'Awaiting Upload'}
+              </Badge>
+              {activePreviewDoc.sha256Digest && (
+                <span className="font-mono text-[11px] text-[#64748B]">
+                  {activePreviewDoc.sha256Digest}
+                </span>
+              )}
+            </div>
+            <h2 className="text-base font-bold text-[#111827]">{activePreviewDoc.title}</h2>
+            <p className="text-xs text-[#475569]">{activePreviewDoc.notes}</p>
           </div>
-
-          <div className="p-4 rounded-xl bg-white border border-[#E2E8F0] shadow-xs flex flex-col gap-1">
-            <span className="text-xs text-[#64748B]">Pending Audit</span>
-            <span className="text-xl font-bold text-[#B45309]">{pendingCount}</span>
-            <span className="text-[11px] text-[#B45309]">Specialist review queued</span>
-          </div>
-
-          <div className="p-4 rounded-xl bg-white border border-[#E2E8F0] shadow-xs flex flex-col gap-1">
-            <span className="text-xs text-[#64748B]">Action Required</span>
-            <span className="text-xl font-bold text-[#B91C1C]">{actionRequiredCount}</span>
-            <span className="text-[11px] text-[#B91C1C]">Upload immediately</span>
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="text-xs font-mono text-[#0D3B2E] bg-[#F0F7F4] px-3 py-1.5 rounded-lg border border-[#0D3B2E]/15">
+              {activePreviewDoc.filename ?? 'No File Uploaded Yet'}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setSelectedCategory(activePreviewDoc.category);
+                setIsModalOpen(true);
+              }}
+            >
+              {activePreviewDoc.filename ? 'Replace Document' : 'Upload Now'}
+            </Button>
           </div>
         </div>
 
         {/* SOLID High-Contrast Data Table per ADR-009 (Never Liquid Glass on Dense Tables) */}
-        <div className="overflow-x-auto rounded-2xl border border-[#E2E8F0] bg-white shadow-xs">
+        <DataTableShell
+          title="Statutory Dossier Checklist"
+          description="Rendered on high-contrast solid white surface per ADR-009"
+          toolbar={
+            <div className="flex flex-wrap items-center gap-1.5">
+              {[
+                { key: 'all', label: `All (${documents.length})` },
+                { key: 'verified', label: `Verified (${verifiedCount})` },
+                { key: 'pending_review', label: `Pending Audit (${pendingCount})` },
+                { key: 'action_required', label: `Action Required (${actionRequiredCount})` },
+              ].map((tab) => (
+                <button
+                  key={tab.key}
+                  type="button"
+                  onClick={() => setStatusFilter(tab.key)}
+                  className={`px-3 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                    statusFilter === tab.key
+                      ? 'bg-[#0D3B2E] text-white'
+                      : 'bg-[#F1F5F9] text-[#475569] hover:bg-[#E2E8F0]'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          }
+        >
           <table className="w-full text-left text-xs">
-            <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0] text-[#64748B] uppercase font-bold tracking-wider">
+            <thead className="bg-[#0D3B2E] text-white uppercase font-bold tracking-wider">
               <tr>
                 <th className="py-3.5 px-4">Document Title & Details</th>
                 <th className="py-3.5 px-4">Category</th>
@@ -229,9 +324,9 @@ export default function DocumentVaultPage() {
                 <th className="py-3.5 px-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#F1F5F9] text-[#334155]">
-              {documents.map((doc) => (
-                <tr key={doc.id} className="hover:bg-[#F8FAFC]/60 transition-colors">
+            <tbody className="divide-y divide-[#F1F5F9] text-[#111827] bg-white">
+              {filteredDocuments.map((doc) => (
+                <tr key={doc.id} className="hover:bg-[#F8FAFC] transition-colors">
                   <td className="py-4 px-4">
                     <div className="flex flex-col gap-0.5">
                       <div className="flex items-center gap-2">
@@ -253,7 +348,7 @@ export default function DocumentVaultPage() {
                   <td className="py-4 px-4">
                     {doc.filename ? (
                       <div className="flex flex-col gap-0.5 font-mono text-[11px]">
-                        <span className="font-medium text-[#0F172A] truncate max-w-[200px]">
+                        <span className="font-medium text-[#111827] truncate max-w-[200px]">
                           {doc.filename}
                         </span>
                         <span className="text-[10px] text-[#64748B]">
@@ -286,49 +381,54 @@ export default function DocumentVaultPage() {
                   </td>
 
                   <td className="py-4 px-4 text-right">
-                    {doc.filename ? (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setSelectedCategory(doc.category);
-                          setIsModalOpen(true);
-                        }}
-                      >
-                        Re-upload
+                    <div className="inline-flex items-center gap-2 justify-end">
+                      <Button variant="ghost" size="sm" onClick={() => setPreviewDocId(doc.id)}>
+                        Inspect
                       </Button>
-                    ) : (
-                      <Button
-                        variant="primary"
-                        size="sm"
-                        onClick={() => {
-                          setSelectedCategory(doc.category);
-                          setIsModalOpen(true);
-                        }}
-                      >
-                        Upload Now
-                      </Button>
-                    )}
+                      {doc.filename ? (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedCategory(doc.category);
+                            setIsModalOpen(true);
+                          }}
+                        >
+                          Re-upload
+                        </Button>
+                      ) : (
+                        <LuxuryButton
+                          size="sm"
+                          onClick={() => {
+                            setSelectedCategory(doc.category);
+                            setIsModalOpen(true);
+                          }}
+                        >
+                          Upload Now
+                        </LuxuryButton>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
+        </DataTableShell>
       </Container>
 
       {/* Interactive Upload Modal (Uses Liquid Glass Overlay per ADR-009) */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs">
           <GlassCard
-            intensity="elevated"
+            intensity="luxury"
+            goldAccent
             className="w-full max-w-lg p-6 md:p-8 bg-white/95 rounded-2xl shadow-xl flex flex-col gap-5 relative"
           >
             <div className="flex items-center justify-between pb-3 border-b border-[#E2E8F0]">
               <div className="flex flex-col gap-0.5">
-                <Badge variant="brand" size="sm" className="w-fit">
+                <EmeraldBadge variant="brand" size="sm" className="w-fit">
                   Safe Upload Intake
-                </Badge>
+                </EmeraldBadge>
                 <h2 className="text-xl font-bold text-[#0D3B2E]">Upload Verification Document</h2>
               </div>
               <button
@@ -337,7 +437,7 @@ export default function DocumentVaultPage() {
                   setIsModalOpen(false);
                   setUploadFeedback(null);
                 }}
-                className="text-[#64748B] hover:text-[#0F172A] font-bold text-lg p-1"
+                className="text-[#64748B] hover:text-[#111827] font-bold text-lg p-1"
                 aria-label="Close upload modal"
               >
                 ✕
@@ -356,7 +456,7 @@ export default function DocumentVaultPage() {
                   id="upload-category"
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-full rounded-xl border border-[#CBD5E1] bg-white px-3.5 py-2.5 text-sm text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#0D3B2E]"
+                  className="w-full rounded-xl border border-[#CBD5E1] bg-white px-3.5 py-2.5 text-sm text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#0D3B2E]"
                 >
                   <option value="financial">Financial (Bank Statements & Salary Slips)</option>
                   <option value="identity">Identity (Passport & National ID)</option>
@@ -382,7 +482,7 @@ export default function DocumentVaultPage() {
                     setSelectedFile(file);
                     setUploadFeedback(null);
                   }}
-                  className="w-full rounded-xl border border-dashed border-[#CBD5E1] bg-[#F8FAFC] p-4 text-xs text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#0D3B2E]"
+                  className="w-full rounded-xl border border-dashed border-[#CBD5E1] bg-[#F8FAFC] p-4 text-xs text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#0D3B2E]"
                 />
                 <span className="text-[11px] text-[#64748B]">
                   Windows & POSIX directory paths are sanitized. EXIF metadata is stripped
@@ -415,15 +515,14 @@ export default function DocumentVaultPage() {
                 >
                   Cancel
                 </Button>
-                <Button
+                <LuxuryButton
                   type="submit"
-                  variant="primary"
                   size="sm"
                   isLoading={isUploading}
                   disabled={!selectedFile || isUploading}
                 >
                   Upload & Verify
-                </Button>
+                </LuxuryButton>
               </div>
             </form>
           </GlassCard>

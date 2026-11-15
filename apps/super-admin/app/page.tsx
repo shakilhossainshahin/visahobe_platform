@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Card, Button, Badge } from '@visahobe/ui';
+import { Button, LuxuryButton, Badge, EmeraldBadge, StatKpiCard } from '@visahobe/ui';
 
 interface CaseItem {
   id: string;
@@ -107,10 +107,14 @@ const MOCK_CASES: CaseItem[] = [
 
 export default function SuperAdminDashboardPage() {
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
+  const [priorityFilter, setPriorityFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   const filteredCases = MOCK_CASES.filter((c) => {
     if (selectedFilter !== 'all' && c.stage !== selectedFilter) {
+      return false;
+    }
+    if (priorityFilter !== 'all' && c.priority !== priorityFilter) {
       return false;
     }
     if (searchQuery.trim()) {
@@ -119,7 +123,8 @@ export default function SuperAdminDashboardPage() {
         c.caseNumber.toLowerCase().includes(q) ||
         c.applicantRef.toLowerCase().includes(q) ||
         c.destination.toLowerCase().includes(q) ||
-        c.visaStream.toLowerCase().includes(q)
+        c.visaStream.toLowerCase().includes(q) ||
+        c.assignedTo.toLowerCase().includes(q)
       );
     }
     return true;
@@ -155,10 +160,18 @@ export default function SuperAdminDashboardPage() {
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 text-[#111827]">
       {/* Operations Executive Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-[#E2E8F0]">
         <div>
+          <div className="flex flex-wrap items-center gap-2 mb-1">
+            <EmeraldBadge variant="brand" size="sm">
+              Executive Operations Desk
+            </EmeraldBadge>
+            <Badge variant="gold" size="sm">
+              AAL2 MFA Enforced • ADR-009 Compliant
+            </Badge>
+          </div>
           <h1 className="text-2xl font-display font-bold text-[#0D3B2E] tracking-tight">
             Case Operations Command Center
           </h1>
@@ -168,89 +181,62 @@ export default function SuperAdminDashboardPage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <a href="/audit">
-            <Button
-              variant="primary"
-              size="sm"
-              className="bg-[#0D3B2E] hover:bg-[#092A21] text-white"
-            >
-              Launch Document Verifier
+          <a href="/partners">
+            <Button variant="outline" size="sm">
+              Partner Wallets
             </Button>
+          </a>
+          <a href="/audit">
+            <LuxuryButton size="sm">Launch Document Verifier</LuxuryButton>
           </a>
         </div>
       </div>
 
-      {/* KPI Summary Cards */}
+      {/* KPI Summary Cards (variant="solid" preserves zero backdrop-blur invariant on this page) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="p-5 bg-white border border-[#E2E8F0] shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#64748B] uppercase tracking-wider">
-              Active Cases
-            </span>
-            <span className="w-2 h-2 rounded-full bg-[#15803D]" />
-          </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-[#0D3B2E]">142</span>
-            <span className="text-xs font-semibold text-[#15803D]">+8 this week</span>
-          </div>
-          <span className="text-xs text-[#94A3B8] mt-1 block">Across 6 launch destinations</span>
-        </Card>
-
-        <Card className="p-5 bg-white border border-[#E2E8F0] shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#64748B] uppercase tracking-wider">
-              Pending Verification
-            </span>
-            <span className="w-2 h-2 rounded-full bg-[#B45309]" />
-          </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-[#B45309]">18</span>
-            <span className="text-xs font-semibold text-[#B45309]">Needs Review</span>
-          </div>
-          <span className="text-xs text-[#94A3B8] mt-1 block">Passports, bank statements, OCR</span>
-        </Card>
-
-        <Card className="p-5 bg-white border border-[#E2E8F0] shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#64748B] uppercase tracking-wider">
-              SLA Critical Alerts
-            </span>
-            <span className="w-2 h-2 rounded-full bg-[#B91C1C] animate-pulse" />
-          </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-[#B91C1C]">3</span>
-            <span className="text-xs font-semibold text-[#B91C1C]">&lt; 4h remaining</span>
-          </div>
-          <span className="text-xs text-[#94A3B8] mt-1 block">Filing submission deadline</span>
-        </Card>
-
-        <Card className="p-5 bg-white border border-[#E2E8F0] shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#64748B] uppercase tracking-wider">
-              Approved Today
-            </span>
-            <span className="w-2 h-2 rounded-full bg-[#15803D]" />
-          </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-[#0D3B2E]">12</span>
-            <span className="text-xs font-semibold text-[#15803D]">100% SLA met</span>
-          </div>
-          <span className="text-xs text-[#94A3B8] mt-1 block">Statutory files certified</span>
-        </Card>
+        <StatKpiCard
+          variant="solid"
+          label="Active Cases"
+          value="142"
+          subvalue="Across 6 launch destinations"
+          trend={{ label: '+8 this week', direction: 'up' }}
+        />
+        <StatKpiCard
+          variant="solid"
+          label="Pending Verification"
+          value="18"
+          subvalue="Passports, bank statements, OCR"
+          trend={{ label: 'Needs Review', direction: 'neutral' }}
+        />
+        <StatKpiCard
+          variant="solid"
+          label="SLA Critical Alerts"
+          value="3"
+          subvalue="Filing submission deadline"
+          trend={{ label: '< 4h remaining', direction: 'down' }}
+        />
+        <StatKpiCard
+          variant="solid"
+          label="Approved Today"
+          value="12"
+          subvalue="Statutory files certified"
+          trend={{ label: '100% SLA met', direction: 'up' }}
+        />
       </div>
 
       {/* Case Operations Queue Section */}
       <div className="space-y-4">
-        {/* Filter Tabs & Search Bar */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        {/* Interactive Stage Filter Tabs, Priority Filter & Live Search Bar */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
             {filterTabs.map((tab) => (
               <button
                 key={tab.id}
+                type="button"
                 onClick={() => setSelectedFilter(tab.id)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 whitespace-nowrap ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
                   selectedFilter === tab.id
-                    ? 'bg-[#0D3B2E] text-white shadow-xs'
+                    ? 'bg-[#0D3B2E] text-white border border-[#C8A951]/60 shadow-xs'
                     : 'bg-white border border-[#E2E8F0] text-[#64748B] hover:text-[#0D3B2E] hover:bg-[#F8FAFC]'
                 }`}
               >
@@ -258,7 +244,7 @@ export default function SuperAdminDashboardPage() {
                 <span
                   className={`px-1.5 py-0.2 rounded-full text-[10px] ${
                     selectedFilter === tab.id
-                      ? 'bg-white/20 text-white'
+                      ? 'bg-[#C8A951] text-[#111827] font-bold'
                       : 'bg-[#F1F5F9] text-[#64748B]'
                   }`}
                 >
@@ -268,34 +254,52 @@ export default function SuperAdminDashboardPage() {
             ))}
           </div>
 
-          <div className="w-full md:w-72">
-            <input
-              type="text"
-              placeholder="Search by case #, client ref, or country..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-3 py-1.5 rounded-lg text-xs border border-[#E2E8F0] bg-white text-[#0F172A] placeholder-[#94A3B8] focus:outline-hidden focus:ring-2 focus:ring-[#0D3B2E] focus:border-transparent"
-            />
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+            <select
+              aria-label="Filter by SLA Priority"
+              value={priorityFilter}
+              onChange={(e) => setPriorityFilter(e.target.value)}
+              className="px-3 py-1.5 rounded-lg text-xs border border-[#E2E8F0] bg-white text-[#111827] font-medium focus:outline-none focus:ring-2 focus:ring-[#0D3B2E]"
+            >
+              <option value="all">All SLA Priorities</option>
+              <option value="urgent">Urgent SLA Only</option>
+              <option value="high">High Priority</option>
+              <option value="standard">Standard Priority</option>
+            </select>
+
+            <div className="w-full sm:w-72">
+              <input
+                type="text"
+                placeholder="Search by case #, client ref, or country..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-3 py-1.5 rounded-lg text-xs border border-[#E2E8F0] bg-white text-[#111827] placeholder-[#94A3B8] focus:outline-hidden focus:ring-2 focus:ring-[#0D3B2E] focus:border-transparent"
+              />
+            </div>
           </div>
         </div>
 
-        {/* Strict ADR-009 Compliant Solid High-Contrast Table (Zero Blur on Data Tables) */}
+        {/* Strict ADR-009 Compliant Solid High-Contrast Table (Zero Blur on Data Tables, Crisp #0D3B2E Header) */}
         <div className="bg-white border border-[#E2E8F0] rounded-xl shadow-xs overflow-hidden">
+          <div
+            aria-hidden="true"
+            className="h-[3px] w-full bg-gradient-to-r from-[#0D3B2E] via-[#C8A951] to-[#0D3B2E]"
+          />
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse" data-testid="case-queue-table">
               <thead>
-                <tr className="border-b border-[#E2E8F0] bg-[#F8FAFC] text-[11px] font-bold text-[#475569] uppercase tracking-wider">
-                  <th className="py-3 px-4">Case Number</th>
-                  <th className="py-3 px-4">Applicant Ref</th>
-                  <th className="py-3 px-4">Destination &amp; Stream</th>
-                  <th className="py-3 px-4">Filing Stage</th>
-                  <th className="py-3 px-4">SLA Priority</th>
-                  <th className="py-3 px-4">Assigned Verifier</th>
-                  <th className="py-3 px-4">Last Updated</th>
-                  <th className="py-3 px-4 text-right">Actions</th>
+                <tr className="bg-[#0D3B2E] text-white text-[11px] font-bold uppercase tracking-wider">
+                  <th className="py-3.5 px-4">Case Number</th>
+                  <th className="py-3.5 px-4">Applicant Ref</th>
+                  <th className="py-3.5 px-4">Destination &amp; Stream</th>
+                  <th className="py-3.5 px-4">Filing Stage</th>
+                  <th className="py-3.5 px-4">SLA Priority</th>
+                  <th className="py-3.5 px-4">Assigned Verifier</th>
+                  <th className="py-3.5 px-4">Last Updated</th>
+                  <th className="py-3.5 px-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E2E8F0] text-xs">
+              <tbody className="divide-y divide-[#E2E8F0] text-xs bg-white">
                 {filteredCases.length === 0 ? (
                   <tr>
                     <td colSpan={8} className="py-8 text-center text-[#64748B]">
@@ -312,11 +316,11 @@ export default function SuperAdminDashboardPage() {
                       <td className="py-3.5 px-4 font-mono font-bold text-[#0D3B2E]">
                         {item.caseNumber}
                       </td>
-                      <td className="py-3.5 px-4 font-medium text-[#1E293B]">
+                      <td className="py-3.5 px-4 font-medium text-[#111827]">
                         {item.applicantRef}
                       </td>
                       <td className="py-3.5 px-4">
-                        <div className="font-semibold text-[#0F172A]">{item.destination}</div>
+                        <div className="font-semibold text-[#111827]">{item.destination}</div>
                         <div className="text-[11px] text-[#64748B]">{item.visaStream}</div>
                       </td>
                       <td className="py-3.5 px-4">

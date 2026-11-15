@@ -67,6 +67,7 @@ In accordance with Section 13 of the Final Blueprint and approved adjustments, P
 | [TICKET-P2-003](./TICKET-P2-003-architecture-blueprint-b2b2c-mcp.md) | Enterprise Blueprint Upgrade (3-Tier B2B2C, Wallet & MCP) | **P0** | 2 days | **Completed & Verified** | Master Blueprint v2.0 upgrade, ADR-010 (B2B2C & wallet), ADR-011 (Autonomy & connectors), and ADR-012 (Scoped MCP servers) |
 | [TICKET-P2-004](./TICKET-P2-004-partner-agency-wallet-and-connectors.md) | B2B Partner Agency Onboarding, White-Label Domain Routing & Prepaid Wallet Engine | **P0** | 3 days | **Completed & Verified** | Agency onboarding, white-label custom domain middleware, dynamic branding, prepaid wallet balance, atomic fee deduction & connector registry |
 | [TICKET-P2-005](./TICKET-P2-005-vercel-deployment-config.md) | Vercel Monorepo Deployment Config for 3 Next.js Apps | **P0** | 1.5 days | **Completed & Verified** | Vercel monorepo configurations (`vercel.json`), Turborepo build filters, preview secret fallbacks in `next.config.*`, deployment runbook |
+| [TICKET-P2-006](./TICKET-P2-006-flagship-luxury-liquid-glass-ui.md) | Flagship Luxury & Liquid Glass UI/UX Overhaul + Interactive Frontend Experience | **P0** | 2.5 days | **Completed & Verified** | Permanent Flagship UI standard (`AGENTS.md`), upgraded `@visahobe/ui` luxury primitives, interactive `/assess` fee & score estimator, B2C/B2B portal switcher, AI Concierge drawer, and Super Admin live filters |
 
 ---
 

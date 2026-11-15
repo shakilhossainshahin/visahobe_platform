@@ -1,10 +1,11 @@
 import React, { forwardRef } from 'react';
 import { cn } from '../../utils/cn.js';
 
-export type CardVariant = 'default' | 'muted' | 'elevated';
+export type CardVariant = 'default' | 'muted' | 'elevated' | 'luxury';
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: CardVariant | undefined;
+  goldDivider?: boolean | undefined;
 }
 
 const cardVariantStyles: Record<CardVariant, string> = {
@@ -12,14 +13,22 @@ const cardVariantStyles: Record<CardVariant, string> = {
   muted: 'bg-[#F8FAFC] border border-[#E2E8F0]',
   elevated:
     'bg-white border border-[#E2E8F0] shadow-md hover:shadow-lg transition-shadow duration-200',
+  luxury:
+    'bg-white border border-[#C8A951]/40 shadow-md hover:shadow-lg transition-all duration-200 ring-1 ring-[#0D3B2E]/5',
 };
 
 export const Card = forwardRef<HTMLDivElement, CardProps>(
-  ({ variant = 'default', className, children, ...rest }, ref) => {
+  ({ variant = 'default', goldDivider = false, className, children, ...rest }, ref) => {
     return (
       <div
         ref={ref}
-        className={cn('rounded-2xl text-[#0F172A]', cardVariantStyles[variant], className)}
+        className={cn(
+          'relative rounded-2xl text-[#111827] transition-all duration-200',
+          cardVariantStyles[variant],
+          goldDivider &&
+            'before:absolute before:inset-x-6 before:top-0 before:h-[2px] before:bg-gradient-to-r before:from-transparent before:via-[#C8A951] before:to-transparent',
+          className,
+        )}
         {...rest}
       >
         {children}
@@ -30,27 +39,32 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
 
 Card.displayName = 'Card';
 
-export type GlassIntensity = 'subtle' | 'standard' | 'elevated';
+export type GlassIntensity = 'subtle' | 'standard' | 'elevated' | 'luxury';
 
 export interface GlassCardProps extends React.HTMLAttributes<HTMLDivElement> {
   intensity?: GlassIntensity | undefined;
+  goldAccent?: boolean | undefined;
 }
 
 const glassIntensityStyles: Record<GlassIntensity, string> = {
   subtle: 'backdrop-blur-sm bg-white/70 border border-white/40 shadow-sm',
   standard: 'backdrop-blur-md bg-white/85 border border-white/60 shadow-glass',
   elevated: 'backdrop-blur-lg bg-white/90 border border-white/80 shadow-glassElevated',
+  luxury:
+    'backdrop-blur-md bg-white/85 border border-[#C8A951]/40 shadow-glass ring-1 ring-[#0D3B2E]/10',
 };
 
 export const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
-  ({ intensity = 'standard', className, children, ...rest }, ref) => {
+  ({ intensity = 'standard', goldAccent = false, className, children, ...rest }, ref) => {
     return (
       <div
         ref={ref}
         className={cn(
-          'relative rounded-2xl text-[#0F172A] overflow-hidden transition-all duration-200',
+          'relative rounded-2xl text-[#111827] overflow-hidden transition-all duration-200',
           // Specular highlight top border
           'before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-white/80 before:z-10',
+          goldAccent &&
+            'border-[#C8A951]/45 after:absolute after:inset-x-8 after:top-0 after:h-[2px] after:bg-gradient-to-r after:from-transparent after:via-[#C8A951] after:to-transparent after:z-20',
           glassIntensityStyles[intensity],
           className,
         )}
@@ -77,7 +91,7 @@ export const CardTitle = forwardRef<HTMLHeadingElement, React.HTMLAttributes<HTM
   ({ className, children, ...rest }, ref) => (
     <h3
       ref={ref}
-      className={cn('text-xl font-bold tracking-tight text-[#0F172A]', className)}
+      className={cn('text-xl font-bold tracking-tight text-[#111827]', className)}
       {...rest}
     >
       {children}
