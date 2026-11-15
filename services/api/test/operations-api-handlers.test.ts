@@ -3,6 +3,7 @@ import { createMockAuthToken } from '@visahobe/auth';
 import { CaseService } from '../src/cases/case-service.js';
 import { DocumentService } from '../src/documents/document-service.js';
 import { AuditService } from '../src/audit/audit-service.js';
+import { AgencyService, BENGAL_AGENCY_TENANT_ID } from '../src/agencies/agency-service.js';
 import { OperationsApiHandler } from '../src/http/handlers.js';
 import type { AuthenticatedRequest, CaseRecord, DocumentRecord } from '../src/types.js';
 
@@ -41,6 +42,7 @@ describe('OperationsApiHandler — REST Dispatch & Security Perimeter (TICKET-P2
     CaseService.clear();
     DocumentService.clear();
     AuditService.clear();
+    AgencyService.ensureDefaultAgencies();
     CaseService.seedCase(mockCaseA);
     DocumentService.seedDocument(mockDocA);
   });
@@ -192,5 +194,133 @@ describe('OperationsApiHandler — REST Dispatch & Security Perimeter (TICKET-P2
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
     expect(res.body.data).toHaveProperty('url');
+  });
+
+  it('lists partner travel agencies via GET /api/v1/partners', async () => {
+    const token = await createMockAuthToken({
+      tenantId: tenantA,
+      role: 'admin',
+      isMfaVerified: true,
+      aal: 'aal2',
+    });
+
+    const res = await OperationsApiHandler.handleRequest('GET', '/api/v1/partners', {
+      headers: { authorization: `Bearer ${token}` },
+    });
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+    const agencies = res.body.data as unknown[];
+    expect(agencies.length).toBeGreaterThan(0);
+  });
+
+  it('resolves white-label custom domain via GET /api/v1/partners/resolve-domain', async () => {
+    const token = await createMockAuthToken({
+      tenantId: tenantA,
+      role: 'admin',
+      isMfaVerified: true,
+      aal: 'aal2',
+    });
+
+    const res = await OperationsApiHandler.handleRequest('GET', '/api/v1/partners/resolve-domain', {
+      headers: { authorization: `Bearer ${token}` },
+      query: { host: 'visa.bengaltravel.com' },
+    });
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+    expect(res.body.data).toHaveProperty('isWhiteLabel', true);
+  });
+
+  it('retrieves agency prepaid wallet and transactions via GET /api/v1/wallet', async () => {
+    const token = await createMockAuthToken({
+      tenantId: BENGAL_AGENCY_TENANT_ID,
+      role: 'agency_manager',
+      isMfaVerified: true,
+      aal: 'aal2',
+    });
+
+    const res = await OperationsApiHandler.handleRequest('GET', '/api/v1/wallet', {
+      headers: { authorization: `Bearer ${token}` },
+    });
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+    expect(res.body.data).toHaveProperty('balance');
+  });
+
+  it('deducts case fee via POST /api/v1/wallet/deduct and prevents overdraft', async () => {
+    const token = await createMockAuthToken({
+      tenantId: BENGAL_AGENCY_TENANT_ID,
+      role: 'agency_manager',
+      isMfaVerified: true,
+      aal: 'aal2',
+    });
+
+    // Valid deduction within balance
+    const validDebit = await OperationsApiHandler.handleRequest('POST', '/api/v1/wallet/deduct', {
+      headers: { authorization: `Bearer ${token}` },
+      body: { caseId: 'case-sg-100', amount: 50, description: 'Test Case Fee' },
+    });
+    expect(validDebit.status).toBe(200);
+    expect(validDebit.body.success).toBe(true);
+
+    // Overdraft attempt ($999,999) rejected with HTTP 402
+    const overdraft = await OperationsApiHandler.handleRequest('POST', '/api/v1/wallet/deduct', {
+      headers: { authorization: `Bearer ${token}` },
+      body: { caseId: 'case-sg-999', amount: 999999, description: 'Overdraft Test' },
+    });
+    expect(overdraft.status).toBe(402);
+    expect(overdraft.body.success).toBe(false);
+    expect(overdraft.body.error?.code).toBe('INSUFFICIENT_WALLET_BALANCE');
+  });
+
+  it('lists registered connectors with masked credentials via GET /api/v1/connectors', async () => {
+    const token = await createMockAuthToken({
+      tenantId: tenantA,
+      role: 'admin',
+      isMfaVerified: true,
+      aal: 'aal2',
+    });
+
+    const res = await OperationsApiHandler.handleRequest('GET', '/api/v1/connectors', {
+      headers: { authorization: `Bearer ${token}` },
+    });
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+    const connectors = res.body.data as Array<Record<string, unknown>>;
+    expect(connectors.length).toBeGreaterThan(0);
+    // Zero secret leak verification
+    expect(JSON.stringify(connectors)).not.toContain('super_secret');
+  });
+
+  it('dispatches case fulfillment via POST /api/v1/fulfillment/dispatch', async () => {
+    const token = await createMockAuthToken({
+      tenantId: tenantA,
+      role: 'admin',
+      isMfaVerified: true,
+      aal: 'aal2',
+    });
+
+    const res = await OperationsApiHandler.handleRequest('POST', '/api/v1/fulfillment/dispatch', {
+      headers: { authorization: `Bearer ${token}` },
+      body: {
+        caseId: 'case-dispatch-test',
+        caseNumber: 'VH-2026-SG-99',
+        tenantId: tenantA,
+        countryCode: 'SG',
+        serviceType: 'tourist_evisa',
+        applicant: {
+          fullName: 'Test Applicant',
+          passportNumberRedacted: 'A0987****',
+          nationality: 'Bangladesh',
+          email: 'test@example.com',
+        },
+        documentUrls: [
+          { category: 'identity_passport', fileName: 'pass.pdf', signedUrl: 'https://s3/p.pdf' },
+          { category: 'photo', fileName: 'pic.jpg', signedUrl: 'https://s3/pic.jpg' },
+        ],
+      },
+    });
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+    expect(res.body.data).toHaveProperty('result');
   });
 });

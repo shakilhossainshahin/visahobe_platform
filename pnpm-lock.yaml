@@ -370,6 +370,9 @@ importers:
       '@visahobe/database':
         specifier: workspace:*
         version: link:../../packages/database
+      '@visahobe/integrations':
+        specifier: workspace:*
+        version: link:../../packages/integrations
       '@visahobe/shared':
         specifier: workspace:*
         version: link:../../packages/shared

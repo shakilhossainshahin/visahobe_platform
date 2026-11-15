@@ -24,3 +24,4 @@ export * from './security/pii/index.js';
 export * from './logger/index.js';
 export * from './monitoring/index.js';
 export * from './storage/signed-urls.js';
+export * from './tenant/index.js';

@@ -9,6 +9,7 @@ export default defineConfig({
       '@visahobe/cms': path.resolve(__dirname, '../../packages/cms/src/index.ts'),
       '@visahobe/database': path.resolve(__dirname, '../../packages/database/src/index.ts'),
       '@visahobe/core': path.resolve(__dirname, '../../packages/core/src/index.ts'),
+      '@visahobe/integrations': path.resolve(__dirname, '../../packages/integrations/src/index.ts'),
       '@visahobe/design-system': path.resolve(
         __dirname,
         '../../packages/design-system/src/index.ts',
