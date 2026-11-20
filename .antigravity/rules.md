@@ -120,14 +120,14 @@ pnpm --filter @visahobe/mobile test
 pnpm --filter @visahobe/cms test
 ```
 
-### 2.3 The "Package Pre-Build" Rule (CI & Fresh Runner Invariant)
+### 2.3 The "Package & Service Pre-Build" Rule (CI & Fresh Runner Invariant)
 
 > [!IMPORTANT]
-> Downstream Next.js apps (`apps/website`, `apps/client-dashboard`) and consumer packages import compiled TypeScript declarations (`dist/*.d.ts`) or source declarations from upstream packages.
-> On clean environments (or after branch switching), ALWAYS run internal package builds before executing Next.js typecheck or build:
+> Downstream Next.js apps (`apps/website`, `apps/client-dashboard`, `apps/super-admin`) and consumer packages import compiled TypeScript declarations (`dist/*.d.ts`) or source declarations from upstream packages and services.
+> On clean environments (or after branch switching), ALWAYS run internal package and service builds before executing Next.js typecheck or build:
 >
 > ```bash
-> pnpm --filter "./packages/**" build
+> pnpm --filter "./packages/**" --filter "./services/**" build
 > ```
 >
 > This matches step 70 of `.github/workflows/ci.yml` and prevents `Cannot find module '@visahobe/...'` errors.

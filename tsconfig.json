@@ -5,6 +5,8 @@
     "paths": {
       "@visahobe/design-system": ["packages/design-system/src/index"],
       "@visahobe/design-system/*": ["packages/design-system/src/*"],
+      "@visahobe/api": ["services/api/src/index"],
+      "@visahobe/api/*": ["services/api/src/*"],
       "@visahobe/*": ["packages/*/src"]
     }
   },
