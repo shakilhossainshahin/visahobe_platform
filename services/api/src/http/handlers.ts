@@ -6,7 +6,12 @@ import {
   PermissionDeniedError,
   type UserSession,
 } from '@visahobe/auth';
-import { StorageAccessDeniedError } from '@visahobe/core';
+import {
+  StorageAccessDeniedError,
+  ClientShieldingService,
+  type ClientTier,
+  type CasePayloadInput,
+} from '@visahobe/core';
 import { CaseNotFoundError, CaseService } from '../cases/case-service.js';
 import { DocumentNotFoundError, DocumentService } from '../documents/document-service.js';
 import { AuditService } from '../audit/audit-service.js';
@@ -86,9 +91,20 @@ export class OperationsApiHandler {
         const priority =
           typeof req.query?.['priority'] === 'string' ? req.query['priority'] : undefined;
         const cases = await CaseService.listCases(session, { status, priority });
+        const host = typeof req.headers['host'] === 'string' ? req.headers['host'] : undefined;
+        const tier: ClientTier = ClientShieldingService.resolveClientTier({
+          host,
+          userRole: session.role,
+        });
+        const shieldedCases = cases.map((c) =>
+          ClientShieldingService.shieldCaseRecord(c as unknown as CasePayloadInput, tier, {
+            callerTenantId: session.tenantId,
+            callerRole: session.role,
+          }),
+        );
         return {
           status: 200,
-          body: { success: true, data: cases },
+          body: { success: true, data: shieldedCases },
         };
       }
 
@@ -96,9 +112,22 @@ export class OperationsApiHandler {
       const caseMatch = pathname.match(/^\/api\/v1\/cases\/([^/]+)$/);
       if (method === 'GET' && caseMatch && caseMatch[1]) {
         const caseRecord = await CaseService.getCaseById(session, caseMatch[1]);
+        const host = typeof req.headers['host'] === 'string' ? req.headers['host'] : undefined;
+        const tier: ClientTier = ClientShieldingService.resolveClientTier({
+          host,
+          userRole: session.role,
+        });
+        const shielded = ClientShieldingService.shieldCaseRecord(
+          caseRecord as unknown as CasePayloadInput,
+          tier,
+          {
+            callerTenantId: session.tenantId,
+            callerRole: session.role,
+          },
+        );
         return {
           status: 200,
-          body: { success: true, data: caseRecord },
+          body: { success: true, data: shielded },
         };
       }
 

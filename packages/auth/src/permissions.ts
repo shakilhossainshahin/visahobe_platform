@@ -166,6 +166,42 @@ export const ROLE_PERMISSIONS: Record<string, readonly PermissionKey[]> = {
     'task.read',
     'task.execute',
   ],
+
+  // ADR-010 B2B Partner Agency Staff RBAC
+  agency_owner: [
+    'case.read',
+    'case.create',
+    'case.update',
+    'document.upload',
+    'document.read',
+    'document.download',
+    'task.read',
+    'task.execute',
+    'payment.record',
+  ],
+
+  agency_manager: [
+    'case.read',
+    'case.create',
+    'case.update',
+    'document.upload',
+    'document.read',
+    'document.download',
+    'task.read',
+    'task.execute',
+  ],
+
+  agency_agent: [
+    'case.read',
+    'case.create',
+    'document.upload',
+    'document.read',
+    'document.download',
+    'task.read',
+    'task.execute',
+  ],
+
+  agency_accountant: ['case.read', 'payment.record', 'invoice.issue'],
 };
 
 interface CacheEntry {
