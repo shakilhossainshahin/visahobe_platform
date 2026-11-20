@@ -118,9 +118,15 @@ importers:
 
   apps/super-admin:
     dependencies:
+      '@visahobe/agents':
+        specifier: workspace:*
+        version: link:../../packages/agents
       '@visahobe/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@visahobe/browser-automation':
+        specifier: workspace:*
+        version: link:../../packages/browser-automation
       '@visahobe/cms':
         specifier: workspace:*
         version: link:../../packages/cms
@@ -221,10 +227,20 @@ importers:
         version: 2.1.9(@types/node@20.19.43)
 
   packages/agents:
+    dependencies:
+      '@visahobe/core':
+        specifier: workspace:*
+        version: link:../core
+      '@visahobe/shared':
+        specifier: workspace:*
+        version: link:../shared
     devDependencies:
       typescript:
         specifier: ^5.6.3
         version: 5.9.3
+      vitest:
+        specifier: ^2.1.4
+        version: 2.1.9(@types/node@20.19.43)
 
   packages/auth:
     dependencies:
@@ -243,10 +259,20 @@ importers:
         version: 2.1.9(@types/node@20.19.43)
 
   packages/browser-automation:
+    dependencies:
+      '@visahobe/core':
+        specifier: workspace:*
+        version: link:../core
+      '@visahobe/shared':
+        specifier: workspace:*
+        version: link:../shared
     devDependencies:
       typescript:
         specifier: ^5.6.3
         version: 5.9.3
+      vitest:
+        specifier: ^2.1.4
+        version: 2.1.9(@types/node@20.19.43)
 
   packages/cms:
     devDependencies:
@@ -364,6 +390,9 @@ importers:
 
   services/api:
     dependencies:
+      '@visahobe/agents':
+        specifier: workspace:*
+        version: link:../../packages/agents
       '@visahobe/auth':
         specifier: workspace:*
         version: link:../../packages/auth

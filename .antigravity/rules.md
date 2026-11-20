@@ -297,9 +297,9 @@ The database is PostgreSQL 16 managed via Prisma ORM (`@prisma/client@^5.22.0`).
   - `TICKET-P2-003`: Enterprise Architecture Blueprint Upgrade (3-Tier B2B2C, Prepaid Wallet, Dynamic Connectors, Scoped MCP) — **MERGED**
   - `TICKET-P2-004`: B2B Partner Agency Onboarding, White-Label Domain Routing, Prepaid Wallet Ledger & Connector Registry — **MERGED**
   - `TICKET-P2-005`: Vercel Monorepo Deployment Config for 3 Next.js Apps (`apps/website`, `apps/client-dashboard`, `apps/super-admin`) — **MERGED**
-  - `TICKET-P2-006`: Flagship Luxury & Liquid Glass UI/UX Overhaul + Interactive Frontend Experience (`@visahobe/ui`, `apps/website`, `apps/client-dashboard`, `apps/super-admin`) — **COMPLETED & VERIFIED (ACTIVE PR)**
+  - `TICKET-P2-006`: Flagship Luxury & Liquid Glass UI/UX Overhaul + Interactive Frontend Experience (`@visahobe/ui`, `apps/website`, `apps/client-dashboard`, `apps/super-admin`) — **MERGED**
 - **Phase 3 — Super AI Agent & Scoped MCP Server Infrastructure:**
-  - `TICKET-P3-001`: Super AI Agent Engine, Hybrid Autonomous Processor & Executive Digest Dispatcher — **NEXT ACTIVE MILESTONE**
+  - `TICKET-P3-001`: Super AI Agent Engine, Hybrid Autonomous Processor & Executive Digest Dispatcher — **IN PROGRESS (ACTIVE FEATURE BRANCH)**
   - `TICKET-P3-002`: Scoped Admin & Partner MCP Servers with Kernel RLS Enforcement — **PLANNED**
 
 ### 5.2 Strict Git & Pull Request Rules (Zero Self-Merge)
@@ -366,3 +366,68 @@ To guarantee continuous zero-defect execution, 100% first-pass CI green rates, a
 - **Strict Milestone Sequencing:** Never branch for `TICKET-P(N+1)` until `TICKET-P(N)` has passed all 5 GitHub Actions checks (`success`) and has been reviewed and merged into `main`.
 - **Clean Working Tree:** Discard any experimental or premature branch work immediately if preceding dependencies or milestones require fixes.
 - **Continuous Gate Validation:** Always execute the full 7-step pre-push gate locally before submitting or updating any Pull Request.
+
+---
+
+## Section 7: Strict Sequential, Self-Healing & Auto-Merge Execution Protocol
+
+To maintain complete monorepo integrity and eliminate regressions during autonomous development, every agent must follow this exact execution discipline:
+
+### 7.1 Strict Sequential Ticket Ordering
+
+- **Never Skip Failing Milestones:** Under no circumstances may an agent skip a failing ticket or advance to `TICKET-P(N+1)` while `TICKET-P(N)` has pending issues or unmerged PRs.
+- **Linear Progression:** Every active milestone must be 100% complete, tested, and validated before touching downstream scopes.
+
+### 7.2 Self-Healing Protocol (Up to 3 Autonomous Iterations)
+
+- **Immediate Diagnosis:** If any local pre-push check or remote GitHub Actions CI run fails, the agent must diagnose the root cause immediately by inspecting full logs.
+- **Source-Level Remediation:** Formulate a clean, principled fix targeting the exact source failure (never masking tests or disabling typechecks).
+- **Self-Healing Iterations:** Perform up to 3 self-healing fix iterations (`fix(<scope>): ...`), push the correction, and re-verify.
+- **Circuit Breaker:** If unresolved after 3 attempts, halt immediately and provide a comprehensive diagnostic report to the Lead Principal Engineer.
+
+### 7.3 Auto-Merge and Pull Request Discipline
+
+- **Autonomous Auto-Merge:** For standard feature and chore PRs that pass all 5 CI checks, enable auto-merge via `gh pr merge --auto --squash` (or prompt for owner squash-merge if CLI authentication requires delegation).
+- **Strict Manual Sign-Off Exceptions:**
+  - Any change modifying `packages/database/prisma/schema.prisma` or migration SQL files (strictly governed by the Single Migration-Owner Rule).
+  - Any live payment gateway cutover, live secret rotation, or statutory affidavit submission.
+- **No Force-Pushes to Protected Branches:** Never force-push to `main` or merge unreviewed breaking changes.
+
+---
+
+## Section 8: Specialist Autonomous Engineering Skills
+
+Four specialist engineering disciplines govern all code additions across the VisaHobe monorepo:
+
+### Skill 1: Autonomous AI & Consular Safety Architect (`ADR-011`)
+
+- **Autonomy Routing Matrix:**
+  - **Level 1 (< 0.80 confidence):** Assisted Draft. AI prepares form drafts, runs OCR, and logs diffs; human staff inspects and approves before state persistence.
+  - **Level 2 (0.80 – 0.94 confidence):** Semi-Autonomous. AI prepares payloads and halts at the `in_review` human verifier gate for staff authorization.
+  - **Level 3 (>= 0.95 confidence):** Fully Autonomous Submission. For standard e-visas (Singapore SGAC, UAE e-Visa, Turkey e-Visa) with complete valid documents. Dispatched with immutable audit snapshot.
+- **Hard Consular Review Gates:** Regardless of confidence score, AI is strictly forbidden from autonomously executing live government payments, irreversible biometric/interview scheduling, or statutory perjury attestations without human sign-off.
+- **Defense-in-Depth PII Scrubber:** MRZ data, passport numbers, and personal identifiers must be redacted in operational logs and dry-run execution traces.
+
+### Skill 2: Zero-Trust MCP & Tenant Boundary Architect (`ADR-012`)
+
+- **Dual MCP Boundary:**
+  - **Admin MCP Server (`@visahobe/admin-mcp-server` / `apps/super-admin/mcp`):** Internal command center operations; strictly requires staff session + Authenticator Assurance Level 2 (AAL2 MFA) and immutable audit logging.
+  - **Partner MCP Server (`@visahobe/partner-mcp-server`):** Scoped strictly to calling partner agency's `tenant_id` via verified JWT claim + PostgreSQL 16 Kernel RLS (`SET LOCAL app.current_tenant_id = X`). Tools only access the agency's own cases, documents, wallet balance, and tasks.
+- **B2C Applicant Shielding:** Retail applicants interact exclusively via the streaming AI concierge; raw MCP endpoints are never exposed to public or client users.
+
+### Skill 3: Flagship Luxury & Liquid Glass UI/UX Architect (`ADR-009` & `AGENTS.md §4.1.1`)
+
+- **Palette Tokens:** Deep Emerald (`#0D3B2E`), Champagne Gold (`#C8A951`), Crisp Pure White (`#FFFFFF`), and Charcoal Ink (`#111827`).
+- **Contrast & Surface Partitioning:**
+  - **Liquid Glass (`backdrop-blur-md`):** Translucent overlays reserved for hero overlays, top navigation (`NavbarShell`), KPI summary cards (`StatKpiCard`), and modal drawers.
+  - **Solid White Surfaces (`#FFFFFF`):** High-density operational data tables (`DataTableShell`), intake wizards, OCR diff views, and document checklists must remain solid `#FFFFFF` with `#0D3B2E` headers for 100% WCAG AAA legibility.
+- **Interactive Excellence:** Rich client-side controls (sorting, filtering, real-time calculators, responsive layouts) with zero static mock buttons.
+
+### Skill 4: Atomic Financial Ledger & Payment Security Architect (`ADR-010`)
+
+- **Prepaid Agency Wallet Ledger:**
+  - Zero overdraft invariant: `balance >= 0` enforced at database kernel level.
+  - Atomic case fee deductions using pessimistic database locking (`SELECT ... FOR UPDATE`).
+  - Double-entry immutable ledger (`wallet_transactions`: `CREDIT`, `DEBIT`, `HOLD`, `RELEASE`, `REFUND`).
+  - Gateway webhook idempotency deduplication (Pay Station, Stripe) preventing duplicate credits.
+  - Automated low-balance alerting (`isLowBalance = true` when balance falls below `$500`).
