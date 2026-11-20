@@ -120,14 +120,14 @@ pnpm --filter @visahobe/mobile test
 pnpm --filter @visahobe/cms test
 ```
 
-### 2.3 The "Package Pre-Build" Rule (CI & Fresh Runner Invariant)
+### 2.3 The "Package & Service Pre-Build" Rule (CI & Fresh Runner Invariant)
 
 > [!IMPORTANT]
-> Downstream Next.js apps (`apps/website`, `apps/client-dashboard`) and consumer packages import compiled TypeScript declarations (`dist/*.d.ts`) or source declarations from upstream packages.
-> On clean environments (or after branch switching), ALWAYS run internal package builds before executing Next.js typecheck or build:
+> Downstream Next.js apps (`apps/website`, `apps/client-dashboard`, `apps/super-admin`) and consumer packages import compiled TypeScript declarations (`dist/*.d.ts`) or source declarations from upstream packages and services.
+> On clean environments (or after branch switching), ALWAYS run internal package and service builds before executing Next.js typecheck or build:
 >
 > ```bash
-> pnpm --filter "./packages/**" build
+> pnpm --filter "./packages/**" --filter "./services/**" build
 > ```
 >
 > This matches step 70 of `.github/workflows/ci.yml` and prevents `Cannot find module '@visahobe/...'` errors.
@@ -299,8 +299,8 @@ The database is PostgreSQL 16 managed via Prisma ORM (`@prisma/client@^5.22.0`).
   - `TICKET-P2-005`: Vercel Monorepo Deployment Config for 3 Next.js Apps (`apps/website`, `apps/client-dashboard`, `apps/super-admin`) — **MERGED**
   - `TICKET-P2-006`: Flagship Luxury & Liquid Glass UI/UX Overhaul + Interactive Frontend Experience (`@visahobe/ui`, `apps/website`, `apps/client-dashboard`, `apps/super-admin`) — **MERGED**
 - **Phase 3 — Super AI Agent & Scoped MCP Server Infrastructure:**
-  - `TICKET-P3-001`: Super AI Agent Engine, Hybrid Autonomous Processor & Executive Digest Dispatcher — **IN PROGRESS (ACTIVE FEATURE BRANCH)**
-  - `TICKET-P3-002`: Scoped Admin & Partner MCP Servers with Kernel RLS Enforcement — **PLANNED**
+  - `TICKET-P3-001`: Super AI Agent Engine, Hybrid Autonomous Processor & Executive Digest Dispatcher — **MERGED**
+  - `TICKET-P3-002`: Scoped Admin & Partner MCP Servers with Kernel RLS Enforcement & B2C Client Shielding — **IN PROGRESS (ACTIVE FEATURE BRANCH)**
 
 ### 5.2 Strict Git & Pull Request Rules (Zero Self-Merge)
 

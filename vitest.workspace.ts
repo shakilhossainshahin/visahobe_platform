@@ -17,6 +17,12 @@ const sharedAliases = {
     __dirname,
     'packages/browser-automation/src/index.ts',
   ),
+  '@visahobe/admin-mcp-server': path.resolve(__dirname, 'packages/admin-mcp-server/src/index.ts'),
+  '@visahobe/partner-mcp-server': path.resolve(
+    __dirname,
+    'packages/partner-mcp-server/src/index.ts',
+  ),
+  '@visahobe/api': path.resolve(__dirname, 'services/api/src/index.ts'),
 };
 
 export default defineWorkspace([
