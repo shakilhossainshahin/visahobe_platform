@@ -28,6 +28,7 @@ import {
   type IPartnerConnector,
   type PartnerCaseSubmissionPayload,
 } from '@visahobe/integrations';
+import { ExecutiveDigestService } from '../executive/digest-service.js';
 import type { ApiResponse, AuthenticatedRequest, CaseStatus } from '../types.js';
 
 export interface HttpResponse {
@@ -348,6 +349,15 @@ export class OperationsApiHandler {
             success: true,
             data: { connector: connector.getMaskedConfig(), result: dispatchResult },
           },
+        };
+      }
+
+      // Route: GET /api/v1/executive/digest
+      if (method === 'GET' && pathname === '/api/v1/executive/digest') {
+        const digest = await ExecutiveDigestService.getDailyDigest(session);
+        return {
+          status: 200,
+          body: { success: true, data: digest },
         };
       }
 

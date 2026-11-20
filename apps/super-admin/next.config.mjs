@@ -31,12 +31,20 @@ const nextConfig = {
     '@visahobe/auth',
     '@visahobe/cms',
     '@visahobe/core',
+    '@visahobe/agents',
+    '@visahobe/browser-automation',
     '@visahobe/shared',
   ],
-  webpack: (config) => {
+  webpack: (config, { isServer }) => {
     config.resolve.extensionAlias = {
       '.js': ['.ts', '.tsx', '.js', '.jsx'],
     };
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        crypto: false,
+      };
+    }
     return config;
   },
 };

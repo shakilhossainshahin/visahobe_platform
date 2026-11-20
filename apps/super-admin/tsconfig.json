@@ -32,6 +32,10 @@
       "@visahobe/auth/*": ["../../packages/auth/src/*"],
       "@visahobe/core": ["../../packages/core/src/index"],
       "@visahobe/core/*": ["../../packages/core/src/*"],
+      "@visahobe/agents": ["../../packages/agents/src/index"],
+      "@visahobe/agents/*": ["../../packages/agents/src/*"],
+      "@visahobe/browser-automation": ["../../packages/browser-automation/src/index"],
+      "@visahobe/browser-automation/*": ["../../packages/browser-automation/src/*"],
       "@visahobe/shared": ["../../packages/shared/src/index"],
       "@visahobe/shared/*": ["../../packages/shared/src/*"]
     }
