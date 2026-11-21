@@ -62,4 +62,14 @@ describe('Super Admin Mission Control & Telemetry Deck (ADR-009, ADR-011, TICKET
     expect(html).toContain('/browser?sessionId=sess-brw-ae-2104');
     expect(html).toContain('Take Over in Live Browser');
   });
+
+  it('renders unified 3D glass telemetry cards and floating dock without backdrop blur', () => {
+    const html = renderToStaticMarkup(<SuperAdminDashboardPage />);
+
+    expect(html).toContain('data-testid="glass-3d-card"');
+    expect(html).toContain('data-testid="floating-glass-dock"');
+    expect(html).toContain('Live Browser');
+    expect(html).toContain('3 Paused');
+    expect(html).not.toContain('backdrop-blur');
+  });
 });

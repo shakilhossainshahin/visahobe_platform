@@ -6,17 +6,15 @@ import {
   Section,
   Button,
   LuxuryButton,
-  GlassCard,
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
   Badge,
   EmeraldBadge,
   StatKpiCard,
   InteractiveVisaGlobe,
+  AuroraParallaxBackdrop,
+  Glass3DCard,
+  ParallaxStage,
+  ScrollReveal3D,
+  FloatingGlassDock,
 } from '@visahobe/ui';
 
 interface DestinationPathway {
@@ -231,22 +229,20 @@ export default function HomePage() {
     },
   ];
 
-  return (
-    <div className="w-full flex flex-col font-sans bg-white text-[#111827]">
-      {/* Executive Flagship Hero Section */}
-      <Section
-        variant="default"
-        padding="xl"
-        className="relative overflow-hidden bg-gradient-to-b from-white via-[#F8FAFC] to-white border-b border-[#E2E8F0]"
-      >
-        {/* Subtle Decorative Luxury Emerald & Champagne Gold Orbs */}
-        <div
-          className="absolute -top-32 left-1/2 -translate-x-1/2 w-[820px] h-[380px] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#0D3B2E]/10 via-[#C8A951]/10 to-transparent blur-3xl pointer-events-none"
-          aria-hidden="true"
-        />
+  const dockNavItems = [
+    { id: 'home', label: 'Explore 3D', href: '#hero', active: true },
+    { id: 'destinations', label: 'Destinations', href: '#destinations' },
+    { id: 'simulation', label: 'AI Officer', href: '#ai-officer-simulation' },
+    { id: 'b2b', label: 'Agency Gateway', href: '#b2b-partners', badge: 'B2B' },
+    { id: 'assess', label: 'Assess Fit', href: '/assess' },
+  ];
 
+  return (
+    <AuroraParallaxBackdrop intensity="vibrant" className="w-full flex flex-col font-sans">
+      {/* 3D Parallax Hero Stage */}
+      <ParallaxStage id="hero" perspective={1200} depthSpeed={0.06} className="relative pt-6 pb-12">
         <Container size="2xl" className="relative z-10">
-          <div className="flex flex-col items-center text-center max-w-4xl mx-auto gap-6 sm:gap-8">
+          <div className="flex flex-col items-center text-center max-w-5xl mx-auto gap-6 sm:gap-8">
             {/* Liquid Glass Status Pill with Champagne Gold Border */}
             <div className="flex flex-wrap items-center justify-center gap-2.5">
               <Badge
@@ -254,7 +250,7 @@ export default function HomePage() {
                 size="md"
                 dot
                 dotPulse
-                className="shadow-sm border-[#C8A951]/50"
+                className="shadow-sm border-[#C8A951]/50 backdrop-blur-md bg-white/80 dark:bg-black/40 text-[#0D3B2E]"
               >
                 <span className="font-semibold text-[#0D3B2E]">
                   99.2% Verification Accuracy • AI + Licensed Human Verifiers
@@ -266,15 +262,15 @@ export default function HomePage() {
             </div>
 
             {/* Authoritative Display Headline */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-extrabold tracking-tight text-[#0D3B2E] leading-[1.1]">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-extrabold tracking-tight text-white leading-[1.1]">
               Global Visas & Relocation Powered by{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0D3B2E] via-[#145342] to-[#C8A951]">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-200 to-[#C8A951]">
                 Intelligent AI Operations
               </span>
             </h1>
 
             {/* Sub-headline */}
-            <p className="text-lg sm:text-xl text-[#475569] max-w-2xl leading-relaxed">
+            <p className="text-lg sm:text-xl text-slate-300 max-w-2xl leading-relaxed">
               Experience transparent, error-free visa processing. Rapid automated eligibility
               scoring, instant document validation, and certified immigration specialist sign-offs
               in one modern platform.
@@ -322,31 +318,96 @@ export default function HomePage() {
               />
             </div>
 
-            {/* 3D Interactive Consular Radar Globe */}
-            <div className="w-full mt-2 sm:mt-4">
-              <InteractiveVisaGlobe
-                selectedDestinationId={selectedQuickCountry}
-                onSelectDestination={(dest) => {
-                  setSelectedQuickCountry(dest.id);
-                }}
-              />
+            {/* 3D Interactive Consular Radar Globe + Holographic Pass Hero Split */}
+            <div className="w-full mt-2 sm:mt-4 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+              {/* Left / Main: 3D Interactive Visa Globe */}
+              <div className="lg:col-span-8 w-full">
+                <InteractiveVisaGlobe
+                  selectedDestinationId={selectedQuickCountry}
+                  onSelectDestination={(dest) => {
+                    setSelectedQuickCountry(dest.id);
+                  }}
+                />
+              </div>
+
+              {/* Right: Floating 3D Holographic Visa Pass Card */}
+              <div className="lg:col-span-4 w-full flex flex-col gap-4">
+                <Glass3DCard
+                  glowColor="gold"
+                  tiltIntensity={15}
+                  specular={true}
+                  className="p-6 text-left"
+                  dataTestId="holographic-visa-pass"
+                >
+                  <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] animate-ping" />
+                      <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#C8A951]">
+                        Holographic Visa Pass
+                      </span>
+                    </div>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-sm bg-white/10 text-white/80">
+                      SEC-CHIP-99
+                    </span>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-white/70">Selected Destination</span>
+                      <span className="text-sm font-bold text-white">
+                        {activeHeroDestination.flag} {activeHeroDestination.country}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-white/70">Sovereign Stream</span>
+                      <span className="text-xs font-mono font-semibold text-[#C8A951]">
+                        {activeHeroDestination.title}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-white/70">Consular Velocity</span>
+                      <span className="text-xs font-bold text-emerald-400">
+                        {activeHeroDestination.processingTime}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-white/70">Dual Verification</span>
+                      <span className="text-xs font-bold text-emerald-300">
+                        {activeHeroDestination.approvalRate} Pass Rate
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="mt-5 pt-3 border-t border-white/10 flex items-center justify-between">
+                    <div className="text-[11px] font-mono text-white/60">
+                      REF: VH-2026-{activeHeroDestination.id.toUpperCase()}
+                    </div>
+                    <a href={`/countries/${activeHeroDestination.slug}`}>
+                      <span className="text-xs font-semibold text-[#C8A951] hover:underline">
+                        Explore Corridor →
+                      </span>
+                    </a>
+                  </div>
+                </Glass3DCard>
+              </div>
             </div>
 
-            {/* Interactive Instant Destination / Visa Selector */}
+            {/* Interactive Instant Destination / Visa Selector (Glass3DCard) */}
             <div className="w-full mt-2 sm:mt-4">
-              <GlassCard
-                intensity="luxury"
-                goldAccent
-                className="p-6 sm:p-8 text-left max-w-4xl mx-auto shadow-glass"
+              <Glass3DCard
+                glowColor="emerald"
+                tiltIntensity={8}
+                specular={true}
+                className="p-6 sm:p-8 text-left max-w-5xl mx-auto"
               >
                 <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
                   <div className="flex items-center gap-2">
                     <span className="h-2 w-2 rounded-full bg-[#C8A951]" aria-hidden="true" />
-                    <span className="text-xs font-bold uppercase tracking-wider text-[#0D3B2E]">
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#C8A951]">
                       Instant Consular Pathway & Tariff Preview
                     </span>
                   </div>
-                  <span className="font-mono text-xs font-semibold text-[#0D3B2E] bg-[#F0F7F4] px-2.5 py-1 rounded-lg border border-[#0D3B2E]/15">
+                  <span className="font-mono text-xs font-semibold text-emerald-300 bg-white/10 px-2.5 py-1 rounded-lg border border-white/15">
                     Live Policy Pack • Nov 2026
                   </span>
                 </div>
@@ -355,7 +416,7 @@ export default function HomePage() {
                   <div className="flex-1 w-full flex flex-col gap-1.5">
                     <label
                       htmlFor="quick-country"
-                      className="text-xs font-bold uppercase tracking-wider text-[#0D3B2E]"
+                      className="text-xs font-bold uppercase tracking-wider text-slate-300"
                     >
                       Select Destination
                     </label>
@@ -363,7 +424,7 @@ export default function HomePage() {
                       id="quick-country"
                       value={selectedQuickCountry}
                       onChange={(e) => setSelectedQuickCountry(e.target.value)}
-                      className="w-full rounded-xl border border-[#CBD5E1] bg-white px-3.5 py-2.5 text-sm font-medium text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#0D3B2E]"
+                      className="w-full rounded-xl border border-white/20 bg-[#092A21]/80 px-3.5 py-2.5 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-[#C8A951]"
                     >
                       <option value="singapore">🇸🇬 Singapore (Employment Pass / Tech)</option>
                       <option value="germany">🇩🇪 Germany / Schengen (EU Blue Card)</option>
@@ -377,7 +438,7 @@ export default function HomePage() {
                   <div className="flex-1 w-full flex flex-col gap-1.5">
                     <label
                       htmlFor="quick-purpose"
-                      className="text-xs font-bold uppercase tracking-wider text-[#0D3B2E]"
+                      className="text-xs font-bold uppercase tracking-wider text-slate-300"
                     >
                       Application Purpose
                     </label>
@@ -385,7 +446,7 @@ export default function HomePage() {
                       id="quick-purpose"
                       value={selectedQuickPurpose}
                       onChange={(e) => setSelectedQuickPurpose(e.target.value)}
-                      className="w-full rounded-xl border border-[#CBD5E1] bg-white px-3.5 py-2.5 text-sm font-medium text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#0D3B2E]"
+                      className="w-full rounded-xl border border-white/20 bg-[#092A21]/80 px-3.5 py-2.5 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-[#C8A951]"
                     >
                       <option value="skilled">Skilled Employment & Work Permit</option>
                       <option value="student">Higher Education & Student Visa</option>
@@ -407,302 +468,315 @@ export default function HomePage() {
                 </div>
 
                 {/* Live Interactive Preview Output Panel */}
-                <div className="mt-5 p-4 rounded-xl bg-white border border-[#E2E8F0] grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="mt-5 p-4 rounded-xl bg-black/40 border border-white/10 grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
-                    <span className="text-[11px] font-semibold uppercase tracking-wider text-[#64748B] block">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block">
                       Selected Pathway
                     </span>
-                    <p className="text-sm font-bold text-[#0D3B2E] mt-0.5">
+                    <p className="text-sm font-bold text-white mt-0.5">
                       {activeHeroDestination.flag} {activeHeroDestination.country} —{' '}
                       {activeHeroDestination.title}
                     </p>
-                    <p className="text-[11px] text-[#475569] mt-0.5">
+                    <p className="text-[11px] text-slate-300 mt-0.5">
                       {activePurpose.readinessNote}
                     </p>
                   </div>
                   <div>
-                    <span className="text-[11px] font-semibold uppercase tracking-wider text-[#64748B] block">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block">
                       Processing & Approval Benchmark
                     </span>
-                    <p className="text-sm font-bold text-[#111827] mt-0.5">
+                    <p className="text-sm font-bold text-white mt-0.5">
                       {activeHeroDestination.processingTime} •{' '}
-                      <span className="text-[#15803D]">
+                      <span className="text-emerald-400">
                         {activeHeroDestination.approvalRate} Approved
                       </span>
                     </p>
-                    <p className="text-[11px] text-[#475569] mt-0.5">
+                    <p className="text-[11px] text-slate-300 mt-0.5">
                       Criteria: {activeHeroDestination.minRequirements}
                     </p>
                   </div>
                   <div>
-                    <span className="text-[11px] font-semibold uppercase tracking-wider text-[#64748B] block">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block">
                       Transparent Tariff Schedule
                     </span>
-                    <p className="text-sm font-mono font-bold text-[#0D3B2E] mt-0.5">
+                    <p className="text-sm font-mono font-bold text-[#C8A951] mt-0.5">
                       {activeHeroDestination.transparentPricing}
                     </p>
-                    <p className="text-[11px] text-[#475569] mt-0.5">
+                    <p className="text-[11px] text-slate-300 mt-0.5">
                       {activeHeroDestination.govFeeNote}
                     </p>
                   </div>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-[rgba(13,59,46,0.08)] flex flex-wrap items-center justify-between gap-3 text-xs text-[#475569]">
-                  <span className="flex items-center gap-1.5 font-medium text-[#0D3B2E]">
+                <div className="mt-4 pt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-300">
+                  <span className="flex items-center gap-1.5 font-medium text-emerald-400">
                     ✓ No hidden fees
                   </span>
-                  <span className="flex items-center gap-1.5 font-medium text-[#0D3B2E]">
+                  <span className="flex items-center gap-1.5 font-medium text-emerald-400">
                     ✓ Official embassy requirements
                   </span>
-                  <span className="flex items-center gap-1.5 font-medium text-[#0D3B2E]">
+                  <span className="flex items-center gap-1.5 font-medium text-emerald-400">
                     ✓ Real-time consular guidelines
                   </span>
                 </div>
-              </GlassCard>
+              </Glass3DCard>
             </div>
           </div>
         </Container>
-      </Section>
+      </ParallaxStage>
 
       {/* Live AI Visa Officer at Work Interactive Simulation Preview */}
       <Section
         id="ai-officer-simulation"
         variant="default"
         padding="lg"
-        className="bg-white border-b border-[#E2E8F0]"
+        className="bg-transparent border-t border-white/10 relative z-10"
       >
         <Container size="2xl">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-8 mb-8">
-            <div className="max-w-2xl">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] animate-ping" />
-                <EmeraldBadge variant="brand" size="sm">
-                  Autonomous Agent Runtime Preview
-                </EmeraldBadge>
+          <ScrollReveal3D direction="up">
+            <div className="flex flex-col lg:flex-row items-center justify-between gap-8 mb-8">
+              <div className="max-w-2xl text-left">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] animate-ping" />
+                  <EmeraldBadge variant="brand" size="sm">
+                    Autonomous Agent Runtime Preview
+                  </EmeraldBadge>
+                </div>
+                <h2 className="text-3xl sm:text-4xl font-display font-bold text-white">
+                  Watch the AI Visa Officer at Work
+                </h2>
+                <p className="text-sm sm:text-base text-slate-300 mt-2">
+                  See our multi-stage pipeline parse identity credentials, verify consular policies,
+                  and enforce statutory review gates in real-time.
+                </p>
               </div>
-              <h2 className="text-3xl sm:text-4xl font-display font-bold text-[#0D3B2E]">
-                Watch the AI Visa Officer at Work
-              </h2>
-              <p className="text-sm sm:text-base text-[#475569] mt-2">
-                See our multi-stage pipeline parse identity credentials, verify consular policies,
-                and enforce statutory review gates in real-time.
-              </p>
+
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={runSimulation}
+                  disabled={isSimulating}
+                  className="px-5 py-2.5 rounded-xl bg-[#0D3B2E] hover:bg-[#092A21] text-white font-semibold text-xs sm:text-sm border border-[#C8A951]/40 shadow-md transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                >
+                  <span>{isSimulating ? 'Processing Simulation...' : '▶ Run Live Simulation'}</span>
+                </button>
+              </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={runSimulation}
-                disabled={isSimulating}
-                className="px-5 py-2.5 rounded-xl bg-[#0D3B2E] hover:bg-[#092A21] text-white font-semibold text-xs sm:text-sm border border-[#C8A951]/40 shadow-md transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Stage 1: Document OCR Ingestion */}
+              <Glass3DCard
+                glowColor="emerald"
+                tiltIntensity={10}
+                className={`p-6 text-left transition-all ${
+                  simulationStep === 1 ? 'ring-2 ring-[#10B981]' : ''
+                }`}
               >
-                <span>{isSimulating ? 'Processing Simulation...' : '▶ Run Live Simulation'}</span>
-              </button>
-            </div>
-          </div>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs font-mono font-bold text-white bg-white/10 px-2.5 py-1 rounded-md border border-white/15">
+                    STAGE 01
+                  </span>
+                  <span className="text-xs font-semibold text-emerald-300 bg-emerald-950/60 px-2 py-0.5 rounded-sm border border-emerald-500/30">
+                    99.8% OCR Confidence
+                  </span>
+                </div>
+                <h3 className="font-bold text-base text-white">Identity & Credential Extraction</h3>
+                <p className="text-xs text-slate-300 mt-1">
+                  Scans passport MRZ, checks biometric integrity, and normalizes educational degrees
+                  against official accreditation registries.
+                </p>
+                <div className="mt-4 p-3 rounded-lg bg-black/40 border border-white/10 font-mono text-[11px] text-slate-300 space-y-1">
+                  <div>✓ MRZ: P&lt;BGDHOSSAIN&lt;&lt;MD&lt;SHAKIL</div>
+                  <div>✓ Checksum: Validated (SHA-256)</div>
+                  <div>✓ Anabin H+ Degree: Certified</div>
+                </div>
+              </Glass3DCard>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Stage 1: Document OCR Ingestion */}
-            <div
-              className={`p-6 rounded-2xl border transition-all ${
-                simulationStep === 1
-                  ? 'bg-emerald-50/50 border-[#10B981] shadow-lg ring-2 ring-[#10B981]/20'
-                  : 'bg-[#F8FAFC] border-[#E2E8F0]'
-              }`}
-            >
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-mono font-bold text-[#0D3B2E] bg-white px-2.5 py-1 rounded-md border border-[#E2E8F0]">
-                  STAGE 01
-                </span>
-                <span className="text-xs font-semibold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-sm">
-                  99.8% OCR Confidence
-                </span>
-              </div>
-              <h3 className="font-bold text-base text-[#0D3B2E]">
-                Identity & Credential Extraction
-              </h3>
-              <p className="text-xs text-[#475569] mt-1">
-                Scans passport MRZ, checks biometric integrity, and normalizes educational degrees
-                against official accreditation registries.
-              </p>
-              <div className="mt-4 p-3 rounded-lg bg-white border border-[#E2E8F0] font-mono text-[11px] text-[#334155] space-y-1">
-                <div>✓ MRZ: P&lt;BGDHOSSAIN&lt;&lt;MD&lt;SHAKIL</div>
-                <div>✓ Checksum: Validated (SHA-256)</div>
-                <div>✓ Anabin H+ Degree: Certified</div>
-              </div>
-            </div>
+              {/* Stage 2: Policy Math & Matrix Scoring */}
+              <Glass3DCard
+                glowColor="gold"
+                tiltIntensity={10}
+                className={`p-6 text-left transition-all ${
+                  simulationStep === 2 ? 'ring-2 ring-[#C8A951]' : ''
+                }`}
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs font-mono font-bold text-white bg-white/10 px-2.5 py-1 rounded-md border border-white/15">
+                    STAGE 02
+                  </span>
+                  <span className="text-xs font-semibold text-amber-300 bg-amber-950/60 px-2 py-0.5 rounded-sm border border-amber-500/30">
+                    Policy Calibration
+                  </span>
+                </div>
+                <h3 className="font-bold text-base text-white">Consular Rules Engine</h3>
+                <p className="text-xs text-slate-300 mt-1">
+                  Evaluates statutory points thresholds, salary benchmarks, and nationality quotas
+                  matching the destination country's live immigration criteria.
+                </p>
+                <div className="mt-4 p-3 rounded-lg bg-black/40 border border-white/10 font-mono text-[11px] text-slate-300 space-y-1">
+                  <div>✓ COMPASS Score: 50 / 40 Pts (Pass)</div>
+                  <div>✓ Salary Benchmark: Top 10th Percentile</div>
+                  <div>✓ Diversity Sub-criteria: Met (20 Pts)</div>
+                </div>
+              </Glass3DCard>
 
-            {/* Stage 2: Policy Math & Matrix Scoring */}
-            <div
-              className={`p-6 rounded-2xl border transition-all ${
-                simulationStep === 2
-                  ? 'bg-amber-50/50 border-[#C8A951] shadow-lg ring-2 ring-[#C8A951]/20'
-                  : 'bg-[#F8FAFC] border-[#E2E8F0]'
-              }`}
-            >
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-mono font-bold text-[#0D3B2E] bg-white px-2.5 py-1 rounded-md border border-[#E2E8F0]">
-                  STAGE 02
-                </span>
-                <span className="text-xs font-semibold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-sm">
-                  Policy Calibration
-                </span>
-              </div>
-              <h3 className="font-bold text-base text-[#0D3B2E]">Consular Rules Engine</h3>
-              <p className="text-xs text-[#475569] mt-1">
-                Evaluates statutory points thresholds, salary benchmarks, and nationality quotas
-                matching the destination country's live immigration criteria.
-              </p>
-              <div className="mt-4 p-3 rounded-lg bg-white border border-[#E2E8F0] font-mono text-[11px] text-[#334155] space-y-1">
-                <div>✓ COMPASS Score: 50 / 40 Pts (Pass)</div>
-                <div>✓ Salary Benchmark: Top 10th Percentile</div>
-                <div>✓ Diversity Sub-criteria: Met (20 Pts)</div>
-              </div>
+              {/* Stage 3: Human Verification Gate */}
+              <Glass3DCard
+                glowColor="emerald"
+                tiltIntensity={10}
+                className={`p-6 text-left transition-all ${
+                  simulationStep === 3 ? 'ring-2 ring-emerald-400' : ''
+                }`}
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs font-mono font-bold text-white bg-white/10 px-2.5 py-1 rounded-md border border-white/15">
+                    STAGE 03
+                  </span>
+                  <span className="text-xs font-semibold text-emerald-300 bg-emerald-950/60 px-2 py-0.5 rounded-sm border border-emerald-500/30">
+                    Licensed Counsel Gate
+                  </span>
+                </div>
+                <h3 className="font-bold text-base text-white">Accredited Attorney Review</h3>
+                <p className="text-xs text-slate-300 mt-1">
+                  Strict ADR-011 review gate halts automated filing for human counsel verification
+                  before any official embassy lodgment or biometric slot request.
+                </p>
+                <div className="mt-4 p-3 rounded-lg bg-black/40 border border-white/10 font-mono text-[11px] text-slate-300 space-y-1">
+                  <div>✓ Verifier: Sarah Jenkins, Esq.</div>
+                  <div>✓ Audit Signature: SHA-256 Hash Verified</div>
+                  <div>✓ Status: Approved for Embassy Lodgment</div>
+                </div>
+              </Glass3DCard>
             </div>
-
-            {/* Stage 3: Human Verification Gate */}
-            <div
-              className={`p-6 rounded-2xl border transition-all ${
-                simulationStep === 3
-                  ? 'bg-emerald-50/50 border-[#0D3B2E] shadow-lg ring-2 ring-[#0D3B2E]/20'
-                  : 'bg-[#F8FAFC] border-[#E2E8F0]'
-              }`}
-            >
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-mono font-bold text-[#0D3B2E] bg-white px-2.5 py-1 rounded-md border border-[#E2E8F0]">
-                  STAGE 03
-                </span>
-                <span className="text-xs font-semibold text-[#0D3B2E] bg-[#E3EFEA] px-2 py-0.5 rounded-sm">
-                  Licensed Counsel Gate
-                </span>
-              </div>
-              <h3 className="font-bold text-base text-[#0D3B2E]">Accredited Attorney Review</h3>
-              <p className="text-xs text-[#475569] mt-1">
-                Strict ADR-011 review gate halts automated filing for human counsel verification
-                before any official embassy lodgment or biometric slot request.
-              </p>
-              <div className="mt-4 p-3 rounded-lg bg-white border border-[#E2E8F0] font-mono text-[11px] text-[#334155] space-y-1">
-                <div>✓ Verifier: Sarah Jenkins, Esq.</div>
-                <div>✓ Audit Signature: SHA-256 Hash Verified</div>
-                <div>✓ Status: Approved for Embassy Lodgment</div>
-              </div>
-            </div>
-          </div>
+          </ScrollReveal3D>
         </Container>
       </Section>
 
-      {/* Popular Destinations & Streams */}
-      <Section id="destinations" variant="muted" padding="lg">
+      {/* Popular Destinations & Streams (Corridors) */}
+      <Section
+        id="destinations"
+        variant="default"
+        padding="lg"
+        className="bg-transparent relative z-10"
+      >
         <Container size="2xl">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
-            <div className="flex flex-col gap-2 max-w-xl">
-              <EmeraldBadge variant="brand" size="sm" className="w-fit">
-                Global Destinations
-              </EmeraldBadge>
-              <h2 className="text-3xl sm:text-4xl font-display font-bold text-[#0D3B2E]">
-                High-Success Migration Pathways
-              </h2>
-              <p className="text-sm sm:text-base text-[#475569]">
-                Verified work permits, skilled PR tracks, and study visas managed end-to-end with
-                unmatched compliance accuracy and transparent statutory pricing.
-              </p>
+          <ScrollReveal3D direction="up">
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4 text-left">
+              <div className="flex flex-col gap-2 max-w-xl">
+                <EmeraldBadge variant="brand" size="sm" className="w-fit">
+                  Global Destinations
+                </EmeraldBadge>
+                <h2 className="text-3xl sm:text-4xl font-display font-bold text-white">
+                  High-Success Migration Pathways
+                </h2>
+                <p className="text-sm sm:text-base text-slate-300">
+                  Verified work permits, skilled PR tracks, and study visas managed end-to-end with
+                  unmatched compliance accuracy and transparent statutory pricing.
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                {['All', 'Popular', 'Skilled Work', 'Skilled Migration', 'Permanent Residency'].map(
+                  (filter) => (
+                    <button
+                      key={filter}
+                      type="button"
+                      onClick={() => setPathwayFilter(filter)}
+                      className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                        pathwayFilter === filter
+                          ? 'bg-[#0D3B2E] text-white border border-[#C8A951]/60 shadow-xs'
+                          : 'bg-white/10 text-slate-300 border border-white/15 hover:border-white/30'
+                      }`}
+                    >
+                      {filter === 'All' ? 'All Pathways (6)' : filter}
+                    </button>
+                  ),
+                )}
+                <a href="/countries">
+                  <Button variant="outline" size="sm" className="text-white border-white/30">
+                    View All Destinations →
+                  </Button>
+                </a>
+              </div>
             </div>
-            <div className="flex flex-wrap items-center gap-2">
-              {['All', 'Popular', 'Skilled Work', 'Skilled Migration', 'Permanent Residency'].map(
-                (filter) => (
-                  <button
-                    key={filter}
-                    type="button"
-                    onClick={() => setPathwayFilter(filter)}
-                    className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
-                      pathwayFilter === filter
-                        ? 'bg-[#0D3B2E] text-white border border-[#C8A951]/60 shadow-xs'
-                        : 'bg-white text-[#475569] border border-[#E2E8F0] hover:border-[#0D3B2E]/40'
-                    }`}
-                  >
-                    {filter === 'All' ? 'All Pathways (6)' : filter}
-                  </button>
-                ),
-              )}
-              <a href="/countries">
-                <Button variant="outline" size="sm">
-                  View All Destinations →
-                </Button>
-              </a>
-            </div>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredDestinations.map((dest) => (
-              <Card
-                key={dest.country}
-                variant="luxury"
-                goldDivider
-                className="hover:border-[#0D3B2E]/50 hover:shadow-lg transition-all duration-200 flex flex-col justify-between bg-white"
-              >
-                <CardHeader>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-3xl" aria-hidden="true">
-                      {dest.flag}
-                    </span>
-                    <div className="flex items-center gap-1.5">
-                      <Badge variant="success" size="sm">
-                        {dest.approvalRate} Approval
-                      </Badge>
-                      {dest.popular ? (
-                        <EmeraldBadge variant="brand" size="sm" dot={false}>
-                          High Demand
-                        </EmeraldBadge>
-                      ) : (
-                        <Badge variant="neutral" size="sm">
-                          {dest.category}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredDestinations.map((dest) => (
+                <Glass3DCard
+                  key={dest.country}
+                  glowColor="gold"
+                  tiltIntensity={12}
+                  className="p-6 text-left flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-3xl" aria-hidden="true">
+                        {dest.flag}
+                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <Badge variant="success" size="sm">
+                          {dest.approvalRate} Approval
                         </Badge>
-                      )}
+                        {dest.popular ? (
+                          <EmeraldBadge variant="gold" size="sm" dot={false}>
+                            High Demand
+                          </EmeraldBadge>
+                        ) : (
+                          <Badge
+                            variant="neutral"
+                            size="sm"
+                            className="text-white/80 border-white/20"
+                          >
+                            {dest.category}
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                    <a href={`/countries/${dest.slug}`} className="hover:underline">
+                      <h3 className="text-lg font-bold text-white">{dest.country}</h3>
+                    </a>
+                    <p className="text-sm font-medium text-emerald-300 mt-0.5">{dest.title}</p>
+
+                    <div className="flex flex-col gap-2 pt-4 text-xs text-slate-300">
+                      <div className="flex items-center justify-between py-1.5 border-b border-white/10">
+                        <span className="text-slate-400">Processing Estimate</span>
+                        <span className="font-semibold text-white">{dest.processingTime}</span>
+                      </div>
+                      <div className="flex items-center justify-between py-1.5 border-b border-white/10">
+                        <span className="text-slate-400">Core Criteria</span>
+                        <span className="font-semibold text-white">{dest.minRequirements}</span>
+                      </div>
+                      <div className="flex items-center justify-between py-1.5 border-b border-white/10">
+                        <span className="text-slate-400">Transparent Fee</span>
+                        <span className="font-mono font-bold text-[#C8A951]">
+                          {dest.transparentPricing}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  <a href={`/countries/${dest.slug}`} className="hover:underline">
-                    <CardTitle className="text-lg font-bold text-[#0D3B2E]">
-                      {dest.country}
-                    </CardTitle>
-                  </a>
-                  <CardDescription className="text-sm font-medium text-[#111827]">
-                    {dest.title}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="flex flex-col gap-2.5 pt-0 text-xs text-[#475569]">
-                  <div className="flex items-center justify-between py-1.5 border-b border-[#F1F5F9]">
-                    <span className="text-[#64748B]">Processing Estimate</span>
-                    <span className="font-semibold text-[#111827]">{dest.processingTime}</span>
+
+                  <div className="pt-4 mt-2 border-t border-white/10 flex items-center gap-2">
+                    <a href={`/countries/${dest.slug}`} className="flex-1">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full text-xs text-white border-white/20"
+                      >
+                        View Guide
+                      </Button>
+                    </a>
+                    <a
+                      href={`/assess?country=${encodeURIComponent(dest.country.toLowerCase())}`}
+                      className="flex-1"
+                    >
+                      <LuxuryButton size="sm" className="w-full text-xs">
+                        Assess Fit
+                      </LuxuryButton>
+                    </a>
                   </div>
-                  <div className="flex items-center justify-between py-1.5 border-b border-[#F1F5F9]">
-                    <span className="text-[#64748B]">Core Criteria</span>
-                    <span className="font-semibold text-[#111827]">{dest.minRequirements}</span>
-                  </div>
-                  <div className="flex items-center justify-between py-1.5 border-b border-[#F1F5F9]">
-                    <span className="text-[#64748B]">Transparent Fee</span>
-                    <span className="font-mono font-bold text-[#0D3B2E]">
-                      {dest.transparentPricing}
-                    </span>
-                  </div>
-                </CardContent>
-                <CardFooter className="pt-2 flex items-center gap-2">
-                  <a href={`/countries/${dest.slug}`} className="flex-1">
-                    <Button variant="outline" size="sm" className="w-full text-xs">
-                      View Guide
-                    </Button>
-                  </a>
-                  <a
-                    href={`/assess?country=${encodeURIComponent(dest.country.toLowerCase())}`}
-                    className="flex-1"
-                  >
-                    <LuxuryButton size="sm" className="w-full text-xs">
-                      Assess Fit
-                    </LuxuryButton>
-                  </a>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
+                </Glass3DCard>
+              ))}
+            </div>
+          </ScrollReveal3D>
         </Container>
       </Section>
 
@@ -711,106 +785,119 @@ export default function HomePage() {
         id="how-it-works"
         variant="default"
         padding="lg"
-        className="border-y border-[#E2E8F0] bg-white"
+        className="border-t border-white/10 bg-transparent relative z-10"
       >
         <Container size="2xl">
-          <div className="text-center max-w-2xl mx-auto mb-16 flex flex-col items-center gap-3">
-            <EmeraldBadge variant="brand" size="sm">
-              Operational Workflow
-            </EmeraldBadge>
-            <h2 className="text-3xl sm:text-4xl font-display font-bold text-[#0D3B2E]">
-              How VisaHobe AI + Human Verification Works
-            </h2>
-            <p className="text-[#475569] text-sm sm:text-base leading-relaxed">
-              We eliminate visa anxiety through an engineered, transparent 4-stage pipeline that
-              combines speed with rigorous legal scrutiny.
-            </p>
-          </div>
+          <ScrollReveal3D direction="up">
+            <div className="text-center max-w-2xl mx-auto mb-16 flex flex-col items-center gap-3">
+              <EmeraldBadge variant="brand" size="sm">
+                Operational Workflow
+              </EmeraldBadge>
+              <h2 className="text-3xl sm:text-4xl font-display font-bold text-white">
+                How VisaHobe AI + Human Verification Works
+              </h2>
+              <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+                We eliminate visa anxiety through an engineered, transparent 4-stage pipeline that
+                combines speed with rigorous legal scrutiny.
+              </p>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {workflowSteps.map((step) => (
-              <div
-                key={step.step}
-                className="flex flex-col gap-4 p-6 rounded-2xl bg-white border border-[#E2E8F0] shadow-xs relative overflow-hidden"
-              >
-                <div
-                  aria-hidden="true"
-                  className="h-[2px] w-12 bg-gradient-to-r from-[#0D3B2E] to-[#C8A951]"
-                />
-                <div className="flex items-center justify-between">
-                  <span className="text-3xl font-display font-extrabold text-[#0D3B2E]/25">
-                    {step.step}
-                  </span>
-                  <Badge variant="brand" size="sm">
-                    {step.badge}
-                  </Badge>
-                </div>
-                <h3 className="text-lg font-bold text-[#0D3B2E]">{step.title}</h3>
-                <p className="text-sm text-[#475569] leading-relaxed">{step.description}</p>
-              </div>
-            ))}
-          </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {workflowSteps.map((step) => (
+                <Glass3DCard
+                  key={step.step}
+                  glowColor="emerald"
+                  tiltIntensity={10}
+                  className="p-6 text-left flex flex-col gap-4"
+                >
+                  <div
+                    aria-hidden="true"
+                    className="h-[2px] w-12 bg-gradient-to-r from-emerald-400 to-[#C8A951]"
+                  />
+                  <div className="flex items-center justify-between">
+                    <span className="text-3xl font-display font-extrabold text-white/30">
+                      {step.step}
+                    </span>
+                    <Badge variant="brand" size="sm">
+                      {step.badge}
+                    </Badge>
+                  </div>
+                  <h3 className="text-lg font-bold text-white">{step.title}</h3>
+                  <p className="text-sm text-slate-300 leading-relaxed">{step.description}</p>
+                </Glass3DCard>
+              ))}
+            </div>
+          </ScrollReveal3D>
         </Container>
       </Section>
 
       {/* Trust, Security & Compliance */}
-      <Section id="security" variant="muted" padding="lg">
+      <Section
+        id="security"
+        variant="default"
+        padding="lg"
+        className="border-t border-white/10 bg-transparent relative z-10"
+      >
         <Container size="2xl">
-          <div className="flex flex-col lg:flex-row items-start gap-12">
-            <div className="lg:w-5/12 flex flex-col gap-4">
-              <EmeraldBadge variant="brand" size="sm" className="w-fit">
-                Security & Compliance
-              </EmeraldBadge>
-              <h2 className="text-3xl sm:text-4xl font-display font-bold text-[#0D3B2E]">
-                Enterprise Data Privacy & Legal Integrity
-              </h2>
-              <p className="text-[#475569] text-sm sm:text-base leading-relaxed">
-                Visa applications contain your most private identity documents. We built VisaHobe
-                with banking-grade tenant boundaries, rigorous auditability, and zero PII leaks.
-              </p>
-              <div className="mt-4 flex flex-col gap-3">
-                <div className="flex items-start gap-3">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#15803D] text-white text-xs font-bold">
-                    ✓
-                  </span>
-                  <span className="text-sm text-[#111827] font-medium">
-                    Strict PostgreSQL Row-Level Security on all database tables
-                  </span>
-                </div>
-                <div className="flex items-start gap-3">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#15803D] text-white text-xs font-bold">
-                    ✓
-                  </span>
-                  <span className="text-sm text-[#111827] font-medium">
-                    Mandatory Multi-Factor Authentication (MFA) for staff & verifiers
-                  </span>
-                </div>
-                <div className="flex items-start gap-3">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#15803D] text-white text-xs font-bold">
-                    ✓
-                  </span>
-                  <span className="text-sm text-[#111827] font-medium">
-                    Automated secret vault and automated PII scrubbing in all logs
-                  </span>
+          <ScrollReveal3D direction="up">
+            <div className="flex flex-col lg:flex-row items-start gap-12 text-left">
+              <div className="lg:w-5/12 flex flex-col gap-4">
+                <EmeraldBadge variant="brand" size="sm" className="w-fit">
+                  Security & Compliance
+                </EmeraldBadge>
+                <h2 className="text-3xl sm:text-4xl font-display font-bold text-white">
+                  Enterprise Data Privacy & Legal Integrity
+                </h2>
+                <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+                  Visa applications contain your most private identity documents. We built VisaHobe
+                  with banking-grade tenant boundaries, rigorous auditability, and zero PII leaks.
+                </p>
+                <div className="mt-4 flex flex-col gap-3">
+                  <div className="flex items-start gap-3">
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#15803D] text-white text-xs font-bold">
+                      ✓
+                    </span>
+                    <span className="text-sm text-slate-200 font-medium">
+                      Strict PostgreSQL Row-Level Security on all database tables
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#15803D] text-white text-xs font-bold">
+                      ✓
+                    </span>
+                    <span className="text-sm text-slate-200 font-medium">
+                      Mandatory Multi-Factor Authentication (MFA) for staff & verifiers
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#15803D] text-white text-xs font-bold">
+                      ✓
+                    </span>
+                    <span className="text-sm text-slate-200 font-medium">
+                      Automated secret vault and automated PII scrubbing in all logs
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="lg:w-7/12 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {securityPillars.map((pillar) => (
-                <div
-                  key={pillar.title}
-                  className="p-5 rounded-2xl bg-white border border-[#E2E8F0] shadow-sm flex flex-col gap-2"
-                >
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#0D3B2E]">
-                    {pillar.tag}
-                  </span>
-                  <h4 className="text-base font-bold text-[#111827]">{pillar.title}</h4>
-                  <p className="text-xs text-[#475569] leading-relaxed">{pillar.description}</p>
-                </div>
-              ))}
+              <div className="lg:w-7/12 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {securityPillars.map((pillar) => (
+                  <Glass3DCard
+                    key={pillar.title}
+                    glowColor="neutral"
+                    tiltIntensity={8}
+                    className="p-5 text-left flex flex-col gap-2"
+                  >
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#C8A951]">
+                      {pillar.tag}
+                    </span>
+                    <h4 className="text-base font-bold text-white">{pillar.title}</h4>
+                    <p className="text-xs text-slate-300 leading-relaxed">{pillar.description}</p>
+                  </Glass3DCard>
+                ))}
+              </div>
             </div>
-          </div>
+          </ScrollReveal3D>
         </Container>
       </Section>
 
@@ -819,77 +906,86 @@ export default function HomePage() {
         id="b2b-partners"
         variant="default"
         padding="lg"
-        className="bg-gradient-to-b from-white via-[#F8FAFC] to-white border-b border-[#E2E8F0]"
+        className="bg-transparent border-t border-white/10 relative z-10"
       >
         <Container size="2xl">
-          <div className="rounded-3xl bg-gradient-to-br from-[#0D3B2E] via-[#092A21] to-[#041611] text-white p-8 md:p-12 shadow-2xl border border-[#C8A951]/40 relative overflow-hidden">
-            <div className="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-[#C8A951]/15 blur-3xl pointer-events-none" />
-            <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
-              <div className="max-w-xl">
-                <div className="flex items-center gap-2 mb-3">
-                  <EmeraldBadge variant="gold" size="sm">
-                    B2B Agency Infrastructure
-                  </EmeraldBadge>
-                  <span className="text-xs font-mono text-[#C8A951]">ADR-010 • 3-Tier SaaS</span>
-                </div>
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-white leading-tight">
-                  Empower Your Travel Agency with White-Label Visa Operations
-                </h2>
-                <p className="text-sm sm:text-base text-white/80 mt-3 leading-relaxed">
-                  Deliver sovereign e-Visas and work permit filings under your agency's brand.
-                  Pre-fund your zero-overdraft wallet via bKash, Nagad or cards, and automate client
-                  casework with high-velocity AI processing.
-                </p>
+          <ScrollReveal3D direction="zoom">
+            <Glass3DCard
+              glowColor="gold"
+              tiltIntensity={6}
+              specular={true}
+              className="p-8 md:p-12 text-left relative overflow-hidden"
+            >
+              <div className="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-[#C8A951]/15 blur-3xl pointer-events-none" />
+              <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
+                <div className="max-w-xl">
+                  <div className="flex items-center gap-2 mb-3">
+                    <EmeraldBadge variant="gold" size="sm">
+                      B2B Agency Infrastructure
+                    </EmeraldBadge>
+                    <span className="text-xs font-mono text-[#C8A951]">ADR-010 • 3-Tier SaaS</span>
+                  </div>
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-white leading-tight">
+                    Empower Your Travel Agency with White-Label Visa Operations
+                  </h2>
+                  <p className="text-sm sm:text-base text-slate-300 mt-3 leading-relaxed">
+                    Deliver sovereign e-Visas and work permit filings under your agency's brand.
+                    Pre-fund your zero-overdraft wallet via bKash, Nagad or cards, and automate
+                    client casework with high-velocity AI processing.
+                  </p>
 
-                <div className="grid grid-cols-2 gap-3 mt-6">
-                  <div className="p-3 rounded-xl bg-white/10 border border-white/10">
-                    <span className="text-xs font-bold text-[#C8A951] block">
-                      White-Label Domains
-                    </span>
-                    <span className="text-[11px] text-white/70">visa.yourtravelagency.com</span>
+                  <div className="grid grid-cols-2 gap-3 mt-6">
+                    <div className="p-3 rounded-xl bg-black/40 border border-white/10">
+                      <span className="text-xs font-bold text-[#C8A951] block">
+                        White-Label Domains
+                      </span>
+                      <span className="text-[11px] text-slate-300">visa.yourtravelagency.com</span>
+                    </div>
+                    <div className="p-3 rounded-xl bg-black/40 border border-white/10">
+                      <span className="text-xs font-bold text-[#C8A951] block">Prepaid Wallet</span>
+                      <span className="text-[11px] text-slate-300">
+                        Instant atomic fee deductions
+                      </span>
+                    </div>
+                    <div className="p-3 rounded-xl bg-black/40 border border-white/10">
+                      <span className="text-xs font-bold text-[#C8A951] block">
+                        Scoped Partner MCP
+                      </span>
+                      <span className="text-[11px] text-slate-300">Zero-trust tenant boundary</span>
+                    </div>
+                    <div className="p-3 rounded-xl bg-black/40 border border-white/10">
+                      <span className="text-xs font-bold text-[#C8A951] block">
+                        Wholesale Tariffs
+                      </span>
+                      <span className="text-[11px] text-slate-300">
+                        Margin protection & ledger audits
+                      </span>
+                    </div>
                   </div>
-                  <div className="p-3 rounded-xl bg-white/10 border border-white/10">
-                    <span className="text-xs font-bold text-[#C8A951] block">Prepaid Wallet</span>
-                    <span className="text-[11px] text-white/70">Instant atomic fee deductions</span>
-                  </div>
-                  <div className="p-3 rounded-xl bg-white/10 border border-white/10">
-                    <span className="text-xs font-bold text-[#C8A951] block">
-                      Scoped Partner MCP
-                    </span>
-                    <span className="text-[11px] text-white/70">Zero-trust tenant boundary</span>
-                  </div>
-                  <div className="p-3 rounded-xl bg-white/10 border border-white/10">
-                    <span className="text-xs font-bold text-[#C8A951] block">
-                      Wholesale Tariffs
-                    </span>
-                    <span className="text-[11px] text-white/70">
-                      Margin protection & ledger audits
-                    </span>
-                  </div>
+                </div>
+
+                <div className="w-full lg:w-auto flex flex-col gap-3 shrink-0">
+                  <a href="http://localhost:3002/partners" className="w-full">
+                    <Button variant="gold" size="lg" className="w-full shadow-lg">
+                      Join B2B Partner Network →
+                    </Button>
+                  </a>
+                  <a href="/login" className="w-full">
+                    <Button
+                      variant="outline"
+                      size="md"
+                      className="w-full text-white border-white/30 hover:bg-white/10"
+                    >
+                      Agency Staff Portal Login
+                    </Button>
+                  </a>
+                  <span className="text-[11px] text-slate-400 text-center">
+                    Verified travel agencies, law firms & corporate HR desks
+                  </span>
                 </div>
               </div>
-
-              <div className="w-full lg:w-auto flex flex-col gap-3 shrink-0">
-                <a href="http://localhost:3002/partners" className="w-full">
-                  <Button variant="gold" size="lg" className="w-full shadow-lg">
-                    Join B2B Partner Network →
-                  </Button>
-                </a>
-                <a href="/login" className="w-full">
-                  <Button
-                    variant="outline"
-                    size="md"
-                    className="w-full text-white border-white/30 hover:bg-white/10"
-                  >
-                    Agency Staff Portal Login
-                  </Button>
-                </a>
-                <span className="text-[11px] text-white/60 text-center">
-                  Verified travel agencies, law firms & corporate HR desks
-                </span>
-              </div>
-            </div>
-          </div>
+            </Glass3DCard>
+          </ScrollReveal3D>
         </Container>
       </Section>
 
@@ -897,7 +993,7 @@ export default function HomePage() {
       <Section
         variant="brand"
         padding="lg"
-        className="bg-[#0D3B2E] text-white text-center border-t-2 border-[#C8A951]"
+        className="bg-transparent text-white text-center border-t border-white/10 relative z-10"
       >
         <Container size="xl">
           <div className="flex flex-col items-center gap-6 max-w-2xl mx-auto">
@@ -907,7 +1003,7 @@ export default function HomePage() {
             <h2 className="text-3xl sm:text-4xl font-display font-extrabold text-white">
               Ready to verify your visa eligibility?
             </h2>
-            <p className="text-base text-white/80 leading-relaxed">
+            <p className="text-base text-slate-300 leading-relaxed">
               Take our 3-minute preliminary assessment. Receive an immediate eligibility breakdown
               and step-by-step document checklist for your chosen destination.
             </p>
@@ -919,6 +1015,9 @@ export default function HomePage() {
           </div>
         </Container>
       </Section>
-    </div>
+
+      {/* Floating Glass Dock Navigation */}
+      <FloatingGlassDock items={dockNavItems} position="floating" />
+    </AuroraParallaxBackdrop>
   );
 }

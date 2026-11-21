@@ -1,7 +1,15 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button, LuxuryButton, Badge, EmeraldBadge, StatKpiCard } from '@visahobe/ui';
+import {
+  Button,
+  LuxuryButton,
+  Badge,
+  EmeraldBadge,
+  StatKpiCard,
+  Glass3DCard,
+  FloatingGlassDock,
+} from '@visahobe/ui';
 import { AutonomyRouter, type ConsularAction, type AutonomyEvaluation } from '@visahobe/agents';
 
 interface CaseItem {
@@ -279,7 +287,13 @@ export default function SuperAdminDashboardPage() {
         {/* 3 Telemetry Pillars: Autonomy Ratio Gauge, Country Pipeline, Wallet Liquidity */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Pillar 1: Autonomous AI vs Human Intervention Ratio Gauge */}
-          <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex flex-col justify-between gap-4">
+          <Glass3DCard
+            glowColor="emerald"
+            tiltIntensity={6}
+            blur={false}
+            specular={true}
+            className="p-4 bg-white/5 border border-white/10 flex flex-col justify-between gap-4"
+          >
             <div>
               <div className="flex items-center justify-between text-xs font-bold text-white">
                 <span>Autonomy Distribution Ratio</span>
@@ -315,10 +329,16 @@ export default function SuperAdminDashboardPage() {
               <span>Trend: +4.2% AI efficiency this month</span>
               <span className="text-emerald-400 font-semibold">Zero Gate Breaches</span>
             </div>
-          </div>
+          </Glass3DCard>
 
           {/* Pillar 2: Country Pipeline Distribution */}
-          <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex flex-col justify-between gap-3">
+          <Glass3DCard
+            glowColor="gold"
+            tiltIntensity={6}
+            blur={false}
+            specular={true}
+            className="p-4 bg-white/5 border border-white/10 flex flex-col justify-between gap-3"
+          >
             <div className="flex items-center justify-between text-xs font-bold text-white">
               <span>Country Pipeline Distribution</span>
               <span className="text-[#64748B] font-mono text-[11px] text-white/70">142 Cases</span>
@@ -346,10 +366,16 @@ export default function SuperAdminDashboardPage() {
             <div className="text-[11px] text-white/60 border-t border-white/10 pt-2">
               All 6 launch jurisdictions operating within standard statutory SLAs.
             </div>
-          </div>
+          </Glass3DCard>
 
           {/* Pillar 3: Agency Prepaid Wallet Liquidity Overview */}
-          <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex flex-col justify-between gap-3">
+          <Glass3DCard
+            glowColor="amber"
+            tiltIntensity={6}
+            blur={false}
+            specular={true}
+            className="p-4 bg-white/5 border border-white/10 flex flex-col justify-between gap-3"
+          >
             <div className="flex items-center justify-between text-xs font-bold text-white">
               <span>Prepaid Wallet Liquidity (ADR-010)</span>
               <span className="text-[#C8A951] font-mono font-bold">$148,500.00</span>
@@ -376,11 +402,17 @@ export default function SuperAdminDashboardPage() {
                 Manage Ledgers →
               </a>
             </div>
-          </div>
+          </Glass3DCard>
         </div>
 
         {/* Prioritized Consular Safety Gate & Live Browser Takeover Deck */}
-        <div className="p-4 rounded-xl bg-black/30 border border-white/10">
+        <Glass3DCard
+          glowColor="gold"
+          tiltIntensity={4}
+          blur={false}
+          specular={true}
+          className="p-4 bg-black/30 border border-white/10"
+        >
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-[#EF4444] animate-ping" />
@@ -444,7 +476,7 @@ export default function SuperAdminDashboardPage() {
               </div>
             ))}
           </div>
-        </div>
+        </Glass3DCard>
       </div>
 
       {/* KPI Summary Cards */}
@@ -938,6 +970,19 @@ export default function SuperAdminDashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* Floating Glass Dock Navigation (ADR-009 Solid Verified blur=false) */}
+      <FloatingGlassDock
+        blur={false}
+        items={[
+          { id: 'queue', label: 'Case Queue', href: '/', active: true },
+          { id: 'browser', label: 'Live Browser', href: '/browser', badge: '3 Paused' },
+          { id: 'partners', label: 'Partner Wallets', href: '/partners' },
+          { id: 'audit', label: 'Document Audit', href: '/audit' },
+          { id: 'logs', label: 'Audit Logs', href: '/logs' },
+        ]}
+        position="floating"
+      />
     </div>
   );
 }

@@ -14,3 +14,4 @@ export * from './components/Shell/index.js';
 export * from './components/Luxury/index.js';
 export * from './components/Browser/index.js';
 export * from './components/Globe/index.js';
+export * from './components/Glass3D/index.js';
