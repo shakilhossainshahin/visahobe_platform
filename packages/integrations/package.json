@@ -14,9 +14,15 @@
   },
   "scripts": {
     "build": "tsc",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@visahobe/core": "workspace:*",
+    "@visahobe/shared": "workspace:*"
   },
   "devDependencies": {
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.4"
   }
 }

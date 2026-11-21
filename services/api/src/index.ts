@@ -5,4 +5,5 @@ export * from './documents/document-service.js';
 export * from './wallet/wallet-service.js';
 export * from './agencies/agency-service.js';
 export * from './executive/digest-service.js';
+export * from './payments/index.js';
 export * from './http/handlers.js';

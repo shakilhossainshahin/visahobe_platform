@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import {
   assertPermission,
   hasPermission,
@@ -6,7 +7,16 @@ import {
 } from '@visahobe/auth';
 import { StorageAccessDeniedError } from '@visahobe/core';
 import { AuditService } from '../audit/audit-service.js';
-import type { CaseRecord, CaseStatus } from '../types.js';
+import type { CasePriority, CaseRecord, CaseStatus } from '../types.js';
+
+export interface CreateCaseInput {
+  countryCode: string;
+  serviceType: string;
+  clientId?: string | undefined;
+  priority?: CasePriority | undefined;
+  status?: CaseStatus | undefined;
+  metadata?: Record<string, unknown> | undefined;
+}
 
 export class CaseNotFoundError extends Error {
   readonly statusCode = 404;
@@ -31,6 +41,73 @@ export class CaseService {
 
   public static clear(): void {
     CaseService.cases.clear();
+  }
+
+  /**
+   * Creates a new case strictly scoped to session.tenantId.
+   */
+  public static async createCase(
+    session: UserSession,
+    input: CreateCaseInput,
+  ): Promise<CaseRecord> {
+    assertPermission(session, 'case.create');
+
+    const country = input.countryCode.trim().toUpperCase();
+    const caseId = `case-${randomUUID()}`;
+    const seq = Math.floor(1000 + Math.random() * 9000);
+    const caseNumber = `VH-2026-${country}-${seq}`;
+    const now = new Date().toISOString();
+
+    const record: CaseRecord = {
+      id: caseId,
+      tenantId: session.tenantId,
+      clientId: input.clientId ?? session.userId,
+      caseNumber,
+      countryCode: country,
+      serviceType: input.serviceType,
+      status: input.status ?? 'draft',
+      priority: input.priority ?? 'standard',
+      metadata: input.metadata,
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    CaseService.cases.set(record.id, record);
+
+    await AuditService.recordLog(session, {
+      action: 'case.created',
+      entityType: 'Case',
+      entityId: record.id,
+      newValues: {
+        caseNumber: record.caseNumber,
+        countryCode: record.countryCode,
+        status: record.status,
+      },
+      details: `Created new case ${record.caseNumber} for country ${record.countryCode}`,
+    });
+
+    return record;
+  }
+
+  /**
+   * System-level status update for automated workflow execution engines.
+   */
+  public static async transitionCaseStatusSystem(
+    caseId: string,
+    newStatus: CaseStatus,
+    _reason?: string,
+  ): Promise<CaseRecord> {
+    const existing = CaseService.cases.get(caseId);
+    if (!existing) {
+      throw new CaseNotFoundError(caseId);
+    }
+    const updated: CaseRecord = {
+      ...existing,
+      status: newStatus,
+      updatedAt: new Date().toISOString(),
+    };
+    CaseService.cases.set(existing.id, updated);
+    return updated;
   }
 
   /**
