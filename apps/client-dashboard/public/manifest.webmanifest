@@ -1,0 +1,23 @@
+{
+  "name": "VisaHobe — Applicant Workspace",
+  "short_name": "VisaHobe",
+  "description": "Secure applicant workspace for live visa journey tracking, encrypted document vault, and real-time consular stream.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#0D3B2E",
+  "background_color": "#F8FAFC",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

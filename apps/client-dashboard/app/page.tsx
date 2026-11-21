@@ -12,6 +12,7 @@ import {
   StatKpiCard,
   DataTableShell,
 } from '@visahobe/ui';
+import { GamifiedJourneyTracker } from '../components/GamifiedJourneyTracker.js';
 
 interface MilestoneStep {
   id: number;
@@ -436,6 +437,15 @@ export default function ClientDashboardOverviewPage() {
             </Button>
           </div>
         </GlassCard>
+      </Container>
+
+      {/* Gamified Visa Journey Tracker */}
+      <Container size="2xl" id="journey">
+        <GamifiedJourneyTracker
+          caseNumber="VH-2026-SG-4921"
+          destinationCountry="Singapore"
+          visaStream="Employment Pass (COMPASS Tier 1)"
+        />
       </Container>
 
       {/* Interactive 5-Stage Visa Application Progress Tracker */}
