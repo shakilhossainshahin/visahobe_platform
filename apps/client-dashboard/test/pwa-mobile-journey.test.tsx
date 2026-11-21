@@ -56,4 +56,12 @@ describe('Client Dashboard PWA, Capacitor & Mobile Gamified Journey (TICKET-P5-0
     expect(html).toContain('Live AI');
     expect(html).toContain('Messages');
   });
+
+  it('renders unified 3D glassmorphism, Aurora Parallax Backdrop, and Floating Glass Dock', async () => {
+    const { default: ClientDashboardOverviewPage } = await import('../app/page.js');
+    const html = renderToStaticMarkup(<ClientDashboardOverviewPage />);
+    expect(html).toContain('data-testid="aurora-parallax-backdrop"');
+    expect(html).toContain('data-testid="glass-3d-card"');
+    expect(html).toContain('data-testid="floating-glass-dock"');
+  });
 });

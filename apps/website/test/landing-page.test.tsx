@@ -60,4 +60,15 @@ describe('Website Landing Page (HomePage)', () => {
     expect(html).toContain('99.4% Approved');
     expect(html).toContain('$290 Service + S$360 MOM Fee');
   });
+
+  it('should render unified 3D glassmorphism, aurora parallax backdrop, holographic pass and floating dock', () => {
+    const html = renderToStaticMarkup(<HomePage />);
+    expect(html).toContain('data-testid="aurora-parallax-backdrop"');
+    expect(html).toContain('data-testid="parallax-stage"');
+    expect(html).toContain('data-testid="holographic-visa-pass"');
+    expect(html).toContain('Holographic Visa Pass');
+    expect(html).toContain('SEC-CHIP-99');
+    expect(html).toContain('data-testid="floating-glass-dock"');
+    expect(html).toContain('Explore 3D');
+  });
 });

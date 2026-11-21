@@ -11,6 +11,9 @@ import {
   LuxuryButton,
   StatKpiCard,
   DataTableShell,
+  AuroraParallaxBackdrop,
+  Glass3DCard,
+  FloatingGlassDock,
 } from '@visahobe/ui';
 import { GamifiedJourneyTracker } from '../components/GamifiedJourneyTracker.js';
 
@@ -223,11 +226,27 @@ export default function ClientDashboardOverviewPage() {
     setConciergeInput('');
   };
 
+  const dashboardDockItems = [
+    { id: 'overview', label: 'Overview', href: '/', active: true },
+    { id: 'journey', label: '5-Stage Journey', href: '/#journey' },
+    { id: 'vault', label: 'Document Vault', href: '/documents', badge: '1 Required' },
+    { id: 'live-stream', label: 'Live Stream', href: '/live-stream' },
+    { id: 'messages', label: 'Messages', href: '/messages' },
+  ];
+
   return (
-    <div className="py-8 md:py-10 flex flex-col gap-8 text-[#111827]">
+    <AuroraParallaxBackdrop
+      intensity="deep"
+      className="py-8 md:py-10 flex flex-col gap-8 text-white"
+    >
       {/* Interactive Role / Mode Switcher Bar (B2C Applicant Mode vs B2B Partner Agency Workspace) */}
       <Container size="2xl">
-        <div className="rounded-2xl bg-[#0D3B2E] text-white p-4 sm:px-6 border border-[#C8A951]/60 shadow-md flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <Glass3DCard
+          glowColor="emerald"
+          tiltIntensity={5}
+          specular={true}
+          className="rounded-2xl p-4 sm:px-6 shadow-md flex flex-col lg:flex-row lg:items-center justify-between gap-4"
+        >
           <div className="flex items-center gap-3">
             <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 border border-[#C8A951]/50 text-[#C8A951] font-bold text-xs shrink-0">
               {workspaceMode === 'b2c' ? 'B2C' : 'B2B'}
@@ -285,7 +304,7 @@ export default function ClientDashboardOverviewPage() {
               {isConciergeOpen ? 'Hide AI Concierge' : '✦ Built-in AI Concierge'}
             </Button>
           </div>
-        </div>
+        </Glass3DCard>
       </Container>
 
       {/* Conditional B2B Partner Agency Command Strip when switched to B2B Mode */}
@@ -387,10 +406,11 @@ export default function ClientDashboardOverviewPage() {
 
       {/* Top Header Card */}
       <Container size="2xl">
-        <GlassCard
-          intensity="luxury"
-          goldAccent
-          className="p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 bg-white/95"
+        <Glass3DCard
+          glowColor="gold"
+          tiltIntensity={6}
+          specular={true}
+          className="p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6"
         >
           <div className="flex flex-col gap-2">
             <div className="flex flex-wrap items-center gap-2">
@@ -436,7 +456,7 @@ export default function ClientDashboardOverviewPage() {
               Ask AI Concierge
             </Button>
           </div>
-        </GlassCard>
+        </Glass3DCard>
       </Container>
 
       {/* Gamified Visa Journey Tracker */}
@@ -737,6 +757,9 @@ export default function ClientDashboardOverviewPage() {
           </form>
         </GlassCard>
       </Container>
-    </div>
+
+      {/* Floating Glass Dock Navigation */}
+      <FloatingGlassDock items={dashboardDockItems} position="floating" />
+    </AuroraParallaxBackdrop>
   );
 }
