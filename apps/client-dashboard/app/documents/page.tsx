@@ -113,6 +113,7 @@ export default function DocumentVaultPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('financial');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const [uploadFeedback, setUploadFeedback] = useState<{
     type: 'success' | 'error';
     message: string;
@@ -471,24 +472,74 @@ export default function DocumentVaultPage() {
                   htmlFor="file-upload"
                   className="text-xs font-bold uppercase tracking-wider text-[#0D3B2E]"
                 >
-                  Select File (PDF, JPG, PNG up to 10MB)
+                  Upload File (Drag & Drop or Browse • PDF, JPG, PNG up to 10MB)
                 </label>
-                <input
-                  id="file-upload"
-                  type="file"
-                  accept=".pdf,.jpg,.jpeg,.png"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0] || null;
-                    setSelectedFile(file);
-                    setUploadFeedback(null);
+                <div
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    setIsDragging(true);
                   }}
-                  className="w-full rounded-xl border border-dashed border-[#CBD5E1] bg-[#F8FAFC] p-4 text-xs text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#0D3B2E]"
-                />
-                <span className="text-[11px] text-[#64748B]">
-                  Windows & POSIX directory paths are sanitized. EXIF metadata is stripped
-                  server-side.
-                </span>
+                  onDragLeave={() => setIsDragging(false)}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    setIsDragging(false);
+                    const file = e.dataTransfer.files?.[0] || null;
+                    if (file) {
+                      setSelectedFile(file);
+                      setUploadFeedback(null);
+                    }
+                  }}
+                  className={`w-full rounded-2xl border-2 border-dashed p-6 text-center transition-all cursor-pointer ${
+                    isDragging
+                      ? 'border-[#C8A951] bg-[#C8A951]/10'
+                      : 'border-[#CBD5E1] bg-[#F8FAFC] hover:border-[#0D3B2E]'
+                  }`}
+                  data-testid="vault-drag-drop-zone"
+                >
+                  <input
+                    id="file-upload"
+                    type="file"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0] || null;
+                      setSelectedFile(file);
+                      setUploadFeedback(null);
+                    }}
+                    className="hidden"
+                  />
+                  <label
+                    htmlFor="file-upload"
+                    className="cursor-pointer flex flex-col items-center gap-2"
+                  >
+                    <span className="text-2xl">📂</span>
+                    <span className="text-xs font-semibold text-[#0D3B2E]">
+                      {selectedFile
+                        ? `Selected: ${selectedFile.name}`
+                        : 'Click to select or drag document here'}
+                    </span>
+                    <span className="text-[11px] text-[#64748B]">
+                      Auto-encrypted with AES-256 • Strip EXIF & PII
+                    </span>
+                  </label>
+                </div>
               </div>
+
+              {/* Animated OCR Scan Beam Feedback */}
+              {isUploading && (
+                <div
+                  className="relative overflow-hidden rounded-xl bg-[#0D3B2E]/5 border border-[#10B981]/30 p-4 my-2 text-center"
+                  data-testid="ocr-scan-beam"
+                >
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#10B981] to-transparent animate-pulse" />
+                  <div className="flex items-center justify-center gap-2 text-xs font-bold text-[#0D3B2E]">
+                    <span className="w-2 h-2 rounded-full bg-[#10B981] animate-ping" />
+                    <span>Scanning Document OCR & Cryptographic Checksum...</span>
+                  </div>
+                  <p className="text-[11px] text-[#64748B] mt-1 font-mono">
+                    Scrubbing EXIF metadata • Verifying MRZ checksum • ADR-012 B2C Shielded
+                  </p>
+                </div>
+              )}
 
               {uploadFeedback && (
                 <div

@@ -16,6 +16,7 @@ import {
   Badge,
   EmeraldBadge,
   StatKpiCard,
+  InteractiveVisaGlobe,
 } from '@visahobe/ui';
 
 interface DestinationPathway {
@@ -150,6 +151,16 @@ export default function HomePage() {
   const [selectedQuickCountry, setSelectedQuickCountry] = useState<string>('singapore');
   const [selectedQuickPurpose, setSelectedQuickPurpose] = useState<string>('skilled');
   const [pathwayFilter, setPathwayFilter] = useState<string>('All');
+  const [simulationStep, setSimulationStep] = useState<number>(2);
+  const [isSimulating, setIsSimulating] = useState<boolean>(false);
+
+  const runSimulation = () => {
+    setIsSimulating(true);
+    setSimulationStep(1);
+    setTimeout(() => setSimulationStep(2), 1000);
+    setTimeout(() => setSimulationStep(3), 2000);
+    setTimeout(() => setIsSimulating(false), 3000);
+  };
 
   const activeHeroDestination =
     POPULAR_DESTINATIONS.find((d) => d.id === selectedQuickCountry) ?? POPULAR_DESTINATIONS[0]!;
@@ -311,6 +322,16 @@ export default function HomePage() {
               />
             </div>
 
+            {/* 3D Interactive Consular Radar Globe */}
+            <div className="w-full mt-2 sm:mt-4">
+              <InteractiveVisaGlobe
+                selectedDestinationId={selectedQuickCountry}
+                onSelectDestination={(dest) => {
+                  setSelectedQuickCountry(dest.id);
+                }}
+              />
+            </div>
+
             {/* Interactive Instant Destination / Visa Selector */}
             <div className="w-full mt-2 sm:mt-4">
               <GlassCard
@@ -438,6 +459,133 @@ export default function HomePage() {
                   </span>
                 </div>
               </GlassCard>
+            </div>
+          </div>
+        </Container>
+      </Section>
+
+      {/* Live AI Visa Officer at Work Interactive Simulation Preview */}
+      <Section
+        id="ai-officer-simulation"
+        variant="default"
+        padding="lg"
+        className="bg-white border-b border-[#E2E8F0]"
+      >
+        <Container size="2xl">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-8 mb-8">
+            <div className="max-w-2xl">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] animate-ping" />
+                <EmeraldBadge variant="brand" size="sm">
+                  Autonomous Agent Runtime Preview
+                </EmeraldBadge>
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-display font-bold text-[#0D3B2E]">
+                Watch the AI Visa Officer at Work
+              </h2>
+              <p className="text-sm sm:text-base text-[#475569] mt-2">
+                See our multi-stage pipeline parse identity credentials, verify consular policies,
+                and enforce statutory review gates in real-time.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={runSimulation}
+                disabled={isSimulating}
+                className="px-5 py-2.5 rounded-xl bg-[#0D3B2E] hover:bg-[#092A21] text-white font-semibold text-xs sm:text-sm border border-[#C8A951]/40 shadow-md transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+              >
+                <span>{isSimulating ? 'Processing Simulation...' : '▶ Run Live Simulation'}</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Stage 1: Document OCR Ingestion */}
+            <div
+              className={`p-6 rounded-2xl border transition-all ${
+                simulationStep === 1
+                  ? 'bg-emerald-50/50 border-[#10B981] shadow-lg ring-2 ring-[#10B981]/20'
+                  : 'bg-[#F8FAFC] border-[#E2E8F0]'
+              }`}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-mono font-bold text-[#0D3B2E] bg-white px-2.5 py-1 rounded-md border border-[#E2E8F0]">
+                  STAGE 01
+                </span>
+                <span className="text-xs font-semibold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-sm">
+                  99.8% OCR Confidence
+                </span>
+              </div>
+              <h3 className="font-bold text-base text-[#0D3B2E]">
+                Identity & Credential Extraction
+              </h3>
+              <p className="text-xs text-[#475569] mt-1">
+                Scans passport MRZ, checks biometric integrity, and normalizes educational degrees
+                against official accreditation registries.
+              </p>
+              <div className="mt-4 p-3 rounded-lg bg-white border border-[#E2E8F0] font-mono text-[11px] text-[#334155] space-y-1">
+                <div>✓ MRZ: P&lt;BGDHOSSAIN&lt;&lt;MD&lt;SHAKIL</div>
+                <div>✓ Checksum: Validated (SHA-256)</div>
+                <div>✓ Anabin H+ Degree: Certified</div>
+              </div>
+            </div>
+
+            {/* Stage 2: Policy Math & Matrix Scoring */}
+            <div
+              className={`p-6 rounded-2xl border transition-all ${
+                simulationStep === 2
+                  ? 'bg-amber-50/50 border-[#C8A951] shadow-lg ring-2 ring-[#C8A951]/20'
+                  : 'bg-[#F8FAFC] border-[#E2E8F0]'
+              }`}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-mono font-bold text-[#0D3B2E] bg-white px-2.5 py-1 rounded-md border border-[#E2E8F0]">
+                  STAGE 02
+                </span>
+                <span className="text-xs font-semibold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-sm">
+                  Policy Calibration
+                </span>
+              </div>
+              <h3 className="font-bold text-base text-[#0D3B2E]">Consular Rules Engine</h3>
+              <p className="text-xs text-[#475569] mt-1">
+                Evaluates statutory points thresholds, salary benchmarks, and nationality quotas
+                matching the destination country's live immigration criteria.
+              </p>
+              <div className="mt-4 p-3 rounded-lg bg-white border border-[#E2E8F0] font-mono text-[11px] text-[#334155] space-y-1">
+                <div>✓ COMPASS Score: 50 / 40 Pts (Pass)</div>
+                <div>✓ Salary Benchmark: Top 10th Percentile</div>
+                <div>✓ Diversity Sub-criteria: Met (20 Pts)</div>
+              </div>
+            </div>
+
+            {/* Stage 3: Human Verification Gate */}
+            <div
+              className={`p-6 rounded-2xl border transition-all ${
+                simulationStep === 3
+                  ? 'bg-emerald-50/50 border-[#0D3B2E] shadow-lg ring-2 ring-[#0D3B2E]/20'
+                  : 'bg-[#F8FAFC] border-[#E2E8F0]'
+              }`}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-mono font-bold text-[#0D3B2E] bg-white px-2.5 py-1 rounded-md border border-[#E2E8F0]">
+                  STAGE 03
+                </span>
+                <span className="text-xs font-semibold text-[#0D3B2E] bg-[#E3EFEA] px-2 py-0.5 rounded-sm">
+                  Licensed Counsel Gate
+                </span>
+              </div>
+              <h3 className="font-bold text-base text-[#0D3B2E]">Accredited Attorney Review</h3>
+              <p className="text-xs text-[#475569] mt-1">
+                Strict ADR-011 review gate halts automated filing for human counsel verification
+                before any official embassy lodgment or biometric slot request.
+              </p>
+              <div className="mt-4 p-3 rounded-lg bg-white border border-[#E2E8F0] font-mono text-[11px] text-[#334155] space-y-1">
+                <div>✓ Verifier: Sarah Jenkins, Esq.</div>
+                <div>✓ Audit Signature: SHA-256 Hash Verified</div>
+                <div>✓ Status: Approved for Embassy Lodgment</div>
+              </div>
             </div>
           </div>
         </Container>
@@ -661,6 +809,85 @@ export default function HomePage() {
                   <p className="text-xs text-[#475569] leading-relaxed">{pillar.description}</p>
                 </div>
               ))}
+            </div>
+          </div>
+        </Container>
+      </Section>
+
+      {/* Corporate & B2B Partner Agency Gateway Section */}
+      <Section
+        id="b2b-partners"
+        variant="default"
+        padding="lg"
+        className="bg-gradient-to-b from-white via-[#F8FAFC] to-white border-b border-[#E2E8F0]"
+      >
+        <Container size="2xl">
+          <div className="rounded-3xl bg-gradient-to-br from-[#0D3B2E] via-[#092A21] to-[#041611] text-white p-8 md:p-12 shadow-2xl border border-[#C8A951]/40 relative overflow-hidden">
+            <div className="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-[#C8A951]/15 blur-3xl pointer-events-none" />
+            <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
+              <div className="max-w-xl">
+                <div className="flex items-center gap-2 mb-3">
+                  <EmeraldBadge variant="gold" size="sm">
+                    B2B Agency Infrastructure
+                  </EmeraldBadge>
+                  <span className="text-xs font-mono text-[#C8A951]">ADR-010 • 3-Tier SaaS</span>
+                </div>
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-white leading-tight">
+                  Empower Your Travel Agency with White-Label Visa Operations
+                </h2>
+                <p className="text-sm sm:text-base text-white/80 mt-3 leading-relaxed">
+                  Deliver sovereign e-Visas and work permit filings under your agency's brand.
+                  Pre-fund your zero-overdraft wallet via bKash, Nagad or cards, and automate client
+                  casework with high-velocity AI processing.
+                </p>
+
+                <div className="grid grid-cols-2 gap-3 mt-6">
+                  <div className="p-3 rounded-xl bg-white/10 border border-white/10">
+                    <span className="text-xs font-bold text-[#C8A951] block">
+                      White-Label Domains
+                    </span>
+                    <span className="text-[11px] text-white/70">visa.yourtravelagency.com</span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-white/10 border border-white/10">
+                    <span className="text-xs font-bold text-[#C8A951] block">Prepaid Wallet</span>
+                    <span className="text-[11px] text-white/70">Instant atomic fee deductions</span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-white/10 border border-white/10">
+                    <span className="text-xs font-bold text-[#C8A951] block">
+                      Scoped Partner MCP
+                    </span>
+                    <span className="text-[11px] text-white/70">Zero-trust tenant boundary</span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-white/10 border border-white/10">
+                    <span className="text-xs font-bold text-[#C8A951] block">
+                      Wholesale Tariffs
+                    </span>
+                    <span className="text-[11px] text-white/70">
+                      Margin protection & ledger audits
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="w-full lg:w-auto flex flex-col gap-3 shrink-0">
+                <a href="http://localhost:3002/partners" className="w-full">
+                  <Button variant="gold" size="lg" className="w-full shadow-lg">
+                    Join B2B Partner Network →
+                  </Button>
+                </a>
+                <a href="/login" className="w-full">
+                  <Button
+                    variant="outline"
+                    size="md"
+                    className="w-full text-white border-white/30 hover:bg-white/10"
+                  >
+                    Agency Staff Portal Login
+                  </Button>
+                </a>
+                <span className="text-[11px] text-white/60 text-center">
+                  Verified travel agencies, law firms & corporate HR desks
+                </span>
+              </div>
             </div>
           </div>
         </Container>

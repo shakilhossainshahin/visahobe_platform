@@ -8,9 +8,11 @@
     "build": "next build",
     "start": "next start --port 3001",
     "typecheck": "next typegen && tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "cap:sync": "cap sync android"
   },
   "dependencies": {
+    "@capacitor/core": "^6.2.0",
     "@visahobe/auth": "workspace:*",
     "@visahobe/core": "workspace:*",
     "@visahobe/design-system": "workspace:*",
@@ -21,6 +23,8 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@capacitor/android": "^6.2.0",
+    "@capacitor/cli": "^6.2.0",
     "@types/node": "^20.17.6",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",

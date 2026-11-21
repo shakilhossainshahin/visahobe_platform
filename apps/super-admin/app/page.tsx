@@ -247,6 +247,206 @@ export default function SuperAdminDashboardPage() {
         </div>
       </div>
 
+      {/* Luxury Dark-Glass Mission Control Command Center (ADR-009 / TICKET-P5-001) */}
+      <div
+        className="rounded-2xl bg-gradient-to-r from-[#0D3B2E] via-[#092A21] to-[#041611] text-white p-6 shadow-xl border border-[#C8A951]/40 space-y-6"
+        data-testid="mission-control-deck"
+      >
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] animate-ping" />
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#C8A951]">
+                Mission Control • Live Consular Operations Deck
+              </span>
+            </div>
+            <h2 className="text-xl font-display font-bold text-white mt-1">
+              Autonomous AI vs Human Intervention Telemetry
+            </h2>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="px-3 py-1 rounded-lg bg-white/10 text-xs font-mono font-semibold text-[#C8A951] border border-white/15">
+              Live Edge Sync • 0.2s
+            </span>
+            <a href="/browser">
+              <Button variant="gold" size="sm" className="shadow-xs">
+                Launch Live Browser Console →
+              </Button>
+            </a>
+          </div>
+        </div>
+
+        {/* 3 Telemetry Pillars: Autonomy Ratio Gauge, Country Pipeline, Wallet Liquidity */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Pillar 1: Autonomous AI vs Human Intervention Ratio Gauge */}
+          <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex flex-col justify-between gap-4">
+            <div>
+              <div className="flex items-center justify-between text-xs font-bold text-white">
+                <span>Autonomy Distribution Ratio</span>
+                <span className="text-[#C8A951] font-mono">78% Autonomous</span>
+              </div>
+              <p className="text-[11px] text-white/70 mt-1">
+                Level 3 electronic visas processed autonomously vs Human specialist review gates.
+              </p>
+            </div>
+
+            {/* Visual Gauge Bar */}
+            <div className="space-y-2">
+              <div className="h-3 w-full rounded-full bg-white/10 overflow-hidden flex">
+                <div
+                  className="h-full bg-gradient-to-r from-[#10B981] to-[#34D399] transition-all"
+                  style={{ width: '78%' }}
+                  title="78% Autonomous (Level 3)"
+                />
+                <div
+                  className="h-full bg-gradient-to-r from-[#F59E0B] to-[#EF4444] transition-all"
+                  style={{ width: '22%' }}
+                  title="22% Human Review Gate"
+                />
+              </div>
+
+              <div className="flex items-center justify-between text-[11px] font-mono">
+                <span className="text-[#10B981] font-bold">78% Level 3 Autonomous</span>
+                <span className="text-[#F59E0B] font-bold">22% Human Intervention Gate</span>
+              </div>
+            </div>
+
+            <div className="text-[11px] text-white/60 border-t border-white/10 pt-2 flex items-center justify-between">
+              <span>Trend: +4.2% AI efficiency this month</span>
+              <span className="text-emerald-400 font-semibold">Zero Gate Breaches</span>
+            </div>
+          </div>
+
+          {/* Pillar 2: Country Pipeline Distribution */}
+          <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex flex-col justify-between gap-3">
+            <div className="flex items-center justify-between text-xs font-bold text-white">
+              <span>Country Pipeline Distribution</span>
+              <span className="text-[#64748B] font-mono text-[11px] text-white/70">142 Cases</span>
+            </div>
+
+            <div className="space-y-2">
+              {[
+                { name: '🇸🇬 Singapore', cases: 54, pct: '38%', sla: '99.4%' },
+                { name: '🇦🇪 UAE Golden', cases: 38, pct: '27%', sla: '99.6%' },
+                { name: '🇬🇧 UK Skilled', cases: 22, pct: '15%', sla: '98.9%' },
+                { name: '🇩🇪 Germany', cases: 16, pct: '11%', sla: '98.5%' },
+                { name: '🇨🇦 Canada PR', cases: 12, pct: '9%', sla: '98.1%' },
+              ].map((c) => (
+                <div key={c.name} className="flex items-center justify-between text-xs">
+                  <span className="font-medium text-white/90">{c.name}</span>
+                  <div className="flex items-center gap-2 font-mono text-[11px]">
+                    <span className="text-white/80">{c.cases} cases</span>
+                    <span className="text-[#C8A951] font-semibold">{c.pct}</span>
+                    <span className="text-emerald-400 text-[10px]">{c.sla}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="text-[11px] text-white/60 border-t border-white/10 pt-2">
+              All 6 launch jurisdictions operating within standard statutory SLAs.
+            </div>
+          </div>
+
+          {/* Pillar 3: Agency Prepaid Wallet Liquidity Overview */}
+          <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex flex-col justify-between gap-3">
+            <div className="flex items-center justify-between text-xs font-bold text-white">
+              <span>Prepaid Wallet Liquidity (ADR-010)</span>
+              <span className="text-[#C8A951] font-mono font-bold">$148,500.00</span>
+            </div>
+
+            <div className="space-y-2 text-xs">
+              <div className="p-2.5 rounded-lg bg-white/5 border border-white/10 flex items-center justify-between">
+                <span className="text-white/80">Active Partner Wallets</span>
+                <span className="font-mono font-bold text-white">14 Agencies</span>
+              </div>
+              <div className="p-2.5 rounded-lg bg-amber-900/30 border border-amber-500/30 flex items-center justify-between">
+                <span className="text-amber-300">Low Balance Alerts (&lt; $500)</span>
+                <span className="font-mono font-bold text-amber-300">2 Agencies</span>
+              </div>
+              <div className="p-2.5 rounded-lg bg-white/5 border border-white/10 flex items-center justify-between">
+                <span className="text-white/80">24h Case Fee Deductions</span>
+                <span className="font-mono font-bold text-emerald-400">$12,450.00</span>
+              </div>
+            </div>
+
+            <div className="text-[11px] text-white/60 border-t border-white/10 pt-2 flex items-center justify-between">
+              <span>Zero-Overdraft Invariant Enforced</span>
+              <a href="/partners" className="text-[#C8A951] hover:underline font-semibold">
+                Manage Ledgers →
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Prioritized Consular Safety Gate & Live Browser Takeover Deck */}
+        <div className="p-4 rounded-xl bg-black/30 border border-white/10">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#EF4444] animate-ping" />
+              <h3 className="text-xs font-bold uppercase tracking-wider text-white">
+                Prioritized Consular Safety Gate &amp; Live Browser Takeover Queue
+              </h3>
+            </div>
+            <span className="text-[11px] text-amber-400 font-mono font-semibold">
+              3 Sessions Paused at Safety Checkpoint • Staff Authorization Required
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            {[
+              {
+                caseNumber: 'VH-2026-SG-4921',
+                country: '🇸🇬 Singapore MOM',
+                checkpoint: 'portal_payment (S$360 Lodgment Fee)',
+                timestamp: '12 mins ago',
+                sessionId: 'sess-brw-sg-4921',
+              },
+              {
+                caseNumber: 'VH-2026-AE-2104',
+                country: '🇦🇪 UAE ICP Portal',
+                checkpoint: 'captcha_detected (Cloudflare Turnstile)',
+                timestamp: '24 mins ago',
+                sessionId: 'sess-brw-ae-2104',
+              },
+              {
+                caseNumber: 'VH-2026-TR-8812',
+                country: '🇹🇷 Turkey e-Visa',
+                checkpoint: 'sign_perjury_affidavit (Consular Sign-off)',
+                timestamp: '38 mins ago',
+                sessionId: 'sess-brw-tr-8812',
+              },
+            ].map((item) => (
+              <div
+                key={item.caseNumber}
+                className="p-3 rounded-lg bg-white/5 border border-white/10 flex flex-col justify-between gap-2"
+              >
+                <div>
+                  <div className="flex items-center justify-between text-xs font-bold text-white">
+                    <span className="text-[#C8A951] font-mono">{item.caseNumber}</span>
+                    <span className="text-[10px] text-white/60">{item.timestamp}</span>
+                  </div>
+                  <span className="text-[11px] text-white/90 font-medium block mt-0.5">
+                    {item.country}
+                  </span>
+                  <span className="text-[10px] text-red-300 font-mono block mt-1">
+                    Gate: {item.checkpoint}
+                  </span>
+                </div>
+
+                <a
+                  href={`/browser?sessionId=${item.sessionId}`}
+                  className="w-full mt-2 py-1.5 px-2.5 rounded-lg bg-[#C8A951] hover:bg-[#b09340] text-[#0D3B2E] font-bold text-[11px] text-center transition-all shadow-xs flex items-center justify-center gap-1.5"
+                >
+                  <span>Take Over in Live Browser</span>
+                  <span>→</span>
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* KPI Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatKpiCard

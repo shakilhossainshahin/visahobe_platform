@@ -2,11 +2,19 @@ import type { Metadata } from 'next';
 import React from 'react';
 import './globals.css';
 import { NavbarShell, FooterShell, Button, Badge } from '@visahobe/ui';
+import { MobileBottomNav } from '../components/MobileBottomNav.js';
+import { PwaInstallPrompt } from '../components/PwaInstallPrompt.js';
 
 export const metadata: Metadata = {
   title: 'Applicant Workspace & Case Tracker | VisaHobe Client Portal',
   description:
     'Secure applicant portal for real-time visa case tracking, document vault management, and direct communication with licensed immigration specialists.',
+  manifest: '/manifest.webmanifest',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'VisaHobe',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -83,6 +91,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col bg-[#F8FAFC] text-[#0F172A] font-sans selection:bg-[#E3EFEA] selection:text-[#0D3B2E]">
+        <PwaInstallPrompt />
         <NavbarShell
           brand={brandNode}
           navLinks={navLinks}
@@ -90,7 +99,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           variant="glass"
           isSticky={true}
         />
-        <main className="flex-1 w-full">{children}</main>
+        <main className="flex-1 w-full pb-20 md:pb-0">{children}</main>
+        <MobileBottomNav />
         <FooterShell
           brand={brandNode}
           columns={footerColumns}
