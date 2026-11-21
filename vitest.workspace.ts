@@ -22,6 +22,8 @@ const sharedAliases = {
     __dirname,
     'packages/partner-mcp-server/src/index.ts',
   ),
+  '@visahobe/integrations': path.resolve(__dirname, 'packages/integrations/src/index.ts'),
+  '@visahobe/workflows': path.resolve(__dirname, 'packages/workflows/src/index.ts'),
   '@visahobe/api': path.resolve(__dirname, 'services/api/src/index.ts'),
 };
 

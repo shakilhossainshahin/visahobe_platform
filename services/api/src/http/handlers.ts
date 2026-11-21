@@ -32,8 +32,20 @@ import {
   PartnerConnectorRegistry,
   type IPartnerConnector,
   type PartnerCaseSubmissionPayload,
+  PaymentGatewayRegistry,
+  type PaymentCurrency,
+  type CreatePaymentSessionRequest,
+  InvalidWebhookSignatureError,
+  WebhookReplayAttackError,
+  DuplicateWebhookEventError,
 } from '@visahobe/integrations';
 import { ExecutiveDigestService } from '../executive/digest-service.js';
+import {
+  InvoiceService,
+  InvoiceNotFoundError,
+  PaymentWebhookService,
+  type CreateCaseInvoiceInput,
+} from '../payments/index.js';
 import type { ApiResponse, AuthenticatedRequest, CaseStatus } from '../types.js';
 
 export interface HttpResponse {
@@ -83,6 +95,43 @@ export class OperationsApiHandler {
     req: AuthenticatedRequest,
   ): Promise<HttpResponse> {
     try {
+      // Inbound webhook routes authenticate cryptographically via gateway signatures, not user JWTs
+      if (method === 'POST' && pathname === '/api/v1/webhooks/pay-station') {
+        const sig = (req.headers['x-paystation-signature'] ??
+          req.headers['signature'] ??
+          req.headers['x-signature'] ??
+          '') as string;
+        const secret =
+          process.env['PAY_STATION_WEBHOOK_SECRET'] || 'whsec_test_secret_key_8492049104';
+        const result = await PaymentWebhookService.processWebhook(
+          'pay_station',
+          (req.body ?? {}) as Record<string, unknown>,
+          sig,
+          secret,
+        );
+        return {
+          status: 200,
+          body: { success: true, data: result },
+        };
+      }
+
+      if (method === 'POST' && pathname === '/api/v1/webhooks/stripe') {
+        const sig = (req.headers['stripe-signature'] ??
+          req.headers['Stripe-Signature'] ??
+          '') as string;
+        const secret = process.env['STRIPE_WEBHOOK_SECRET'] || 'whsec_test_secret_key_8492049104';
+        const result = await PaymentWebhookService.processWebhook(
+          'stripe',
+          (req.body ?? {}) as Record<string, unknown>,
+          sig,
+          secret,
+        );
+        return {
+          status: 200,
+          body: { success: true, data: result },
+        };
+      }
+
       const session = await OperationsApiHandler.authenticateRequest(req);
 
       // Route: GET /api/v1/cases
@@ -381,6 +430,47 @@ export class OperationsApiHandler {
         };
       }
 
+      // Route: POST /api/v1/invoices
+      if (method === 'POST' && pathname === '/api/v1/invoices') {
+        const body = (req.body ?? {}) as CreateCaseInvoiceInput;
+        const invoice = await InvoiceService.createCaseInvoice(session, {
+          tenantId: body.tenantId || session.tenantId,
+          caseId: body.caseId,
+          clientId: body.clientId || session.userId,
+          amount: body.amount,
+          currency: body.currency,
+          paymentScheduleType: body.paymentScheduleType || 'upfront_full',
+          milestones: body.milestones,
+        });
+        return {
+          status: 201,
+          body: { success: true, data: invoice },
+        };
+      }
+
+      // Route: GET /api/v1/invoices/:id
+      const invoiceMatch = pathname.match(/^\/api\/v1\/invoices\/([^/]+)$/);
+      if (method === 'GET' && invoiceMatch && invoiceMatch[1]) {
+        const invoice = await InvoiceService.getInvoice(session, invoiceMatch[1]);
+        return {
+          status: 200,
+          body: { success: true, data: invoice },
+        };
+      }
+
+      // Route: POST /api/v1/payments/checkout-session
+      if (method === 'POST' && pathname === '/api/v1/payments/checkout-session') {
+        const body = (req.body ?? {}) as CreatePaymentSessionRequest;
+        const adapter = body.currency
+          ? PaymentGatewayRegistry.resolveAdapterForCurrency(body.currency as PaymentCurrency)
+          : PaymentGatewayRegistry.getAdapter('stripe');
+        const sessionResult = await adapter.createPaymentSession(body);
+        return {
+          status: 200,
+          body: { success: true, data: sessionResult },
+        };
+      }
+
       // Route: GET /api/v1/executive/digest
       if (method === 'GET' && pathname === '/api/v1/executive/digest') {
         const digest = await ExecutiveDigestService.getDailyDigest(session);
@@ -442,7 +532,8 @@ export class OperationsApiHandler {
         err instanceof CaseNotFoundError ||
         err instanceof DocumentNotFoundError ||
         err instanceof WalletNotFoundError ||
-        err instanceof AgencyNotFoundError
+        err instanceof AgencyNotFoundError ||
+        err instanceof InvoiceNotFoundError
       ) {
         return {
           status: 404,
@@ -463,7 +554,7 @@ export class OperationsApiHandler {
         };
       }
 
-      if (err instanceof AgencyConflictError) {
+      if (err instanceof AgencyConflictError || err instanceof DuplicateWebhookEventError) {
         return {
           status: 409,
           body: {
@@ -473,7 +564,11 @@ export class OperationsApiHandler {
         };
       }
 
-      if (err instanceof InvalidSignatureError) {
+      if (
+        err instanceof InvalidSignatureError ||
+        err instanceof InvalidWebhookSignatureError ||
+        err instanceof WebhookReplayAttackError
+      ) {
         return {
           status: 400,
           body: {

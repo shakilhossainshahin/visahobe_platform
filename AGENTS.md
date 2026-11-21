@@ -300,7 +300,9 @@ The database is PostgreSQL 16 managed via Prisma ORM (`@prisma/client@^5.22.0`).
   - `TICKET-P2-006`: Flagship Luxury & Liquid Glass UI/UX Overhaul + Interactive Frontend Experience (`@visahobe/ui`, `apps/website`, `apps/client-dashboard`, `apps/super-admin`) — **MERGED**
 - **Phase 3 — Super AI Agent & Scoped MCP Server Infrastructure:**
   - `TICKET-P3-001`: Super AI Agent Engine, Hybrid Autonomous Processor & Executive Digest Dispatcher — **MERGED**
-  - `TICKET-P3-002`: Scoped Admin & Partner MCP Servers with Kernel RLS Enforcement & B2C Client Shielding — **IN PROGRESS (ACTIVE FEATURE BRANCH)**
+  - `TICKET-P3-002`: Scoped Admin & Partner MCP Servers with Kernel RLS Enforcement & B2C Client Shielding — **MERGED**
+- **Phase 4 — Payment Gateways, Webhook Idempotency & Case-to-Submission Pipeline:**
+  - `TICKET-P4-001`: Payment Gateway Adapters (Pay Station & Stripe), Idempotent Webhook Security & End-to-End Pipeline — **IN PROGRESS (ACTIVE FEATURE BRANCH)**
 
 ### 5.2 Strict Git & Pull Request Rules (Zero Self-Merge)
 

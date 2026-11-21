@@ -1,2 +1,1 @@
-﻿// Scaffolding placeholder
-export const moduleName = 'packages/workflows';
+﻿export * from './case-lifecycle/index.js';
