@@ -302,7 +302,8 @@ The database is PostgreSQL 16 managed via Prisma ORM (`@prisma/client@^5.22.0`).
   - `TICKET-P3-001`: Super AI Agent Engine, Hybrid Autonomous Processor & Executive Digest Dispatcher — **MERGED**
   - `TICKET-P3-002`: Scoped Admin & Partner MCP Servers with Kernel RLS Enforcement & B2C Client Shielding — **MERGED**
 - **Phase 4 — Payment Gateways, Webhook Idempotency & Case-to-Submission Pipeline:**
-  - `TICKET-P4-001`: Payment Gateway Adapters (Pay Station & Stripe), Idempotent Webhook Security & End-to-End Pipeline — **IN PROGRESS (ACTIVE FEATURE BRANCH)**
+  - `TICKET-P4-001`: Payment Gateway Adapters (Pay Station & Stripe), Idempotent Webhook Security & End-to-End Pipeline — **MERGED**
+  - `TICKET-P4-002`: Production Cutover Readiness, Isolated Live Browser Worker (Docker + noVNC/CDP) & Hyper-Velocity Execution Rules — **IN PROGRESS (ACTIVE FEATURE BRANCH)**
 
 ### 5.2 Strict Git & Pull Request Rules (Zero Self-Merge)
 
@@ -399,7 +400,7 @@ To maintain complete monorepo integrity and eliminate regressions during autonom
 
 ## Section 8: Specialist Autonomous Engineering Skills
 
-Four specialist engineering disciplines govern all code additions across the VisaHobe monorepo:
+Five specialist engineering disciplines govern all code additions across the VisaHobe monorepo:
 
 ### Skill 1: Autonomous AI & Consular Safety Architect (`ADR-011`)
 
@@ -433,3 +434,17 @@ Four specialist engineering disciplines govern all code additions across the Vis
   - Double-entry immutable ledger (`wallet_transactions`: `CREDIT`, `DEBIT`, `HOLD`, `RELEASE`, `REFUND`).
   - Gateway webhook idempotency deduplication (Pay Station, Stripe) preventing duplicate credits.
   - Automated low-balance alerting (`isLowBalance = true` when balance falls below `$500`).
+
+### Skill 5: Hyper-Velocity Monorepo Execution & Zero-Waste CI Architect
+
+- **Single-Turn Complete File Inspections:**
+  - Never read files in fragmented 20-30 line slices when complete file context is required; read complete target files in single targeted operations.
+  - Batch independent inspections, type definitions, and edits across packages in parallel to maintain velocity and context.
+- **Strictly Scoped Fast Verification During Implementation:**
+  - During feature development and active iteration, run scoped tests and typechecks strictly on modified packages (`pnpm --filter <pkg> typecheck`, `pnpm --filter <pkg> test`).
+  - Never execute full 33-project monorepo test or build suites during intermediate development loops.
+- **Single-Shot Mandatory 7-Step Gate at Commit Time:**
+  - Execute the full 7-step pre-push gate (`pnpm install --frozen-lockfile`, `pnpm format:check`, `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm verify:phase-0`) plus `pnpm verify:prod` ONCE immediately prior to `git push`.
+- **Zero-Waste CI & Artifact Cleanliness:**
+  - Ensure zero stale build artifacts (`dist`, `.tsbuildinfo`, `.next`) contaminate typechecks or builds.
+  - Enforce 100% parity between local verification and GitHub Actions CI runner steps.

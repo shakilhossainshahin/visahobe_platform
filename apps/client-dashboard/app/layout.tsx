@@ -12,6 +12,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const navLinks = [
     { label: 'Overview', href: '/' },
+    { label: 'Live Stream', href: '/live-stream' },
     { label: 'My Cases', href: '/#cases' },
     { label: 'Document Vault', href: '/documents' },
     { label: 'Messages', href: '/messages' },

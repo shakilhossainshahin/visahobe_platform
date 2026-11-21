@@ -520,10 +520,32 @@ importers:
         version: 5.9.3
 
   workers/browser-session:
+    dependencies:
+      '@visahobe/agents':
+        specifier: workspace:*
+        version: link:../../packages/agents
+      '@visahobe/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
+      '@visahobe/browser-automation':
+        specifier: workspace:*
+        version: link:../../packages/browser-automation
+      '@visahobe/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@visahobe/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+      jose:
+        specifier: ^5.9.6
+        version: 5.10.0
     devDependencies:
       typescript:
         specifier: ^5.6.3
         version: 5.9.3
+      vitest:
+        specifier: ^2.1.4
+        version: 2.1.9(@types/node@20.19.43)
 
   workers/document-processing:
     devDependencies:

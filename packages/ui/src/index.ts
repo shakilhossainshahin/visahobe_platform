@@ -12,3 +12,4 @@ export * from './components/Form/index.js';
 export * from './components/Layout/index.js';
 export * from './components/Shell/index.js';
 export * from './components/Luxury/index.js';
+export * from './components/Browser/index.js';
