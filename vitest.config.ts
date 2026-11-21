@@ -28,6 +28,10 @@ export default defineConfig({
       '@visahobe/integrations': path.resolve(__dirname, 'packages/integrations/src/index.ts'),
       '@visahobe/workflows': path.resolve(__dirname, 'packages/workflows/src/index.ts'),
       '@visahobe/api': path.resolve(__dirname, 'services/api/src/index.ts'),
+      '@visahobe/worker-browser-session': path.resolve(
+        __dirname,
+        'workers/browser-session/src/index.ts',
+      ),
     },
   },
   test: {
@@ -36,6 +40,8 @@ export default defineConfig({
     include: [
       'apps/**/test/**/*.{test,spec}.{ts,tsx}',
       'packages/**/test/**/*.{test,spec}.{ts,tsx}',
+      'services/**/test/**/*.{test,spec}.{ts,tsx}',
+      'workers/**/test/**/*.{test,spec}.{ts,tsx}',
       'tests/**/*.{test,spec}.{ts,tsx}',
     ],
     coverage: {

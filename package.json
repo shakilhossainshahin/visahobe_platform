@@ -14,6 +14,7 @@
     "format:check": "prettier --check .",
     "format:write": "prettier --write .",
     "verify:phase-0": "tsx scripts/verify-phase-0.ts",
+    "verify:prod": "tsx scripts/verify-production-readiness.ts",
     "db:generate": "pnpm --filter @visahobe/database db:generate",
     "db:migrate": "pnpm --filter @visahobe/database db:migrate",
     "db:seed": "pnpm --filter @visahobe/database db:seed",

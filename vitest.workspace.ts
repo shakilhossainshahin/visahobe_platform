@@ -25,6 +25,10 @@ const sharedAliases = {
   '@visahobe/integrations': path.resolve(__dirname, 'packages/integrations/src/index.ts'),
   '@visahobe/workflows': path.resolve(__dirname, 'packages/workflows/src/index.ts'),
   '@visahobe/api': path.resolve(__dirname, 'services/api/src/index.ts'),
+  '@visahobe/worker-browser-session': path.resolve(
+    __dirname,
+    'workers/browser-session/src/index.ts',
+  ),
 };
 
 export default defineWorkspace([
