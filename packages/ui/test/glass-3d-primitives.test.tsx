@@ -5,11 +5,12 @@ import {
   AuroraParallaxBackdrop,
   Glass3DCard,
   ParallaxStage,
+  ParallaxLayer,
   ScrollReveal3D,
   FloatingGlassDock,
 } from '../src/index.js';
 
-describe('Shared 3D Glassmorphism & Parallax Engine Primitives (TICKET-P5-002)', () => {
+describe('Shared 3D Glassmorphism & Parallax Engine Primitives (TICKET-P5-002 / TICKET-P5-003)', () => {
   it('renders AuroraParallaxBackdrop with obsidian background, light orbs, and grid', () => {
     const html = renderToStaticMarkup(
       <AuroraParallaxBackdrop intensity="vibrant" showParticles={true}>
@@ -55,6 +56,18 @@ describe('Shared 3D Glassmorphism & Parallax Engine Primitives (TICKET-P5-002)',
     expect(html).toContain('Stage Content');
   });
 
+  it('renders ParallaxLayer with zOffset and speed attributes', () => {
+    const html = renderToStaticMarkup(
+      <ParallaxLayer speed={0.2} zOffset={40}>
+        <div>Parallax Foreground Element</div>
+      </ParallaxLayer>,
+    );
+
+    expect(html).toContain('data-testid="parallax-layer"');
+    expect(html).toContain('transform-style:preserve-3d');
+    expect(html).toContain('Parallax Foreground Element');
+  });
+
   it('renders ScrollReveal3D with initial 3D transform and opacity', () => {
     const html = renderToStaticMarkup(
       <ScrollReveal3D direction="up" delayMs={150}>
@@ -66,19 +79,22 @@ describe('Shared 3D Glassmorphism & Parallax Engine Primitives (TICKET-P5-002)',
     expect(html).toContain('Animated Card');
   });
 
-  it('renders FloatingGlassDock with specular highlight and active pill indicators', () => {
+  it('renders FloatingGlassDock with specular highlight, active pill indicators, and mobile hiding', () => {
     const dockItems = [
       { id: 'home', label: 'Home', href: '/', active: true },
       { id: 'vault', label: 'Document Vault', href: '/documents', badge: '3 Pending' },
       { id: 'live', label: 'Live AI Officer', href: '/live-stream' },
     ];
 
-    const html = renderToStaticMarkup(<FloatingGlassDock items={dockItems} position="floating" />);
+    const html = renderToStaticMarkup(
+      <FloatingGlassDock items={dockItems} position="floating" hideOnMobile={true} />,
+    );
 
     expect(html).toContain('data-testid="floating-glass-dock"');
     expect(html).toContain('aria-label="Floating Glass Dock"');
     expect(html).toContain('backdrop-blur-2xl');
     expect(html).toContain('bg-[#092A21]/70');
+    expect(html).toContain('hidden md:block');
     expect(html).toContain('Home');
     expect(html).toContain('Document Vault');
     expect(html).toContain('3 Pending');

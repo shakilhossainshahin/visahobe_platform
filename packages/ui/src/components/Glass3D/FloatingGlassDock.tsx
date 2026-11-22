@@ -8,6 +8,7 @@ export const FloatingGlassDock: React.FC<FloatingGlassDockProps> = ({
   className = '',
   position = 'floating',
   blur = true,
+  hideOnMobile = false,
   dataTestId = 'floating-glass-dock',
   ...rest
 }) => {
@@ -24,12 +25,13 @@ export const FloatingGlassDock: React.FC<FloatingGlassDockProps> = ({
   };
 
   const blurClass = blur ? 'backdrop-blur-2xl' : 'backdrop-filter-none';
+  const mobileClass = hideOnMobile ? 'hidden md:block' : 'block';
 
   return (
     <nav
       data-testid={dataTestId}
       aria-label="Floating Glass Dock"
-      className={`${getPositionClasses()} transition-all duration-300`}
+      className={`${getPositionClasses()} ${mobileClass} transition-all duration-300`}
       {...rest}
     >
       <div

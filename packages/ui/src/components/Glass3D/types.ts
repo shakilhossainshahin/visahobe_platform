@@ -30,6 +30,14 @@ export interface ParallaxStageProps extends React.HTMLAttributes<HTMLDivElement>
   dataTestId?: string;
 }
 
+export interface ParallaxLayerProps extends React.HTMLAttributes<HTMLDivElement> {
+  children?: React.ReactNode;
+  className?: string;
+  speed?: number;
+  zOffset?: number;
+  dataTestId?: string;
+}
+
 export interface ScrollReveal3DProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
   className?: string;
@@ -53,5 +61,6 @@ export interface FloatingGlassDockProps extends React.HTMLAttributes<HTMLDivElem
   className?: string;
   position?: 'bottom' | 'top' | 'floating';
   blur?: boolean;
+  hideOnMobile?: boolean;
   dataTestId?: string;
 }

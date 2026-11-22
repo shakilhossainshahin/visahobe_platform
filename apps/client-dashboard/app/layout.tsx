@@ -51,7 +51,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <span className="font-semibold text-[#0D3B2E]">Tanvir Ahmed</span>
         <span className="text-[10px] text-[#64748B]">Primary Applicant</span>
       </div>
-      <a href="http://localhost:3000/login">
+      <a href="/login">
         <Button variant="ghost" size="sm" className="text-xs text-[#64748B] hover:text-[#0D3B2E]">
           Sign Out
         </Button>

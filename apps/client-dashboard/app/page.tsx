@@ -420,16 +420,16 @@ export default function ClientDashboardOverviewPage() {
               <Badge variant="gold" size="sm">
                 Case ID: VH-2026-SG-4921
               </Badge>
-              <span className="text-xs text-[#64748B] font-medium">
+              <span className="text-xs text-slate-300 font-medium">
                 • Target Submission: Dec 15, 2026
               </span>
             </div>
-            <h1 className="text-2xl md:text-3xl font-display font-extrabold text-[#0D3B2E]">
+            <h1 className="text-2xl md:text-3xl font-display font-extrabold text-white">
               Singapore Employment Pass (COMPASS Tier 1)
             </h1>
-            <p className="text-xs md:text-sm text-[#475569]">
+            <p className="text-xs md:text-sm text-slate-300">
               Assigned Specialist:{' '}
-              <span className="font-semibold text-[#0D3B2E]">
+              <span className="font-semibold text-[#C8A951]">
                 Sarah Jenkins (Senior Immigration Specialist)
               </span>{' '}
               • Ministry of Manpower Registered
@@ -758,8 +758,8 @@ export default function ClientDashboardOverviewPage() {
         </GlassCard>
       </Container>
 
-      {/* Floating Glass Dock Navigation */}
-      <FloatingGlassDock items={dashboardDockItems} position="floating" />
+      {/* Floating Glass Dock Navigation (Hidden on Mobile for clean touch controls) */}
+      <FloatingGlassDock items={dashboardDockItems} position="floating" hideOnMobile={true} />
     </AuroraParallaxBackdrop>
   );
 }
