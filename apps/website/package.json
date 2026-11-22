@@ -15,6 +15,7 @@
     "@visahobe/core": "workspace:*",
     "@visahobe/design-system": "workspace:*",
     "@visahobe/ui": "workspace:*",
+    "framer-motion": "^14.14.0",
     "next": "^15.0.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"

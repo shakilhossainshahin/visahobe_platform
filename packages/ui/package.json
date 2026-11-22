@@ -22,7 +22,8 @@
     "react-dom": ">=18.0.0"
   },
   "dependencies": {
-    "@visahobe/design-system": "workspace:*"
+    "@visahobe/design-system": "workspace:*",
+    "framer-motion": "^14.14.0"
   },
   "devDependencies": {
     "@types/react": "^18.3.18",

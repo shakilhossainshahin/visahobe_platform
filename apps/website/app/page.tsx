@@ -13,6 +13,7 @@ import {
   AuroraParallaxBackdrop,
   Glass3DCard,
   ParallaxStage,
+  ParallaxLayer,
   ScrollReveal3D,
   FloatingGlassDock,
 } from '@visahobe/ui';
@@ -250,9 +251,9 @@ export default function HomePage() {
                 size="md"
                 dot
                 dotPulse
-                className="shadow-sm border-[#C8A951]/50 backdrop-blur-md bg-white/80 dark:bg-black/40 text-[#0D3B2E]"
+                className="shadow-sm border-[#C8A951]/50 backdrop-blur-md bg-emerald-950/70 text-[#C8A951]"
               >
-                <span className="font-semibold text-[#0D3B2E]">
+                <span className="font-semibold text-[#C8A951]">
                   99.2% Verification Accuracy • AI + Licensed Human Verifiers
                 </span>
               </Badge>
@@ -322,73 +323,77 @@ export default function HomePage() {
             <div className="w-full mt-2 sm:mt-4 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
               {/* Left / Main: 3D Interactive Visa Globe */}
               <div className="lg:col-span-8 w-full">
-                <InteractiveVisaGlobe
-                  selectedDestinationId={selectedQuickCountry}
-                  onSelectDestination={(dest) => {
-                    setSelectedQuickCountry(dest.id);
-                  }}
-                />
+                <ParallaxLayer speed={0.03} zOffset={10} dataTestId="hero-globe-layer">
+                  <InteractiveVisaGlobe
+                    selectedDestinationId={selectedQuickCountry}
+                    onSelectDestination={(dest) => {
+                      setSelectedQuickCountry(dest.id);
+                    }}
+                  />
+                </ParallaxLayer>
               </div>
 
               {/* Right: Floating 3D Holographic Visa Pass Card */}
               <div className="lg:col-span-4 w-full flex flex-col gap-4">
-                <Glass3DCard
-                  glowColor="gold"
-                  tiltIntensity={15}
-                  specular={true}
-                  className="p-6 text-left"
-                  dataTestId="holographic-visa-pass"
-                >
-                  <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
-                    <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] animate-ping" />
-                      <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#C8A951]">
-                        Holographic Visa Pass
+                <ParallaxLayer speed={0.08} zOffset={30} dataTestId="hero-pass-layer">
+                  <Glass3DCard
+                    glowColor="gold"
+                    tiltIntensity={15}
+                    specular={true}
+                    className="p-6 text-left"
+                    dataTestId="holographic-visa-pass"
+                  >
+                    <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] animate-ping" />
+                        <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#C8A951]">
+                          Holographic Visa Pass
+                        </span>
+                      </div>
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-sm bg-white/10 text-white/80">
+                        SEC-CHIP-99
                       </span>
                     </div>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-sm bg-white/10 text-white/80">
-                      SEC-CHIP-99
-                    </span>
-                  </div>
 
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-white/70">Selected Destination</span>
-                      <span className="text-sm font-bold text-white">
-                        {activeHeroDestination.flag} {activeHeroDestination.country}
-                      </span>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-white/70">Selected Destination</span>
+                        <span className="text-sm font-bold text-white">
+                          {activeHeroDestination.flag} {activeHeroDestination.country}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-white/70">Sovereign Stream</span>
+                        <span className="text-xs font-mono font-semibold text-[#C8A951]">
+                          {activeHeroDestination.title}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-white/70">Consular Velocity</span>
+                        <span className="text-xs font-bold text-emerald-400">
+                          {activeHeroDestination.processingTime}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-white/70">Dual Verification</span>
+                        <span className="text-xs font-bold text-emerald-300">
+                          {activeHeroDestination.approvalRate} Pass Rate
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-white/70">Sovereign Stream</span>
-                      <span className="text-xs font-mono font-semibold text-[#C8A951]">
-                        {activeHeroDestination.title}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-white/70">Consular Velocity</span>
-                      <span className="text-xs font-bold text-emerald-400">
-                        {activeHeroDestination.processingTime}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-white/70">Dual Verification</span>
-                      <span className="text-xs font-bold text-emerald-300">
-                        {activeHeroDestination.approvalRate} Pass Rate
-                      </span>
-                    </div>
-                  </div>
 
-                  <div className="mt-5 pt-3 border-t border-white/10 flex items-center justify-between">
-                    <div className="text-[11px] font-mono text-white/60">
-                      REF: VH-2026-{activeHeroDestination.id.toUpperCase()}
+                    <div className="mt-5 pt-3 border-t border-white/10 flex items-center justify-between">
+                      <div className="text-[11px] font-mono text-white/60">
+                        REF: VH-2026-{activeHeroDestination.id.toUpperCase()}
+                      </div>
+                      <a href={`/countries/${activeHeroDestination.slug}`}>
+                        <span className="text-xs font-semibold text-[#C8A951] hover:underline">
+                          Explore Corridor →
+                        </span>
+                      </a>
                     </div>
-                    <a href={`/countries/${activeHeroDestination.slug}`}>
-                      <span className="text-xs font-semibold text-[#C8A951] hover:underline">
-                        Explore Corridor →
-                      </span>
-                    </a>
-                  </div>
-                </Glass3DCard>
+                  </Glass3DCard>
+                </ParallaxLayer>
               </div>
             </div>
 
@@ -965,7 +970,7 @@ export default function HomePage() {
                 </div>
 
                 <div className="w-full lg:w-auto flex flex-col gap-3 shrink-0">
-                  <a href="http://localhost:3002/partners" className="w-full">
+                  <a href="/login" className="w-full">
                     <Button variant="gold" size="lg" className="w-full shadow-lg">
                       Join B2B Partner Network →
                     </Button>
@@ -1016,8 +1021,8 @@ export default function HomePage() {
         </Container>
       </Section>
 
-      {/* Floating Glass Dock Navigation */}
-      <FloatingGlassDock items={dockNavItems} position="floating" />
+      {/* Floating Glass Dock Navigation (Hidden on Mobile) */}
+      <FloatingGlassDock items={dockNavItems} position="floating" hideOnMobile={true} />
     </AuroraParallaxBackdrop>
   );
 }

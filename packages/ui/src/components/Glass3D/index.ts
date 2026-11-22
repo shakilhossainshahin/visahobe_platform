@@ -4,5 +4,6 @@ export * from './useScrollParallax.js';
 export * from './AuroraParallaxBackdrop.js';
 export * from './Glass3DCard.js';
 export * from './ParallaxStage.js';
+export * from './ParallaxLayer.js';
 export * from './ScrollReveal3D.js';
 export * from './FloatingGlassDock.js';

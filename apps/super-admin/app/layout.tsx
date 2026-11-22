@@ -55,7 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <span className="text-[10px] text-[#64748B]">Lead Verifier • MOM #EP-8842</span>
       </div>
 
-      <a href="http://localhost:3000/login">
+      <a href="/login">
         <Button variant="ghost" size="sm" className="text-xs text-[#64748B] hover:text-[#0D3B2E]">
           Exit Console
         </Button>
@@ -77,10 +77,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     {
       title: 'Customer Endpoints',
       links: [
-        { label: 'Public Portal (Port 3000)', href: 'http://localhost:3000' },
-        { label: 'Client Workspace (Port 3001)', href: 'http://localhost:3001' },
-        { label: 'Country Policy Guides', href: 'http://localhost:3000/countries' },
-        { label: 'Intake Wizard', href: 'http://localhost:3000/assess' },
+        { label: 'Public Portal', href: 'https://visahobe-platform.vercel.app' },
+        { label: 'Client Workspace', href: 'https://visahobe-client.vercel.app' },
+        { label: 'Country Policy Guides', href: 'https://visahobe-platform.vercel.app/countries' },
+        { label: 'Intake Wizard', href: 'https://visahobe-platform.vercel.app/assess' },
       ],
     },
     {
