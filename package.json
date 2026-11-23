@@ -20,7 +20,8 @@
     "db:seed": "pnpm --filter @visahobe/database db:seed",
     "db:studio": "pnpm --filter @visahobe/database db:studio",
     "db:validate": "pnpm --filter @visahobe/database db:validate",
-    "clean": "pnpm -r exec rimraf dist"
+    "clean": "pnpm -r exec rimraf dist",
+    "android:sync": "pnpm --filter @visahobe/client-dashboard build && pnpm --filter @visahobe/client-dashboard exec cap sync android"
   },
   "devDependencies": {
     "@eslint/js": "^9.14.0",

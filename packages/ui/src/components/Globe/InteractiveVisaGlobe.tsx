@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import * as THREE from 'three';
+import { feature } from 'topojson-client';
+import countriesTopology from './countries-110m.json' with { type: 'json' };
 import { cn } from '../../utils/cn.js';
 import {
   type GlobeDestination,
@@ -10,7 +12,56 @@ import {
   STANDARD_GLOBE_DESTINATIONS,
 } from './types.js';
 
-// Pre-computed land coordinate clusters for the tactical 3D dot-matrix & procedural Earth
+interface GeoPolygonGeometry {
+  type: 'Polygon';
+  coordinates: number[][][];
+}
+
+interface GeoMultiPolygonGeometry {
+  type: 'MultiPolygon';
+  coordinates: number[][][][];
+}
+
+interface CountryFeature {
+  id?: string | number | undefined;
+  geometry: GeoPolygonGeometry | GeoMultiPolygonGeometry;
+}
+
+interface GeoFeatureCollection<T> {
+  type: 'FeatureCollection';
+  features: T[];
+}
+
+type TopoTopology = Parameters<typeof feature>[0];
+type TopoGeometry = Parameters<typeof feature>[1];
+
+interface TopoFileShape {
+  type: 'Topology';
+  objects: {
+    land: TopoGeometry;
+    countries: TopoGeometry;
+  };
+}
+
+const topo = countriesTopology as unknown as TopoFileShape;
+
+// Pre-extract genuine GeoJSON landmasses and countries from bundled TopoJSON
+const landGeo = feature(
+  topo as unknown as TopoTopology,
+  topo.objects.land,
+) as unknown as GeoFeatureCollection<{
+  geometry: GeoMultiPolygonGeometry;
+}>;
+
+const countriesGeo = feature(
+  topo as unknown as TopoTopology,
+  topo.objects.countries,
+) as unknown as GeoFeatureCollection<CountryFeature>;
+
+const cachedLandData: number[][][][] = landGeo?.features?.[0]?.geometry?.coordinates ?? [];
+const cachedCountries: CountryFeature[] = countriesGeo?.features ?? [];
+
+// Major tactical city coordinates for procedural dot-matrix radar overlays
 const LAND_COORDINATES: Array<[number, number]> = [
   // Europe & UK
   [51.5, -0.1],
@@ -98,118 +149,6 @@ const LAND_COORDINATES: Array<[number, number]> = [
   [10.4, -66.9],
 ];
 
-// Major continental landmass boundary polygons for high-res procedural Earth texture
-const CONTINENT_POLYGONS: Array<Array<[number, number]>> = [
-  // North America
-  [
-    [70, -165],
-    [72, -130],
-    [70, -90],
-    [60, -65],
-    [47, -53],
-    [44, -66],
-    [30, -81],
-    [25, -80],
-    [29, -95],
-    [20, -105],
-    [16, -93],
-    [8, -78],
-    [15, -88],
-    [22, -105],
-    [32, -117],
-    [38, -123],
-    [48, -124],
-    [58, -136],
-    [60, -145],
-    [65, -168],
-    [70, -165],
-  ],
-  // South America
-  [
-    [10, -75],
-    [5, -52],
-    [-5, -35],
-    [-20, -40],
-    [-35, -55],
-    [-55, -68],
-    [-52, -75],
-    [-35, -72],
-    [-18, -70],
-    [-5, -80],
-    [5, -77],
-    [10, -75],
-  ],
-  // Europe
-  [
-    [71, 28],
-    [68, 50],
-    [55, 60],
-    [45, 40],
-    [40, 26],
-    [36, -5],
-    [43, -9],
-    [48, -4],
-    [54, 8],
-    [58, 6],
-    [63, 10],
-    [71, 28],
-  ],
-  // Africa
-  [
-    [37, 10],
-    [32, 32],
-    [28, 34],
-    [12, 51],
-    [5, 48],
-    [-12, 40],
-    [-26, 33],
-    [-34, 18],
-    [-33, 17],
-    [-15, 12],
-    [4, 9],
-    [5, -1],
-    [5, -10],
-    [15, -17],
-    [21, -17],
-    [32, -5],
-    [37, 10],
-  ],
-  // Asia
-  [
-    [75, 100],
-    [70, 170],
-    [60, 160],
-    [55, 135],
-    [43, 132],
-    [35, 128],
-    [22, 114],
-    [10, 105],
-    [1, 103],
-    [8, 98],
-    [20, 88],
-    [22, 70],
-    [25, 60],
-    [30, 48],
-    [40, 44],
-    [55, 60],
-    [68, 70],
-    [75, 100],
-  ],
-  // Australia
-  [
-    [-12, 132],
-    [-15, 136],
-    [-12, 142],
-    [-22, 149],
-    [-33, 151],
-    [-38, 147],
-    [-35, 117],
-    [-22, 114],
-    [-15, 124],
-    [-12, 132],
-  ],
-];
-
 // Convert Lat/Lng to 3D Cartesian coordinates on sphere
 function latLngToVector3(lat: number, lng: number, radius: number): THREE.Vector3 {
   const phi = (90 - lat) * (Math.PI / 180);
@@ -220,7 +159,7 @@ function latLngToVector3(lat: number, lng: number, radius: number): THREE.Vector
   return new THREE.Vector3(x, y, z);
 }
 
-// Generate procedural photorealistic/stylized Earth canvas texture
+// Generate procedural photorealistic/stylized Earth canvas texture with genuine GeoJSON boundaries
 function createProceduralEarthTexture(): THREE.CanvasTexture {
   const canvas = document.createElement('canvas');
   canvas.width = 2048;
@@ -228,18 +167,18 @@ function createProceduralEarthTexture(): THREE.CanvasTexture {
   const ctx = canvas.getContext('2d');
 
   if (ctx) {
-    // 1. Deep Ocean Azure background with subtle oceanic depth gradient
+    // 1. Deep Ocean space-navy background with subtle equatorial depth gradient
     const oceanGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-    oceanGrad.addColorStop(0, '#024D7A'); // Polar deep
-    oceanGrad.addColorStop(0.25, '#0284C7'); // Ocean azure
-    oceanGrad.addColorStop(0.5, '#0369A1'); // Equatorial azure
-    oceanGrad.addColorStop(0.75, '#0284C7');
-    oceanGrad.addColorStop(1, '#024D7A');
+    oceanGrad.addColorStop(0, '#020B14'); // Polar deep
+    oceanGrad.addColorStop(0.25, '#04182C'); // Northern deep ocean
+    oceanGrad.addColorStop(0.5, '#062847'); // Equatorial azure-navy
+    oceanGrad.addColorStop(0.75, '#04182C');
+    oceanGrad.addColorStop(1, '#020B14');
     ctx.fillStyle = oceanGrad;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // 2. Graticule Lat/Lng grid lines (subtle oceanic coordinates)
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
     ctx.lineWidth = 1;
     for (let lat = -80; lat <= 80; lat += 20) {
       const y = ((90 - lat) / 180) * canvas.height;
@@ -257,43 +196,74 @@ function createProceduralEarthTexture(): THREE.CanvasTexture {
     }
 
     // Equator highlight (Champagne Gold hairline)
-    ctx.strokeStyle = 'rgba(200, 169, 81, 0.2)';
+    ctx.strokeStyle = 'rgba(200, 169, 81, 0.25)';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
     ctx.moveTo(0, canvas.height / 2);
     ctx.lineTo(canvas.width, canvas.height / 2);
     ctx.stroke();
 
-    // 3. Render Continents
-    ctx.fillStyle = '#0D9488'; // Tropical teal landmass
-    ctx.strokeStyle = '#10B981'; // Emerald coastal highlight
-    ctx.lineWidth = 2;
-
-    for (const poly of CONTINENT_POLYGONS) {
-      ctx.beginPath();
-      let first = true;
-      for (const [lat, lng] of poly) {
+    // Helper to draw a linear ring of [lng, lat] coordinates, handling antimeridian jumps
+    const drawRing = (ring: number[][]) => {
+      if (!ring || ring.length < 2) return;
+      for (let i = 0; i < ring.length; i++) {
+        const pt = ring[i];
+        if (!pt || pt.length < 2) continue;
+        const lng = pt[0]!;
+        const lat = pt[1]!;
         const x = ((lng + 180) / 360) * canvas.width;
         const y = ((90 - lat) / 180) * canvas.height;
-        if (first) {
+        if (i === 0 || Math.abs(lng - ring[i - 1]![0]!) > 180) {
           ctx.moveTo(x, y);
-          first = false;
         } else {
           ctx.lineTo(x, y);
         }
+      }
+    };
+
+    // 3. Render Landmasses from TopoJSON
+    ctx.fillStyle = '#064E3B'; // Tactical Deep Emerald
+    ctx.strokeStyle = '#10B981'; // Vibrant Emerald shoreline
+    ctx.lineWidth = 1.6;
+
+    for (const polygon of cachedLandData) {
+      ctx.beginPath();
+      for (const ring of polygon) {
+        drawRing(ring);
       }
       ctx.closePath();
       ctx.fill();
       ctx.stroke();
     }
 
-    // 4. Dot-matrix landmass glow for major city clusters
+    // 4. Render Country Borders from GeoJSON countries
+    ctx.strokeStyle = 'rgba(16, 185, 129, 0.35)';
+    ctx.lineWidth = 0.8;
+    for (const country of cachedCountries) {
+      const geom = country.geometry;
+      if (!geom) continue;
+      ctx.beginPath();
+      if (geom.type === 'Polygon') {
+        for (const ring of geom.coordinates) {
+          drawRing(ring);
+        }
+      } else if (geom.type === 'MultiPolygon') {
+        for (const poly of geom.coordinates) {
+          for (const ring of poly) {
+            drawRing(ring);
+          }
+        }
+      }
+      ctx.stroke();
+    }
+
+    // 5. Tactical city cluster glows
     ctx.fillStyle = '#34D399';
     for (const [lat, lng] of LAND_COORDINATES) {
       const x = ((lng + 180) / 360) * canvas.width;
       const y = ((90 - lat) / 180) * canvas.height;
       ctx.beginPath();
-      ctx.arc(x, y, 4, 0, Math.PI * 2);
+      ctx.arc(x, y, 3.5, 0, Math.PI * 2);
       ctx.fill();
     }
   }
@@ -690,13 +660,25 @@ export function InteractiveVisaGlobe({
       {/* Header & Search Toolbar */}
       <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#10B981] animate-pulse" />
-            <span className="text-xs font-mono uppercase tracking-widest text-[#C8A951]">
-              Live 3D Consular Radar • 60 FPS
-            </span>
+          <div className="flex flex-wrap items-center gap-2.5">
+            <div className="flex items-center gap-2">
+              <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#10B981] animate-pulse" />
+              <span className="text-xs font-mono uppercase tracking-widest text-[#C8A951]">
+                Live 3D Consular Radar • 60 FPS
+              </span>
+            </div>
+            <div
+              data-testid="holographic-visa-pass"
+              className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-white/10 border border-[#C8A951]/40 text-[11px] font-mono text-white/90 backdrop-blur-md"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-ping" />
+              <span className="font-bold text-[#C8A951]">Holographic Visa Pass</span>
+              <span className="text-[9px] bg-white/15 px-1.5 py-0.2 rounded text-white/80">
+                SEC-CHIP-99
+              </span>
+            </div>
           </div>
-          <h3 className="font-display text-xl sm:text-2xl font-bold text-white mt-1">
+          <h3 className="font-display text-xl sm:text-2xl font-bold text-white mt-1.5">
             Interactive Global Visa Locator
           </h3>
           <p className="text-xs text-white/70 max-w-lg">
