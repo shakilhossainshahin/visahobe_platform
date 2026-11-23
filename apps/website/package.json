@@ -14,6 +14,7 @@
     "@visahobe/cms": "workspace:*",
     "@visahobe/core": "workspace:*",
     "@visahobe/design-system": "workspace:*",
+    "@visahobe/integrations": "workspace:*",
     "@visahobe/ui": "workspace:*",
     "framer-motion": "^14.14.0",
     "next": "^15.0.3",

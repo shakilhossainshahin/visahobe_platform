@@ -17,6 +17,7 @@ import {
   ScrollReveal3D,
   FloatingGlassDock,
 } from '@visahobe/ui';
+import { ScenicTravelHeroBanner } from './components/ScenicTravelHeroBanner.js';
 
 interface DestinationPathway {
   id: string;
@@ -239,7 +240,11 @@ export default function HomePage() {
   ];
 
   return (
-    <AuroraParallaxBackdrop intensity="vibrant" className="w-full flex flex-col font-sans">
+    <AuroraParallaxBackdrop
+      variant="travel"
+      intensity="vibrant"
+      className="w-full flex flex-col font-sans"
+    >
       {/* 3D Parallax Hero Stage */}
       <ParallaxStage id="hero" perspective={1200} depthSpeed={0.06} className="relative pt-6 pb-12">
         <Container size="2xl" className="relative z-10">
@@ -251,9 +256,9 @@ export default function HomePage() {
                 size="md"
                 dot
                 dotPulse
-                className="shadow-sm border-[#C8A951]/50 backdrop-blur-md bg-emerald-950/70 text-[#C8A951]"
+                className="shadow-sm border-[#C8A951]/50 backdrop-blur-md bg-white/80 text-[#0D3B2E]"
               >
-                <span className="font-semibold text-[#C8A951]">
+                <span className="font-semibold text-[#0D3B2E]">
                   99.2% Verification Accuracy • AI + Licensed Human Verifiers
                 </span>
               </Badge>
@@ -263,15 +268,15 @@ export default function HomePage() {
             </div>
 
             {/* Authoritative Display Headline */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-extrabold tracking-tight text-white leading-[1.1]">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-extrabold tracking-tight text-[#0F172A] leading-[1.1]">
               Global Visas & Relocation Powered by{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-200 to-[#C8A951]">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0D3B2E] via-[#0284C7] to-[#C8A951]">
                 Intelligent AI Operations
               </span>
             </h1>
 
             {/* Sub-headline */}
-            <p className="text-lg sm:text-xl text-slate-300 max-w-2xl leading-relaxed">
+            <p className="text-lg sm:text-xl text-[#334155] max-w-2xl leading-relaxed">
               Experience transparent, error-free visa processing. Rapid automated eligibility
               scoring, instant document validation, and certified immigration specialist sign-offs
               in one modern platform.
@@ -289,6 +294,14 @@ export default function HomePage() {
                   Explore Destinations & Streams
                 </Button>
               </a>
+            </div>
+
+            {/* Animated Scenic Travel Hero Banner */}
+            <div className="w-full mt-2">
+              <ScenicTravelHeroBanner
+                selectedDestinationId={selectedQuickCountry}
+                onSelectDestination={(id) => setSelectedQuickCountry(id)}
+              />
             </div>
 
             {/* Live Executive Trust Metrics Strip (Liquid Glass KPI Cards) */}

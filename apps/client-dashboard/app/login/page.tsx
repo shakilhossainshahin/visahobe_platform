@@ -60,15 +60,21 @@ export default function ClientDashboardLoginPage() {
 
   return (
     <AuroraParallaxBackdrop
-      intensity="deep"
+      variant="travel"
+      intensity="vibrant"
       className="min-h-screen flex items-center justify-center py-16 px-4 sm:px-6"
     >
       <div className="w-full max-w-md relative z-10">
-        <Glass3DCard glowColor="gold" specular={true} tiltIntensity={6} className="p-8 sm:p-10">
+        <Glass3DCard
+          glowColor="azure"
+          specular={true}
+          tiltIntensity={0}
+          className="p-8 sm:p-10 bg-white/95 border-white/80 shadow-2xl"
+        >
           <div className="flex flex-col items-center text-center gap-3 mb-6">
             <a
               href="/"
-              className="flex items-center gap-2.5 font-display text-2xl font-bold text-white tracking-tight"
+              className="flex items-center gap-2.5 font-display text-2xl font-bold text-[#0D3B2E] tracking-tight"
             >
               <div className="w-8 h-8 rounded-lg bg-[#0D3B2E] border border-[#C8A951]/40 flex items-center justify-center text-white font-bold text-sm shadow-xs">
                 VH
@@ -78,10 +84,10 @@ export default function ClientDashboardLoginPage() {
             <EmeraldBadge variant="brand" size="sm">
               Applicant Workspace Portal
             </EmeraldBadge>
-            <h1 className="text-xl sm:text-2xl font-display font-bold text-white">
+            <h1 className="text-xl sm:text-2xl font-display font-bold text-[#0F172A]">
               Client Workspace Login
             </h1>
-            <p className="text-xs text-slate-300 leading-relaxed">
+            <p className="text-xs text-[#64748B] leading-relaxed">
               Access your real-time 5-stage case timeline, Document Vault, and direct messaging with
               assigned verifiers.
             </p>
@@ -91,10 +97,10 @@ export default function ClientDashboardLoginPage() {
             <div
               className={`mb-5 p-3.5 rounded-xl text-xs font-medium border transition-all ${
                 status.type === 'success'
-                  ? 'bg-emerald-950/80 border-emerald-500/50 text-emerald-200'
+                  ? 'bg-emerald-50 border-emerald-300 text-emerald-800'
                   : status.type === 'magic_link'
-                    ? 'bg-amber-950/80 border-amber-500/50 text-amber-200'
-                    : 'bg-red-950/80 border-red-500/50 text-red-200'
+                    ? 'bg-amber-50 border-amber-300 text-amber-800'
+                    : 'bg-red-50 border-red-300 text-red-800'
               }`}
               role="alert"
             >
@@ -106,7 +112,7 @@ export default function ClientDashboardLoginPage() {
             <div>
               <label
                 htmlFor="client-login-email"
-                className="text-xs font-bold uppercase tracking-wider text-slate-300 block mb-1.5"
+                className="text-xs font-bold uppercase tracking-wider text-[#475569] block mb-1.5"
               >
                 Applicant Email
               </label>
@@ -118,7 +124,7 @@ export default function ClientDashboardLoginPage() {
                 placeholder="applicant@example.com"
                 autoComplete="username"
                 required
-                className="w-full rounded-xl border border-white/20 bg-black/50 px-3.5 py-2.5 text-sm font-medium text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#C8A951]"
+                className="w-full rounded-xl border border-[#CBD5E1] bg-white px-3.5 py-2.5 text-sm font-medium text-[#0F172A] placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-[#0284C7]"
               />
             </div>
 
@@ -126,11 +132,11 @@ export default function ClientDashboardLoginPage() {
               <div className="flex items-center justify-between mb-1.5">
                 <label
                   htmlFor="client-login-password"
-                  className="text-xs font-bold uppercase tracking-wider text-slate-300"
+                  className="text-xs font-bold uppercase tracking-wider text-[#475569]"
                 >
                   Password
                 </label>
-                <a href="#forgot" className="text-xs text-[#C8A951] hover:underline">
+                <a href="#forgot" className="text-xs text-[#0284C7] font-semibold hover:underline">
                   Forgot password?
                 </a>
               </div>
@@ -142,15 +148,15 @@ export default function ClientDashboardLoginPage() {
                 placeholder="••••••••••••"
                 autoComplete="current-password"
                 required
-                className="w-full rounded-xl border border-white/20 bg-black/50 px-3.5 py-2.5 text-sm font-medium text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#C8A951]"
+                className="w-full rounded-xl border border-[#CBD5E1] bg-white px-3.5 py-2.5 text-sm font-medium text-[#0F172A] placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-[#0284C7]"
               />
             </div>
 
             <div className="flex items-center justify-between text-xs pt-1">
-              <label className="flex items-center gap-2 text-slate-300 cursor-pointer">
+              <label className="flex items-center gap-2 text-[#475569] cursor-pointer">
                 <input
                   type="checkbox"
-                  className="h-3.5 w-3.5 rounded border-white/30 bg-black/40 text-[#0D3B2E] focus:ring-[#C8A951]"
+                  className="h-3.5 w-3.5 rounded border-[#CBD5E1] bg-white text-[#0D3B2E] focus:ring-[#0284C7]"
                 />
                 <span>Remember this workstation</span>
               </label>
@@ -162,10 +168,10 @@ export default function ClientDashboardLoginPage() {
 
             <div className="relative my-2">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-white/10" />
+                <div className="w-full border-t border-[#E2E8F0]" />
               </div>
               <div className="relative flex justify-center text-xs uppercase tracking-wider">
-                <span className="bg-[#051610] px-2 text-slate-400 font-semibold">Or</span>
+                <span className="bg-white px-2 text-[#94A3B8] font-semibold">Or</span>
               </div>
             </div>
 
@@ -174,14 +180,14 @@ export default function ClientDashboardLoginPage() {
               variant="outline"
               size="md"
               onClick={handleMagicLink}
-              className="w-full text-white border-white/25 hover:bg-white/10"
+              className="w-full text-[#0F172A] border-[#CBD5E1] hover:bg-slate-50"
             >
               Send Secure Magic Link
             </Button>
           </form>
 
-          <div className="mt-8 pt-6 border-t border-white/10 flex flex-col items-center gap-2 text-center text-xs text-slate-400">
-            <div className="flex items-center gap-1.5 font-medium text-[#C8A951]">
+          <div className="mt-8 pt-6 border-t border-[#E2E8F0] flex flex-col items-center gap-2 text-center text-xs text-[#64748B]">
+            <div className="flex items-center gap-1.5 font-medium text-[#0D3B2E]">
               <span>🛡️</span>
               <span>PostgreSQL 16 Kernel RLS & Scoped Case Boundary</span>
             </div>

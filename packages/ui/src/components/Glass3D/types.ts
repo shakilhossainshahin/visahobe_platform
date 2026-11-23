@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type GlassGlowColor = 'gold' | 'emerald' | 'amber' | 'neutral';
+export type GlassGlowColor = 'gold' | 'emerald' | 'amber' | 'azure' | 'coral' | 'neutral';
 
 export interface Glass3DCardProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
@@ -18,6 +18,7 @@ export interface AuroraParallaxBackdropProps extends React.HTMLAttributes<HTMLDi
   children?: React.ReactNode;
   className?: string;
   intensity?: 'subtle' | 'vibrant' | 'deep';
+  variant?: 'travel' | 'dark';
   showParticles?: boolean;
   dataTestId?: string;
 }

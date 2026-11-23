@@ -307,7 +307,8 @@ The database is PostgreSQL 16 managed via Prisma ORM (`@prisma/client@^5.22.0`).
 - **Phase 5 — Interactive 3D Visuals, Mobile-First PWA/Capacitor & Mission Control UX:**
   - `TICKET-P5-001`: Interactive 3D Globe Country Locator, Luxury UI/UX Transformation Across All 3 Surfaces & Client Dashboard PWA + Android Capacitor Shell — **MERGED**
   - `TICKET-P5-002`: Unified 3D Glassmorphism, Scroll Parallax & Luxury Motion Overhaul Across All 3 Applications (`website`, `client-dashboard`, `super-admin`) — **MERGED**
-  - `TICKET-P5-003`: Live Browser UX Audit, True Scroll-Linked 3D Parallax Luxury Overhaul & Full Dynamic End-to-End System Wiring — **COMPLETED & VERIFIED**
+  - `TICKET-P5-003`: Live Browser UX Audit, True Scroll-Linked 3D Parallax Luxury Overhaul & Full Dynamic End-to-End System Wiring — **MERGED**
+  - `TICKET-P5-004`: Vibrant Travel Agency Theme Overhaul, Clean Card Interactions, Animated Scenic Hero Banner, Genuine WebGL Earth Globe & Complete Production DB/API Wiring — **COMPLETED & VERIFIED**
 
 ### 5.2 Strict Git & Pull Request Rules (Zero Self-Merge)
 

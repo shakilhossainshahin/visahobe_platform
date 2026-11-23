@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import * as THREE from 'three';
 import { cn } from '../../utils/cn.js';
 import {
   type GlobeDestination,
@@ -9,7 +10,7 @@ import {
   STANDARD_GLOBE_DESTINATIONS,
 } from './types.js';
 
-// Pre-computed land coordinate clusters for the tactical 3D dot-matrix globe
+// Pre-computed land coordinate clusters for the tactical 3D dot-matrix & procedural Earth
 const LAND_COORDINATES: Array<[number, number]> = [
   // Europe & UK
   [51.5, -0.1],
@@ -19,30 +20,46 @@ const LAND_COORDINATES: Array<[number, number]> = [
   [40.4, -3.7],
   [59.3, 18.0],
   [55.7, 37.6],
-  // Middle East & UAE
+  [60.1, 24.9],
+  [50.8, 4.3],
+  [47.3, 8.5],
+  [48.2, 16.3],
+  [45.4, 9.1],
+  // Middle East & Gulf (UAE, Saudi, Qatar)
   [25.2, 55.3],
   [24.4, 54.3],
   [21.5, 39.2],
+  [24.7, 46.7],
+  [25.3, 51.5],
   [32.0, 34.8],
   [33.3, 44.3],
   [35.6, 51.4],
-  // South & Southeast Asia (Dhaka, Singapore, Malaysia, Thailand, India)
+  [29.3, 47.9],
+  // South & Southeast Asia (Dhaka, Singapore, Malaysia, Thailand, India, Vietnam, Indonesia)
   [23.8, 90.4],
   [22.3, 91.8],
+  [24.9, 91.8],
   [28.6, 77.2],
   [19.0, 72.8],
   [13.0, 80.2],
+  [12.9, 77.5],
+  [22.5, 88.3],
   [1.3, 103.8],
   [3.1, 101.7],
   [13.7, 100.5],
   [10.8, 106.6],
-  // East Asia
+  [21.0, 105.8],
+  [-6.2, 106.8],
+  [14.5, 120.9],
+  // East Asia (Japan, Korea, China, HK)
   [39.9, 116.4],
   [31.2, 121.5],
   [35.6, 139.6],
+  [34.6, 135.5],
   [37.5, 126.9],
   [22.3, 114.1],
-  // North America
+  [25.0, 121.5],
+  // North America (US, Canada)
   [40.7, -74.0],
   [34.0, -118.2],
   [41.8, -87.6],
@@ -51,25 +68,242 @@ const LAND_COORDINATES: Array<[number, number]> = [
   [45.5, -73.5],
   [49.2, -123.1],
   [43.6, -79.3],
+  [38.9, -77.0],
+  [25.7, -80.1],
+  [47.6, -122.3],
   // Australia & Oceania
   [-33.8, 151.2],
   [-37.8, 144.9],
   [-31.9, 115.8],
   [-27.4, 153.0],
+  [-34.9, 138.6],
   [-41.2, 174.7],
+  [-36.8, 174.7],
   // Africa
   [30.0, 31.2],
   [-26.2, 28.0],
+  [-33.9, 18.4],
   [6.5, 3.3],
   [-1.2, 36.8],
   [33.5, -7.6],
+  [9.0, 38.7],
+  [14.7, -17.4],
   // South America
   [-23.5, -46.6],
+  [-22.9, -43.1],
   [-34.6, -58.3],
   [4.7, -74.0],
   [-12.0, -77.0],
   [-33.4, -70.6],
+  [10.4, -66.9],
 ];
+
+// Major continental landmass boundary polygons for high-res procedural Earth texture
+const CONTINENT_POLYGONS: Array<Array<[number, number]>> = [
+  // North America
+  [
+    [70, -165],
+    [72, -130],
+    [70, -90],
+    [60, -65],
+    [47, -53],
+    [44, -66],
+    [30, -81],
+    [25, -80],
+    [29, -95],
+    [20, -105],
+    [16, -93],
+    [8, -78],
+    [15, -88],
+    [22, -105],
+    [32, -117],
+    [38, -123],
+    [48, -124],
+    [58, -136],
+    [60, -145],
+    [65, -168],
+    [70, -165],
+  ],
+  // South America
+  [
+    [10, -75],
+    [5, -52],
+    [-5, -35],
+    [-20, -40],
+    [-35, -55],
+    [-55, -68],
+    [-52, -75],
+    [-35, -72],
+    [-18, -70],
+    [-5, -80],
+    [5, -77],
+    [10, -75],
+  ],
+  // Europe
+  [
+    [71, 28],
+    [68, 50],
+    [55, 60],
+    [45, 40],
+    [40, 26],
+    [36, -5],
+    [43, -9],
+    [48, -4],
+    [54, 8],
+    [58, 6],
+    [63, 10],
+    [71, 28],
+  ],
+  // Africa
+  [
+    [37, 10],
+    [32, 32],
+    [28, 34],
+    [12, 51],
+    [5, 48],
+    [-12, 40],
+    [-26, 33],
+    [-34, 18],
+    [-33, 17],
+    [-15, 12],
+    [4, 9],
+    [5, -1],
+    [5, -10],
+    [15, -17],
+    [21, -17],
+    [32, -5],
+    [37, 10],
+  ],
+  // Asia
+  [
+    [75, 100],
+    [70, 170],
+    [60, 160],
+    [55, 135],
+    [43, 132],
+    [35, 128],
+    [22, 114],
+    [10, 105],
+    [1, 103],
+    [8, 98],
+    [20, 88],
+    [22, 70],
+    [25, 60],
+    [30, 48],
+    [40, 44],
+    [55, 60],
+    [68, 70],
+    [75, 100],
+  ],
+  // Australia
+  [
+    [-12, 132],
+    [-15, 136],
+    [-12, 142],
+    [-22, 149],
+    [-33, 151],
+    [-38, 147],
+    [-35, 117],
+    [-22, 114],
+    [-15, 124],
+    [-12, 132],
+  ],
+];
+
+// Convert Lat/Lng to 3D Cartesian coordinates on sphere
+function latLngToVector3(lat: number, lng: number, radius: number): THREE.Vector3 {
+  const phi = (90 - lat) * (Math.PI / 180);
+  const theta = (lng + 180) * (Math.PI / 180);
+  const x = -(radius * Math.sin(phi) * Math.cos(theta));
+  const z = radius * Math.sin(phi) * Math.sin(theta);
+  const y = radius * Math.cos(phi);
+  return new THREE.Vector3(x, y, z);
+}
+
+// Generate procedural photorealistic/stylized Earth canvas texture
+function createProceduralEarthTexture(): THREE.CanvasTexture {
+  const canvas = document.createElement('canvas');
+  canvas.width = 2048;
+  canvas.height = 1024;
+  const ctx = canvas.getContext('2d');
+
+  if (ctx) {
+    // 1. Deep Ocean Azure background with subtle oceanic depth gradient
+    const oceanGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    oceanGrad.addColorStop(0, '#024D7A'); // Polar deep
+    oceanGrad.addColorStop(0.25, '#0284C7'); // Ocean azure
+    oceanGrad.addColorStop(0.5, '#0369A1'); // Equatorial azure
+    oceanGrad.addColorStop(0.75, '#0284C7');
+    oceanGrad.addColorStop(1, '#024D7A');
+    ctx.fillStyle = oceanGrad;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // 2. Graticule Lat/Lng grid lines (subtle oceanic coordinates)
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+    ctx.lineWidth = 1;
+    for (let lat = -80; lat <= 80; lat += 20) {
+      const y = ((90 - lat) / 180) * canvas.height;
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(canvas.width, y);
+      ctx.stroke();
+    }
+    for (let lng = -180; lng <= 180; lng += 30) {
+      const x = ((lng + 180) / 360) * canvas.width;
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, canvas.height);
+      ctx.stroke();
+    }
+
+    // Equator highlight (Champagne Gold hairline)
+    ctx.strokeStyle = 'rgba(200, 169, 81, 0.2)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(0, canvas.height / 2);
+    ctx.lineTo(canvas.width, canvas.height / 2);
+    ctx.stroke();
+
+    // 3. Render Continents
+    ctx.fillStyle = '#0D9488'; // Tropical teal landmass
+    ctx.strokeStyle = '#10B981'; // Emerald coastal highlight
+    ctx.lineWidth = 2;
+
+    for (const poly of CONTINENT_POLYGONS) {
+      ctx.beginPath();
+      let first = true;
+      for (const [lat, lng] of poly) {
+        const x = ((lng + 180) / 360) * canvas.width;
+        const y = ((90 - lat) / 180) * canvas.height;
+        if (first) {
+          ctx.moveTo(x, y);
+          first = false;
+        } else {
+          ctx.lineTo(x, y);
+        }
+      }
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+    }
+
+    // 4. Dot-matrix landmass glow for major city clusters
+    ctx.fillStyle = '#34D399';
+    for (const [lat, lng] of LAND_COORDINATES) {
+      const x = ((lng + 180) / 360) * canvas.width;
+      const y = ((90 - lat) / 180) * canvas.height;
+      ctx.beginPath();
+      ctx.arc(x, y, 4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.ClampToEdgeWrapping;
+  texture.generateMipmaps = true;
+  return texture;
+}
 
 export function InteractiveVisaGlobe({
   destinations = STANDARD_GLOBE_DESTINATIONS,
@@ -87,18 +321,30 @@ export function InteractiveVisaGlobe({
   const [isClient, setIsClient] = useState<boolean>(false);
   const [flightProgress, setFlightProgress] = useState<number>(0);
 
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+  const sceneRef = useRef<THREE.Scene | null>(null);
+  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
+  const globeGroupRef = useRef<THREE.Group | null>(null);
+  const flightArcRef = useRef<THREE.Line | null>(null);
+  const beaconMeshRef = useRef<THREE.Mesh | null>(null);
+  const flightCurveRef = useRef<THREE.QuadraticBezierCurve3 | null>(null);
   const animationFrameRef = useRef<number | null>(null);
-  const rotationRef = useRef<{
-    yaw: number;
-    pitch: number;
-    targetYaw: number;
-    targetPitch: number;
+
+  // Rotation & Drag state
+  const isDraggingRef = useRef<boolean>(false);
+  const prevPointerRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const rotationStateRef = useRef<{
+    currentY: number;
+    currentX: number;
+    targetY: number;
+    targetX: number;
   }>({
-    yaw: 0,
-    pitch: 15,
-    targetYaw: 0,
-    targetPitch: 15,
+    currentY: 0,
+    currentX: 0.2,
+    targetY: 0,
+    targetX: 0.2,
   });
 
   const activeDestination = useMemo(() => {
@@ -132,14 +378,15 @@ export function InteractiveVisaGlobe({
     }
   }, []);
 
-  // Update target rotation when destination changes
+  // Update target rotation when active destination changes
   useEffect(() => {
     if (!activeDestination) return;
-    // Bring destination to the front: yaw is negative longitude, pitch is slight tilt toward latitude
-    const targetY = -activeDestination.lng;
-    const targetP = Math.max(-25, Math.min(35, activeDestination.lat * 0.4));
-    rotationRef.current.targetYaw = targetY;
-    rotationRef.current.targetPitch = targetP;
+    // Map destination lat/lng to target globe rotation
+    // Longitude maps to Y rotation (radians), Latitude maps to X rotation
+    const targetY = -(activeDestination.lng * (Math.PI / 180)) - Math.PI / 2;
+    const targetX = activeDestination.lat * (Math.PI / 180) * 0.4;
+    rotationStateRef.current.targetY = targetY;
+    rotationStateRef.current.targetX = THREE.MathUtils.clamp(targetX, -0.6, 0.6);
   }, [activeDestination]);
 
   // Handle destination selection
@@ -170,250 +417,275 @@ export function InteractiveVisaGlobe({
     });
   }, [destinations, searchQuery, categoryFilter]);
 
-  // 60fps 3D Canvas Rendering Engine
+  // ==========================================
+  // Three.js 60fps WebGL Earth Engine
+  // ==========================================
   useEffect(() => {
     if (!hasWebGL || !isClient) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    const width = canvas.clientWidth || 460;
+    const height = canvas.clientHeight || 460;
 
-    let localFlight = 0;
+    // 1. Scene & Camera
+    const scene = new THREE.Scene();
+    sceneRef.current = scene;
 
-    const render = () => {
-      const width = canvas.width;
-      const height = canvas.height;
-      const cx = width / 2;
-      const cy = height / 2;
-      const radius = Math.min(width, height) * 0.38;
+    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 1000);
+    camera.position.set(0, 0, 5.2);
+    cameraRef.current = camera;
 
-      ctx.clearRect(0, 0, width, height);
+    // 2. Renderer
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        canvas,
+        antialias: true,
+        alpha: true,
+        powerPreference: 'high-performance',
+      });
+      renderer.setSize(width, height, false);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      rendererRef.current = renderer;
+    } catch {
+      setHasWebGL(false);
+      return;
+    }
+
+    // 3. Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
+    scene.add(ambientLight);
+
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1.6);
+    dirLight.position.set(5, 3, 5);
+    scene.add(dirLight);
+
+    // 4. Globe Group
+    const globeGroup = new THREE.Group();
+    globeGroupRef.current = globeGroup;
+    scene.add(globeGroup);
+
+    const GLOBE_RADIUS = 1.85;
+
+    // Base Photorealistic / Stylized Earth Sphere
+    const earthTexture = createProceduralEarthTexture();
+    const sphereGeo = new THREE.SphereGeometry(GLOBE_RADIUS, 64, 64);
+    const sphereMat = new THREE.MeshStandardMaterial({
+      map: earthTexture,
+      roughness: 0.55,
+      metalness: 0.1,
+    });
+    const earthMesh = new THREE.Mesh(sphereGeo, sphereMat);
+    globeGroup.add(earthMesh);
+
+    // Atmospheric Sky-Blue Glow Halo Sphere
+    const haloGeo = new THREE.SphereGeometry(GLOBE_RADIUS * 1.025, 48, 48);
+    const haloMat = new THREE.MeshBasicMaterial({
+      color: 0x38bdf8,
+      transparent: true,
+      opacity: 0.18,
+      side: THREE.BackSide,
+    });
+    const haloMesh = new THREE.Mesh(haloGeo, haloMat);
+    globeGroup.add(haloMesh);
+
+    // Outer Liquid Glass Ring
+    const ringGeo = new THREE.RingGeometry(GLOBE_RADIUS * 1.08, GLOBE_RADIUS * 1.09, 64);
+    const ringMat = new THREE.MeshBasicMaterial({
+      color: 0xc8a951,
+      transparent: true,
+      opacity: 0.35,
+      side: THREE.DoubleSide,
+    });
+    const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+    ringMesh.rotation.x = Math.PI / 2;
+    globeGroup.add(ringMesh);
+
+    // 5. Origin Marker (Dhaka DAC)
+    const originPos = latLngToVector3(originCity.lat, originCity.lng, GLOBE_RADIUS);
+    const originGeo = new THREE.SphereGeometry(0.045, 16, 16);
+    const originMat = new THREE.MeshBasicMaterial({ color: 0xc8a951 });
+    const originMesh = new THREE.Mesh(originGeo, originMat);
+    originMesh.position.copy(originPos);
+    globeGroup.add(originMesh);
+
+    // Dhaka radar ring
+    const radarGeo = new THREE.RingGeometry(0.06, 0.08, 32);
+    const radarMat = new THREE.MeshBasicMaterial({
+      color: 0xc8a951,
+      transparent: true,
+      opacity: 0.8,
+      side: THREE.DoubleSide,
+    });
+    const radarMesh = new THREE.Mesh(radarGeo, radarMat);
+    radarMesh.position.copy(originPos);
+    radarMesh.lookAt(new THREE.Vector3(0, 0, 0));
+    globeGroup.add(radarMesh);
+
+    // 6. Destination Markers
+    const destGroup = new THREE.Group();
+    globeGroup.add(destGroup);
+
+    destinations.forEach((dest) => {
+      const pos = latLngToVector3(dest.lat, dest.lng, GLOBE_RADIUS);
+      const isSelected = dest.id === activeDestination.id;
+
+      const markerGeo = new THREE.SphereGeometry(isSelected ? 0.055 : 0.035, 16, 16);
+      const markerMat = new THREE.MeshBasicMaterial({
+        color: isSelected ? 0xf97316 : 0x0284c7, // Sunset Coral if active, else Ocean Azure
+      });
+      const markerMesh = new THREE.Mesh(markerGeo, markerMat);
+      markerMesh.position.copy(pos);
+      destGroup.add(markerMesh);
+    });
+
+    // 7. Dynamic 3D Parabolic Flight Arc (Dhaka -> Active Destination)
+    const destPos = latLngToVector3(activeDestination.lat, activeDestination.lng, GLOBE_RADIUS);
+    const midPos = originPos
+      .clone()
+      .add(destPos)
+      .multiplyScalar(0.5)
+      .normalize()
+      .multiplyScalar(GLOBE_RADIUS * 1.38);
+
+    const flightCurve = new THREE.QuadraticBezierCurve3(originPos, midPos, destPos);
+    flightCurveRef.current = flightCurve;
+
+    const arcPoints = flightCurve.getPoints(50);
+    const arcGeo = new THREE.BufferGeometry().setFromPoints(arcPoints);
+    const arcMat = new THREE.LineBasicMaterial({
+      color: 0xc8a951,
+      linewidth: 2,
+      transparent: true,
+      opacity: 0.85,
+    });
+    const arcLine = new THREE.Line(arcGeo, arcMat);
+    flightArcRef.current = arcLine;
+    globeGroup.add(arcLine);
+
+    // Animated Flight Beacon along Arc
+    const beaconGeo = new THREE.SphereGeometry(0.045, 16, 16);
+    const beaconMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    const beaconMesh = new THREE.Mesh(beaconGeo, beaconMat);
+    beaconMesh.position.copy(originPos);
+    beaconMeshRef.current = beaconMesh;
+    globeGroup.add(beaconMesh);
+
+    // 8. Animation & Render Loop
+    let t = 0;
+    const animate = () => {
+      t = (t + 0.012) % 1;
+      setFlightProgress(t);
 
       // Smooth rotation interpolation
-      const rot = rotationRef.current;
-      rot.yaw += (rot.targetYaw - rot.yaw) * 0.05;
-      rot.pitch += (rot.targetPitch - rot.pitch) * 0.05;
+      const rot = rotationStateRef.current;
+      rot.currentY += (rot.targetY - rot.currentY) * 0.05;
+      rot.currentX += (rot.targetX - rot.currentX) * 0.05;
 
-      // Flight arc pulse progression
-      localFlight = (localFlight + 0.015) % 1;
-      setFlightProgress(localFlight);
-
-      const to3D = (lat: number, lng: number, rOffset = 0) => {
-        const phi = (90 - lat) * (Math.PI / 180);
-        const theta = (lng + rot.yaw) * (Math.PI / 180);
-        const pRad = rot.pitch * (Math.PI / 180);
-
-        // Spherical coords
-        const x = (radius + rOffset) * Math.sin(phi) * Math.cos(theta);
-        let y = (radius + rOffset) * Math.cos(phi);
-        let z = (radius + rOffset) * Math.sin(phi) * Math.sin(theta);
-
-        // Pitch tilt around X axis
-        const cosP = Math.cos(pRad);
-        const sinP = Math.sin(pRad);
-        const yRot = y * cosP - z * sinP;
-        const zRot = y * sinP + z * cosP;
-        y = yRot;
-        z = zRot;
-
-        return { x: cx + x, y: cy - y, z, visible: z > -radius * 0.2 };
-      };
-
-      // 1. Ambient Outer Halo (Liquid Glass Emerald + Gold glow)
-      const haloGrad = ctx.createRadialGradient(cx, cy, radius * 0.85, cx, cy, radius * 1.25);
-      haloGrad.addColorStop(0, 'rgba(13, 59, 46, 0.35)');
-      haloGrad.addColorStop(0.5, 'rgba(20, 83, 66, 0.15)');
-      haloGrad.addColorStop(1, 'rgba(13, 59, 46, 0)');
-      ctx.fillStyle = haloGrad;
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius * 1.25, 0, Math.PI * 2);
-      ctx.fill();
-
-      // 2. Base Sphere (Deep Emerald dark globe)
-      const sphereGrad = ctx.createRadialGradient(
-        cx - radius * 0.3,
-        cy - radius * 0.3,
-        radius * 0.1,
-        cx,
-        cy,
-        radius,
-      );
-      sphereGrad.addColorStop(0, '#124838');
-      sphereGrad.addColorStop(0.65, '#0D3B2E');
-      sphereGrad.addColorStop(1, '#061D17');
-      ctx.fillStyle = sphereGrad;
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Hairline sphere border (Champagne gold accent)
-      ctx.strokeStyle = 'rgba(200, 169, 81, 0.4)';
-      ctx.lineWidth = 1.2;
-      ctx.stroke();
-
-      // 3. Meridian Grids (Latitude and Longitude Rings)
-      ctx.lineWidth = 0.7;
-      for (let lat = -60; lat <= 60; lat += 30) {
-        ctx.strokeStyle = lat === 0 ? 'rgba(200, 169, 81, 0.25)' : 'rgba(255, 255, 255, 0.08)';
-        ctx.beginPath();
-        let started = false;
-        for (let lng = 0; lng <= 360; lng += 10) {
-          const pt = to3D(lat, lng);
-          if (pt.visible) {
-            if (!started) {
-              ctx.moveTo(pt.x, pt.y);
-              started = true;
-            } else {
-              ctx.lineTo(pt.x, pt.y);
-            }
-          } else {
-            started = false;
-          }
-        }
-        ctx.stroke();
+      if (globeGroupRef.current) {
+        globeGroupRef.current.rotation.y = rot.currentY;
+        globeGroupRef.current.rotation.x = rot.currentX;
       }
 
-      // 4. Tactical Landmass Coordinates (Glowing Matrix Dots)
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
-      for (const [lat, lng] of LAND_COORDINATES) {
-        const pt = to3D(lat, lng);
-        if (pt.visible) {
-          const alpha = Math.max(0.1, Math.min(1, (pt.z + radius * 0.2) / radius));
-          ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.65})`;
-          ctx.beginPath();
-          ctx.arc(pt.x, pt.y, 1.8, 0, Math.PI * 2);
-          ctx.fill();
-        }
+      // Update flight beacon along curve
+      if (flightCurveRef.current && beaconMeshRef.current) {
+        const beaconPos = flightCurveRef.current.getPoint(t);
+        beaconMeshRef.current.position.copy(beaconPos);
       }
 
-      // 5. Origin Marker: Dhaka (DAC)
-      const originPt = to3D(originCity.lat, originCity.lng);
-      if (originPt.visible) {
-        // Glowing gold pulsing radar ring
-        ctx.strokeStyle = 'rgba(200, 169, 81, 0.85)';
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        ctx.arc(
-          originPt.x,
-          originPt.y,
-          4 + Math.sin(localFlight * Math.PI * 4) * 2,
-          0,
-          Math.PI * 2,
-        );
-        ctx.stroke();
-
-        ctx.fillStyle = '#C8A951';
-        ctx.beginPath();
-        ctx.arc(originPt.x, originPt.y, 3, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Label DAC
-        ctx.fillStyle = '#FFFFFF';
-        ctx.font = '600 10px JetBrains Mono, monospace';
-        ctx.fillText(`DAC (${originCity.name})`, originPt.x + 8, originPt.y - 4);
+      // Pulse radar mesh
+      if (radarMesh) {
+        const scale = 1 + Math.sin(t * Math.PI * 4) * 0.35;
+        radarMesh.scale.set(scale, scale, scale);
       }
 
-      // 6. Destination Marker
-      const destPt = to3D(activeDestination.lat, activeDestination.lng);
-      if (destPt.visible) {
-        // Pulsing emerald target beacon
-        ctx.strokeStyle = '#10B981';
-        ctx.lineWidth = 1.8;
-        ctx.beginPath();
-        ctx.arc(destPt.x, destPt.y, 6 + Math.cos(localFlight * Math.PI * 4) * 2.5, 0, Math.PI * 2);
-        ctx.stroke();
-
-        ctx.fillStyle = '#10B981';
-        ctx.beginPath();
-        ctx.arc(destPt.x, destPt.y, 3.5, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Destination Callout
-        ctx.fillStyle = '#C8A951';
-        ctx.font = '700 11px Plus Jakarta Sans, sans-serif';
-        ctx.fillText(
-          `${activeDestination.flag} ${activeDestination.name}`,
-          destPt.x + 10,
-          destPt.y + 4,
-        );
-      }
-
-      // 7. Dynamic Parabolic Flight Arc (DAC -> Destination)
-      if (originPt.visible || destPt.visible) {
-        const steps = 30;
-        ctx.beginPath();
-        let flightStarted = false;
-
-        for (let i = 0; i <= steps; i++) {
-          const t = i / steps;
-          // Interpolate lat / lng along great arc
-          const curLat = originCity.lat + (activeDestination.lat - originCity.lat) * t;
-          const curLng = originCity.lng + (activeDestination.lng - originCity.lng) * t;
-          // Arch upward in middle of flight
-          const arcElevation = Math.sin(t * Math.PI) * (radius * 0.28);
-          const pt = to3D(curLat, curLng, arcElevation);
-
-          if (pt.visible) {
-            if (!flightStarted) {
-              ctx.moveTo(pt.x, pt.y);
-              flightStarted = true;
-            } else {
-              ctx.lineTo(pt.x, pt.y);
-            }
-          }
-        }
-
-        ctx.strokeStyle = 'rgba(200, 169, 81, 0.7)';
-        ctx.lineWidth = 2;
-        ctx.setLineDash([4, 4]);
-        ctx.stroke();
-        ctx.setLineDash([]);
-
-        // Animated traveling beacon along flight arc
-        const t = localFlight;
-        const curLat = originCity.lat + (activeDestination.lat - originCity.lat) * t;
-        const curLng = originCity.lng + (activeDestination.lng - originCity.lng) * t;
-        const arcElevation = Math.sin(t * Math.PI) * (radius * 0.28);
-        const beaconPt = to3D(curLat, curLng, arcElevation);
-
-        if (beaconPt.visible) {
-          ctx.fillStyle = '#FFFFFF';
-          ctx.beginPath();
-          ctx.arc(beaconPt.x, beaconPt.y, 3.5, 0, Math.PI * 2);
-          ctx.fill();
-
-          ctx.strokeStyle = 'rgba(200, 169, 81, 0.9)';
-          ctx.lineWidth = 1.5;
-          ctx.beginPath();
-          ctx.arc(beaconPt.x, beaconPt.y, 6, 0, Math.PI * 2);
-          ctx.stroke();
-        }
-      }
-
-      animationFrameRef.current = requestAnimationFrame(render);
+      renderer.render(scene, camera);
+      animationFrameRef.current = requestAnimationFrame(animate);
     };
 
-    render();
+    animate();
 
+    // 9. Pointer / Drag Event Handlers for 3D Globe Rotation
+    const handlePointerDown = (e: MouseEvent | TouchEvent) => {
+      isDraggingRef.current = true;
+      const clientX = 'touches' in e ? e.touches[0]!.clientX : e.clientX;
+      const clientY = 'touches' in e ? e.touches[0]!.clientY : e.clientY;
+      prevPointerRef.current = { x: clientX, y: clientY };
+    };
+
+    const handlePointerMove = (e: MouseEvent | TouchEvent) => {
+      if (!isDraggingRef.current) return;
+      const clientX = 'touches' in e ? e.touches[0]!.clientX : e.clientX;
+      const clientY = 'touches' in e ? e.touches[0]!.clientY : e.clientY;
+      const dx = clientX - prevPointerRef.current.x;
+      const dy = clientY - prevPointerRef.current.y;
+
+      rotationStateRef.current.targetY += dx * 0.006;
+      rotationStateRef.current.targetX = THREE.MathUtils.clamp(
+        rotationStateRef.current.targetX + dy * 0.006,
+        -0.7,
+        0.7,
+      );
+
+      prevPointerRef.current = { x: clientX, y: clientY };
+    };
+
+    const handlePointerUp = () => {
+      isDraggingRef.current = false;
+    };
+
+    const canvasEl = canvas;
+    canvasEl.addEventListener('mousedown', handlePointerDown);
+    canvasEl.addEventListener('touchstart', handlePointerDown, { passive: true });
+    window.addEventListener('mousemove', handlePointerMove);
+    window.addEventListener('touchmove', handlePointerMove, { passive: true });
+    window.addEventListener('mouseup', handlePointerUp);
+    window.addEventListener('touchend', handlePointerUp);
+
+    // Cleanup
     return () => {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
+      canvasEl.removeEventListener('mousedown', handlePointerDown);
+      canvasEl.removeEventListener('touchstart', handlePointerDown);
+      window.removeEventListener('mousemove', handlePointerMove);
+      window.removeEventListener('touchmove', handlePointerMove);
+      window.removeEventListener('mouseup', handlePointerUp);
+      window.removeEventListener('touchend', handlePointerUp);
+
+      renderer.dispose();
+      earthTexture.dispose();
+      sphereGeo.dispose();
+      sphereMat.dispose();
+      haloGeo.dispose();
+      haloMat.dispose();
+      ringGeo.dispose();
+      ringMat.dispose();
+      originGeo.dispose();
+      originMat.dispose();
+      radarGeo.dispose();
+      radarMat.dispose();
+      arcGeo.dispose();
+      arcMat.dispose();
+      beaconGeo.dispose();
+      beaconMat.dispose();
     };
-  }, [hasWebGL, isClient, originCity, activeDestination]);
+  }, [hasWebGL, isClient, originCity, activeDestination, destinations]);
 
   return (
     <div
+      ref={containerRef}
       className={cn(
-        'relative w-full rounded-2xl bg-gradient-to-b from-[#0D3B2E]/90 to-[#08241D] text-white p-4 md:p-8 shadow-2xl border border-[#C8A951]/25 overflow-hidden backdrop-blur-xl',
+        'relative w-full rounded-2xl bg-gradient-to-b from-[#0D3B2E]/95 via-[#0A2F25] to-[#041A14] text-white p-4 md:p-8 shadow-2xl border border-[#C8A951]/30 overflow-hidden backdrop-blur-xl',
         className,
       )}
       data-testid="interactive-visa-globe"
     >
-      {/* Background ambient lighting */}
-      <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-[#145342]/30 blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-[#C8A951]/15 blur-3xl pointer-events-none" />
+      {/* Background ambient lighting - Ocean Azure & Champagne Gold */}
+      <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-[#0284C7]/20 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-[#C8A951]/20 blur-3xl pointer-events-none" />
 
       {/* Header & Search Toolbar */}
       <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
@@ -432,8 +704,8 @@ export function InteractiveVisaGlobe({
             <strong className="text-white">
               {originCity.name} ({originCity.code})
             </strong>
-            . Select any country to locate embassy jurisdiction, real-time approval rates, and AI
-            autonomy levels.
+            . Drag to spin the photorealistic 3D Earth, locate embassy jurisdictions, and assess
+            instant AI approval pathways.
           </p>
         </div>
 
@@ -484,17 +756,22 @@ export function InteractiveVisaGlobe({
       {/* Main Interactive Stage: 3D Globe + Liquid Glass Intelligence Card */}
       <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
         {/* Globe Viewport (Col 1-7) */}
-        <div className="lg:col-span-7 flex flex-col items-center justify-center relative min-h-[340px] sm:min-h-[420px]">
+        <div className="lg:col-span-7 flex flex-col items-center justify-center relative min-h-[340px] sm:min-h-[440px]">
           {hasWebGL && isClient ? (
-            <canvas
-              ref={canvasRef}
-              width={600}
-              height={600}
-              className="w-full max-w-[480px] aspect-square select-none cursor-grab active:cursor-grabbing"
-              aria-label="Interactive 3D visa globe canvas"
-            />
+            <div className="relative w-full max-w-[480px] aspect-square flex items-center justify-center">
+              <canvas
+                ref={canvasRef}
+                width={500}
+                height={500}
+                className="w-full h-full aspect-square select-none cursor-grab active:cursor-grabbing rounded-full"
+                aria-label="Interactive 3D Three.js WebGL visa globe canvas"
+              />
+              <div className="absolute bottom-1 right-2 text-[10px] text-white/40 font-mono pointer-events-none">
+                WebGL 3D Earth • Drag to rotate
+              </div>
+            </div>
           ) : (
-            /* 2D SVG Vector Orthographic Fallback for Reduced-Motion / Non-WebGL Environments */
+            /* 2D SVG Vector Orthographic Fallback for Reduced-Motion / Server SSR Environments */
             <div
               className="w-full max-w-[420px] aspect-square flex items-center justify-center relative"
               data-testid="globe-svg-fallback"
@@ -506,13 +783,13 @@ export function InteractiveVisaGlobe({
               >
                 <defs>
                   <radialGradient id="svgGlobeGlow" cx="40%" cy="40%" r="60%">
-                    <stop offset="0%" stopColor="#145342" />
+                    <stop offset="0%" stopColor="#0284C7" />
                     <stop offset="60%" stopColor="#0D3B2E" />
                     <stop offset="100%" stopColor="#061D17" />
                   </radialGradient>
                   <linearGradient id="svgArcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
                     <stop offset="0%" stopColor="#C8A951" />
-                    <stop offset="100%" stopColor="#10B981" />
+                    <stop offset="100%" stopColor="#F97316" />
                   </linearGradient>
                 </defs>
 
@@ -576,13 +853,13 @@ export function InteractiveVisaGlobe({
                 </text>
 
                 {/* Destination Pin */}
-                <circle cx="280" cy="220" r="5" fill="#10B981" />
+                <circle cx="280" cy="220" r="5" fill="#F97316" />
                 <circle
                   cx="280"
                   cy="220"
                   r="10"
                   fill="none"
-                  stroke="#10B981"
+                  stroke="#F97316"
                   strokeWidth="1.2"
                   opacity="0.8"
                 />
@@ -620,7 +897,7 @@ export function InteractiveVisaGlobe({
           )}
 
           {/* Quick Country Pills Rail */}
-          <div className="w-full flex items-center justify-center gap-1.5 flex-wrap mt-2">
+          <div className="w-full flex items-center justify-center gap-1.5 flex-wrap mt-3">
             {filteredDestinations.slice(0, 7).map((dest) => (
               <button
                 key={dest.id}

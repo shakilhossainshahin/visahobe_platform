@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@capacitor/core": "^6.2.0",
+    "@visahobe/agents": "workspace:*",
     "@visahobe/auth": "workspace:*",
     "@visahobe/core": "workspace:*",
     "@visahobe/design-system": "workspace:*",
