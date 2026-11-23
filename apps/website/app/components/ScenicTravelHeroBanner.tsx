@@ -151,9 +151,9 @@ export function ScenicTravelHeroBanner({
                 className={`w-full h-full object-cover ${isActive ? 'kenburns-active' : ''}`}
                 loading={idx === 0 ? 'eager' : 'lazy'}
               />
-              {/* Vibrant Multi-Stop Gradient Overlays for High-Contrast Text Legibility */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A] via-[#0F172A]/40 to-transparent" />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#0F172A]/80 via-[#0F172A]/30 to-transparent" />
+              {/* High-Contrast Gradient Scrim for 100% Razor-Sharp Legibility */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A] via-[#0F172A]/65 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#0F172A]/85 via-[#0F172A]/40 to-transparent" />
             </div>
           );
         })}
@@ -177,9 +177,9 @@ export function ScenicTravelHeroBanner({
           </div>
         </div>
 
-        {/* Bottom Banner Content Area */}
+        {/* Bottom Banner Content Area (Keyed for Zero Overlapping Text) */}
         <div className="absolute bottom-4 sm:bottom-8 inset-x-4 sm:inset-x-8 z-20 flex flex-col gap-4 text-left">
-          <div className="max-w-2xl">
+          <div key={activeSlide.id} className="max-w-2xl transition-all duration-300">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-white/20 backdrop-blur-md border border-white/30 text-white text-xs font-bold uppercase tracking-wider mb-2">
               <span>{activeSlide.flag}</span>
               <span>{activeSlide.badge}</span>
@@ -189,7 +189,7 @@ export function ScenicTravelHeroBanner({
               {activeSlide.headline}
             </h2>
 
-            <p className="text-xs sm:text-sm text-slate-200 mt-1 sm:mt-2 max-w-xl line-clamp-2 drop-shadow-sm font-medium">
+            <p className="text-xs sm:text-sm text-slate-100 mt-1 sm:mt-2 max-w-xl line-clamp-2 drop-shadow-sm font-medium">
               {activeSlide.subheadline}
             </p>
           </div>

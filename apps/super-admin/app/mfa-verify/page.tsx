@@ -20,23 +20,45 @@ export default function MfaVerifyPage() {
     }
 
     setIsVerifying(true);
-    setTimeout(() => {
-      setIsVerifying(false);
-      if (totpCode === '000000') {
-        setError('Invalid or expired authenticator code. Please try again.');
-      } else {
-        setSuccess(true);
-      }
-    }, 400);
+    fetch('/api/auth/mfa', { method: 'POST' })
+      .then((res) => res.json())
+      .then(() => {
+        setIsVerifying(false);
+        if (totpCode === '000000') {
+          setError('Invalid or expired authenticator code. Please try again.');
+        } else {
+          setSuccess(true);
+          const params = new URLSearchParams(window.location.search);
+          const redirect = params.get('redirect') || '/';
+          setTimeout(() => {
+            window.location.href = redirect;
+          }, 600);
+        }
+      })
+      .catch(() => {
+        setIsVerifying(false);
+        setError('Failed to seal session token. Please try again.');
+      });
   };
 
   const handlePasskeySubmit = () => {
     setError(null);
     setIsVerifying(true);
-    setTimeout(() => {
-      setIsVerifying(false);
-      setSuccess(true);
-    }, 500);
+    fetch('/api/auth/mfa', { method: 'POST' })
+      .then((res) => res.json())
+      .then(() => {
+        setIsVerifying(false);
+        setSuccess(true);
+        const params = new URLSearchParams(window.location.search);
+        const redirect = params.get('redirect') || '/';
+        setTimeout(() => {
+          window.location.href = redirect;
+        }, 600);
+      })
+      .catch(() => {
+        setIsVerifying(false);
+        setError('Failed to seal session token. Please try again.');
+      });
   };
 
   return (

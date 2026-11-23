@@ -249,19 +249,17 @@ export default function ClientDashboardOverviewPage() {
           className="rounded-2xl p-4 sm:px-6 shadow-md flex flex-col lg:flex-row lg:items-center justify-between gap-4"
         >
           <div className="flex items-center gap-3">
-            <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 border border-[#C8A951]/50 text-[#C8A951] font-bold text-xs shrink-0">
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-[#0D3B2E] text-[#C8A951] font-bold text-xs shrink-0 shadow-xs">
               {workspaceMode === 'b2c' ? 'B2C' : 'B2B'}
             </span>
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-[#C8A951]">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#0D3B2E]">
                   Interactive Workspace Mode Switcher
                 </span>
-                <span className="text-[11px] text-[#E3EFEA]/80 font-mono">
-                  • Tenant RLS Isolated
-                </span>
+                <span className="text-[11px] text-slate-500 font-mono">• Tenant RLS Isolated</span>
               </div>
-              <p className="text-xs sm:text-sm text-white/90">
+              <p className="text-xs sm:text-sm text-[#0F172A] font-medium">
                 {workspaceMode === 'b2c'
                   ? 'Viewing Direct Retail Applicant Portal (Personal Dossier, Milestone Tracker & Document Vault)'
                   : 'Viewing B2B Partner Agency Workspace (Bengal Global Travels • Prepaid Wallet & Sub-Client Roster)'}
@@ -273,7 +271,7 @@ export default function ClientDashboardOverviewPage() {
             <div
               role="group"
               aria-label="Workspace Mode Switcher"
-              className="inline-flex rounded-xl bg-black/25 p-1 border border-white/15"
+              className="inline-flex rounded-xl bg-slate-100 p-1 border border-slate-200"
             >
               <button
                 type="button"
@@ -281,8 +279,8 @@ export default function ClientDashboardOverviewPage() {
                 aria-pressed={workspaceMode === 'b2c'}
                 className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   workspaceMode === 'b2c'
-                    ? 'bg-[#C8A951] text-[#111827] shadow-xs'
-                    : 'text-white/85 hover:text-white'
+                    ? 'bg-[#0D3B2E] text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 B2C Applicant Mode
@@ -293,8 +291,8 @@ export default function ClientDashboardOverviewPage() {
                 aria-pressed={workspaceMode === 'b2b'}
                 className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   workspaceMode === 'b2b'
-                    ? 'bg-[#C8A951] text-[#111827] shadow-xs'
-                    : 'text-white/85 hover:text-white'
+                    ? 'bg-[#0D3B2E] text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 B2B Partner Agency Workspace
@@ -411,7 +409,7 @@ export default function ClientDashboardOverviewPage() {
           glowColor="gold"
           tiltIntensity={6}
           specular={true}
-          className="p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6"
+          className="p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 bg-white"
         >
           <div className="flex flex-col gap-2">
             <div className="flex flex-wrap items-center gap-2">
@@ -421,16 +419,16 @@ export default function ClientDashboardOverviewPage() {
               <Badge variant="gold" size="sm">
                 Case ID: VH-2026-SG-4921
               </Badge>
-              <span className="text-xs text-slate-300 font-medium">
+              <span className="text-xs text-slate-500 font-medium">
                 • Target Submission: Dec 15, 2026
               </span>
             </div>
-            <h1 className="text-2xl md:text-3xl font-display font-extrabold text-white">
+            <h1 className="text-2xl md:text-3xl font-display font-extrabold text-[#0F172A]">
               Singapore Employment Pass (COMPASS Tier 1)
             </h1>
-            <p className="text-xs md:text-sm text-slate-300">
+            <p className="text-xs md:text-sm text-[#475569]">
               Assigned Specialist:{' '}
-              <span className="font-semibold text-[#C8A951]">
+              <span className="font-semibold text-[#0D3B2E]">
                 Sarah Jenkins (Senior Immigration Specialist)
               </span>{' '}
               • Ministry of Manpower Registered
