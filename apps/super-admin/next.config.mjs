@@ -25,6 +25,7 @@ if (isVercelPreviewOrBuild) {
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  serverExternalPackages: ['@prisma/client', 'prisma'],
   transpilePackages: [
     '@visahobe/ui',
     '@visahobe/design-system',
@@ -34,6 +35,7 @@ const nextConfig = {
     '@visahobe/agents',
     '@visahobe/browser-automation',
     '@visahobe/shared',
+    '@visahobe/worker-browser-session',
   ],
   webpack: (config, { isServer }) => {
     config.resolve.extensionAlias = {

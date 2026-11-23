@@ -98,7 +98,18 @@ export async function GET(request: Request): Promise<Response> {
           orderBy: { createdAt: 'desc' },
         });
         if (dbCases && dbCases.length > 0) {
-          filtered = dbCases.map((dbC) => ({
+          filtered = (
+            dbCases as Array<{
+              id: string;
+              caseNumber: string;
+              countryCode: string;
+              serviceType: string | null;
+              status: string;
+              priority: string;
+              createdAt: Date;
+              metadata: unknown;
+            }>
+          ).map((dbC) => ({
             id: dbC.id,
             caseNumber: dbC.caseNumber,
             applicantName:
