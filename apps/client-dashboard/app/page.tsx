@@ -236,8 +236,9 @@ export default function ClientDashboardOverviewPage() {
 
   return (
     <AuroraParallaxBackdrop
-      intensity="deep"
-      className="py-8 md:py-10 flex flex-col gap-8 text-white"
+      variant="travel"
+      intensity="vibrant"
+      className="py-8 md:py-10 flex flex-col gap-8 text-[#0F172A]"
     >
       {/* Interactive Role / Mode Switcher Bar (B2C Applicant Mode vs B2B Partner Agency Workspace) */}
       <Container size="2xl">

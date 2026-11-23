@@ -10,10 +10,10 @@ import {
   FloatingGlassDock,
 } from '../src/index.js';
 
-describe('Shared 3D Glassmorphism & Parallax Engine Primitives (TICKET-P5-002 / TICKET-P5-003)', () => {
-  it('renders AuroraParallaxBackdrop with obsidian background, light orbs, and grid', () => {
+describe('Shared 3D Glassmorphism & Parallax Engine Primitives (TICKET-P5-002 / TICKET-P5-003 / TICKET-P5-004)', () => {
+  it('renders AuroraParallaxBackdrop with dark variant and obsidian background', () => {
     const html = renderToStaticMarkup(
-      <AuroraParallaxBackdrop intensity="vibrant" showParticles={true}>
+      <AuroraParallaxBackdrop variant="dark" intensity="vibrant" showParticles={true}>
         <div data-testid="test-content">Hero Headline</div>
       </AuroraParallaxBackdrop>,
     );
@@ -26,9 +26,24 @@ describe('Shared 3D Glassmorphism & Parallax Engine Primitives (TICKET-P5-002 / 
     expect(html).toContain('Hero Headline');
   });
 
-  it('renders Glass3DCard with frosted blur, specular top reflection, and glow color', () => {
+  it('renders AuroraParallaxBackdrop with vibrant travel theme canvas and ocean azure / sunset coral orbs', () => {
     const html = renderToStaticMarkup(
-      <Glass3DCard glowColor="gold" specular={true} spotlight={true}>
+      <AuroraParallaxBackdrop variant="travel" intensity="vibrant" showParticles={true}>
+        <div data-testid="test-content-travel">Vibrant Travel Experience</div>
+      </AuroraParallaxBackdrop>,
+    );
+
+    expect(html).toContain('data-testid="aurora-parallax-backdrop"');
+    expect(html).toContain('from-[#F0F9FF]');
+    expect(html).toContain('from-[#0284C7]');
+    expect(html).toContain('from-[#F97316]');
+    expect(html).toContain('text-[#0F172A]');
+    expect(html).toContain('Vibrant Travel Experience');
+  });
+
+  it('renders Glass3DCard with rock-solid hover, frosted blur, and specular top reflection', () => {
+    const html = renderToStaticMarkup(
+      <Glass3DCard glowColor="gold" specular={true} spotlight={false}>
         <div className="p-6">
           <h3>Visa Pass Hologram</h3>
         </div>
@@ -37,9 +52,10 @@ describe('Shared 3D Glassmorphism & Parallax Engine Primitives (TICKET-P5-002 / 
 
     expect(html).toContain('data-testid="glass-3d-card"');
     expect(html).toContain('backdrop-blur-2xl');
-    expect(html).toContain('border-white/15');
+    expect(html).toContain('border-white/60');
     expect(html).toContain('via-white/70'); // Specular top reflection
     expect(html).toContain('hover:border-[#C8A951]/60');
+    expect(html).toContain('hover:-translate-y-1');
     expect(html).toContain('Visa Pass Hologram');
   });
 

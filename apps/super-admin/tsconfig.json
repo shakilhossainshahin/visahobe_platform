@@ -37,7 +37,11 @@
       "@visahobe/browser-automation": ["../../packages/browser-automation/src/index"],
       "@visahobe/browser-automation/*": ["../../packages/browser-automation/src/*"],
       "@visahobe/shared": ["../../packages/shared/src/index"],
-      "@visahobe/shared/*": ["../../packages/shared/src/*"]
+      "@visahobe/shared/*": ["../../packages/shared/src/*"],
+      "@visahobe/database": ["../../packages/database/src/index"],
+      "@visahobe/database/*": ["../../packages/database/src/*"],
+      "@visahobe/worker-browser-session": ["../../workers/browser-session/src/index"],
+      "@visahobe/worker-browser-session/*": ["../../workers/browser-session/src/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
